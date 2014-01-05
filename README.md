@@ -1,4 +1,4 @@
-wampspring
-==========
+##wampspring 
 
-A WAMP implementation based on Spring 4
+A WAMP server and client implementation based on the Spring Framework 4 WebSocket support.
+
