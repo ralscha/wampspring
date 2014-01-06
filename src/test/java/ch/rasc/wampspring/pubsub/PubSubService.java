@@ -21,11 +21,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.annotation.WampSubscribeListener;
 import ch.rasc.wampspring.annotation.WampUnsubscribeListener;
 import ch.rasc.wampspring.call.TestDto;
-import ch.rasc.wampspring.handler.EventMessenger;
 
 public class PubSubService {
 

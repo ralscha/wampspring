@@ -27,8 +27,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import ch.rasc.wampspring.EnableWamp;
-import ch.rasc.wampspring.WampConfigurerAdapter;
+import ch.rasc.wampspring.config.EnableWamp;
+import ch.rasc.wampspring.config.WampConfigurerAdapter;
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;

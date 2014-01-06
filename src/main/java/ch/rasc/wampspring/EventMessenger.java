@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring;
 
 import java.util.Set;
 
+import ch.rasc.wampspring.handler.PubSubHandler;
 import ch.rasc.wampspring.message.EventMessage;
 
 /**

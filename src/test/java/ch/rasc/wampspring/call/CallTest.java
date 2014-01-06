@@ -21,8 +21,8 @@ import org.junit.Test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ch.rasc.wampspring.EnableWamp;
-import ch.rasc.wampspring.WampConfigurerAdapter;
+import ch.rasc.wampspring.config.EnableWamp;
+import ch.rasc.wampspring.config.WampConfigurerAdapter;
 import ch.rasc.wampspring.message.CallErrorMessage;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;

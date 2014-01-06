@@ -17,7 +17,7 @@ package ch.rasc.wampspring.pubsub;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ch.rasc.wampspring.handler.EventMessenger;
+import ch.rasc.wampspring.EventMessenger;
 
 public class EventSenderService {
 

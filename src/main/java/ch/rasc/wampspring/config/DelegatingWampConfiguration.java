@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring;
+package ch.rasc.wampspring.config;
 
 import java.util.Collection;
 
@@ -27,8 +27,8 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.handler.AnnotationMethodHandler;
-import ch.rasc.wampspring.handler.EventMessenger;
 import ch.rasc.wampspring.handler.PubSubHandler;
 import ch.rasc.wampspring.handler.WampMessageSender;
 import ch.rasc.wampspring.handler.WampWebsocketHandler;
