@@ -82,10 +82,6 @@ public class PubSubHandler {
 		Set<String> sessions = topicSessionIds.get(eventMessage.getTopicURI());
 		wampMessageSender.sendMessageToClient(sessions, eventMessage);
 	}
-
-	public void sendToAllExcept(EventMessage eventMessage, String excludeSessionId) {
-		sendToAllExcept(eventMessage, Collections.singleton(excludeSessionId));
-	}
 	
 	public void sendToAllExcept(EventMessage eventMessage, Set<String> excludeSessionIds) {
 		Set<String> subscriptionSessions = topicSessionIds.get(eventMessage.getTopicURI());
