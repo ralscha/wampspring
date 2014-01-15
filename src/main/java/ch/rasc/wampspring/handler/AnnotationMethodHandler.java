@@ -19,7 +19,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -47,6 +49,7 @@ import ch.rasc.wampspring.message.CallErrorMessage;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.EventMessage;
+import ch.rasc.wampspring.message.PrefixMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
@@ -79,6 +82,13 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 	private final MultiValueMap<String, WampHandlerMethod> unsubscribeMethods = new LinkedMultiValueMap<>();
 
 	private final MultiValueMap<String, WampHandlerMethod> callMethods = new LinkedMultiValueMap<>();
+	
+	/**
+     * SPEC says: 
+     * The agreement is per-connection, and has a lifetime starting with the server receiving a 
+     * PREFIX message establishing a prefix-to-URI mapping, and ending with the WebSocket connection.
+     */
+    private final Map<String, Map<String, String>> sessionIdsPrefixUri = new HashMap<>();
 
 	private List<HandlerMethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
 
@@ -188,21 +198,41 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 			UnsubscribeMessage unsubscribeMessage = (UnsubscribeMessage) message;
 			handlePubSubMessage(unsubscribeMessage, null, unsubscribeMessage.getTopicURI(), unsubscribeMethods);
 			break;
+		case PREFIX:
+		    PrefixMessage prefixMessage = (PrefixMessage) message;
+		    handlePrefixMessage(prefixMessage);
+		    break;
 		default:
 			break;
 		}
 
 	}
 
-	private void handleCallMessage(CallMessage callMessage) {
+	private void handlePrefixMessage(PrefixMessage prefixMessage) {
+	    String sessionId = prefixMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
+	    
+	    if(sessionIdsPrefixUri.containsKey(sessionId)){
+	        Map<String, String> prefixUri = sessionIdsPrefixUri.get(sessionId);
+	        prefixUri.put(prefixMessage.getPrefix(), prefixMessage.getUri());
+	    }else{
+	        Map<String, String> prefixUri = new HashMap<>();
+	        prefixUri.put(prefixMessage.getPrefix(), prefixMessage.getUri());
+	        sessionIdsPrefixUri.put(sessionId, prefixUri);
+	    }
+    }
+
+    private void handleCallMessage(CallMessage callMessage) {
 		String sessionId = callMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
 
 		List<WampHandlerMethod> matches = getHandlerMethod(callMessage.getProcURI(), callMethods);
 		if (matches == null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("No matching method, destination " + callMessage.getProcURI());
-			}
-			return;
+		    matches = searchIfPrefixSet(callMessage, callMessage.getProcURI(), callMethods);
+		    if (matches == null) {
+		        if (logger.isTraceEnabled()) {
+		            logger.trace("No matching method, destination " + callMessage.getProcURI());
+		        }
+		        return;
+		    }
 		}
 
 		for (HandlerMethod match : matches) {
@@ -232,16 +262,44 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		}
 	}
 
-	private void handlePubSubMessage(WampMessage message, Object argument, String destination,
+	private List<WampHandlerMethod> searchIfPrefixSet(WampMessage message, String destination,
+            MultiValueMap<String, WampHandlerMethod> handlerMethods) {
+	    String sessionId = message.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
+	    List<WampHandlerMethod> matches = null;
+	    if(sessionIdsPrefixUri.containsKey(sessionId)){
+            Map<String, String> prefixUri = sessionIdsPrefixUri.get(sessionId);
+            String[] curie = destination.split(":");
+            //if it is a prefix, we search the original URI
+            String prefix = prefixUri.get(curie[0]);
+            if(null != prefix && curie.length > 1){
+                //we rebuild the original URI
+                String uri = String.format("%s%s", prefix, curie[1]);
+                matches = getHandlerMethod(uri, handlerMethods);
+                //question is? do we cache it or no to accelerate further use and avoid each call search (perf issue)
+                //problem is methods maps are cross session and spec say prefix is per session 
+                //and multiple session can register same prefix
+                //something like following works, but how to track prefix->method per session
+                for (WampHandlerMethod match : matches) {
+                    handlerMethods.add(destination, match);
+                }
+            }
+        }
+        return matches;
+    }
+
+    private void handlePubSubMessage(WampMessage message, Object argument, String destination,
 			MultiValueMap<String, WampHandlerMethod> handlerMethods) {
 		Assert.notNull(destination, "destination is required");
 
 		List<WampHandlerMethod> matches = getHandlerMethod(destination, handlerMethods);
 		if (matches == null) {
-			if (logger.isTraceEnabled()) {
-				logger.trace("No matching method, destination " + destination);
-			}
-			return;
+		    matches = searchIfPrefixSet(message, destination, handlerMethods);
+		    if (matches == null){
+		        if (logger.isTraceEnabled()) {
+		            logger.trace("No matching method, destination " + destination);
+		        }
+		        return;
+		    }
 		}
 
 		for (WampHandlerMethod handlerMethod : matches) {
@@ -280,5 +338,15 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		}
 		return null;
 	}
+
+    public void unregisterSessionFromAllPrefixCurie(String sessionId) {
+        if(sessionIdsPrefixUri.containsKey(sessionId)){
+            Map<String, String> prefixUri = sessionIdsPrefixUri.remove(sessionId);
+            //question is: now should we remove the mapping prefix->method
+            //other sessions may use this prefix->method
+            //we cannot for moment as we don't track prefix->method with session
+        }
+        
+    }
 
 }
