@@ -279,9 +279,10 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
                 //problem is methods maps are cross session and spec say prefix is per session 
                 //and multiple session can register same prefix
                 //something like following works, but how to track prefix->method per session
-                for (WampHandlerMethod match : matches) {
-                    handlerMethods.add(destination, match);
-                }
+                if(null != matches)
+                    for (WampHandlerMethod match : matches) {
+                        handlerMethods.add(destination, match);
+                    }
             }
         }
         return matches;
