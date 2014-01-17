@@ -38,7 +38,7 @@ public class PrefixMessageTest extends BaseMessageTest {
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(1, "news:read", "http://example.com/simple/news#");
 
-		PrefixMessage wm = PrefixMessage.fromJson(jsonFactory, json);
+		PrefixMessage wm = WampMessage.fromJson(jsonFactory, json);
 
 		assertThat(wm.getType()).isEqualTo(WampMessageType.PREFIX);
 		assertThat(wm.getPrefix()).isEqualTo("news:read");
