@@ -41,8 +41,8 @@ import ch.rasc.wampspring.message.WampMessageHeader;
  * {@link PublishMessage}, {@link SubscribeMessage} and
  * {@link UnsubscribeMessage}
  * <p>
- * The handler manages a map (topicSessionIds) that holds a set of
- * WebSocket session ids per topicURI.
+ * The handler manages a map (topicSessionIds) that holds a set of WebSocket
+ * session ids per topicURI.
  */
 public class PubSubHandler {
 
@@ -74,18 +74,18 @@ public class PubSubHandler {
 			handleUnsubscribeMessage((UnsubscribeMessage) message);
 			break;
 		case PREFIX:
-		    handlePrefixMessage((PrefixMessage)message);
-		    break;
+			handlePrefixMessage((PrefixMessage) message);
+			break;
 		default:
 			break;
 		}
 	}
 
-    public void sendToAll(EventMessage eventMessage) {
+	public void sendToAll(EventMessage eventMessage) {
 		Set<String> sessions = topicSessionIds.get(eventMessage.getTopicURI());
 		wampMessageSender.sendMessageToClient(sessions, eventMessage);
 	}
-	
+
 	public void sendToAllExcept(EventMessage eventMessage, Set<String> excludeSessionIds) {
 		Set<String> subscriptionSessions = topicSessionIds.get(eventMessage.getTopicURI());
 		if (subscriptionSessions != null) {
@@ -129,17 +129,21 @@ public class PubSubHandler {
 			}
 		}
 	}
-	
+
 	private void handlePrefixMessage(PrefixMessage message) {
-	    //NOT much to do now
-	    
-	    //spec says:
-	    //The agreement is per-connection, and has a lifetime starting with the server receiving a 
-	    //PREFIX message establishing a prefix-to-URI mapping, and ending with the WebSocket connection.
-	    
-	    //this WAMP implementation is so flexible that we can handle any kind of topics uri, curie, or else
-	    //the maintenance of yet another map looks like overblown, considering it is operated by other handlers
-    }
+		// NOT much to do now
+
+		// spec says:
+		// The agreement is per-connection, and has a lifetime starting with the
+		// server receiving a
+		// PREFIX message establishing a prefix-to-URI mapping, and ending with
+		// the WebSocket connection.
+
+		// this WAMP implementation is so flexible that we can handle any kind
+		// of topics uri, curie, or else
+		// the maintenance of yet another map looks like overblown, considering
+		// it is operated by other handlers
+	}
 
 	private static boolean isSessionEligible(PublishMessage publishMessage, String mySessionId, String otherSessionId) {
 

@@ -54,8 +54,8 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
-	 * provided topicURI
+	 * Send a {@link EventMessage} to every client that is currently subscribed
+	 * to the provided topicURI
 	 * 
 	 * @param topicURI the name of the topic
 	 * @param event the message
@@ -65,8 +65,9 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
-	 * provided topicURI except the one provided with the excludeSessionId parameter.
+	 * Send a {@link EventMessage} to every client that is currently subscribed
+	 * to the provided topicURI except the one provided with the
+	 * excludeSessionId parameter.
 	 * 
 	 * @param topicURI the name of the topic
 	 * @param event the message
@@ -74,11 +75,12 @@ public class EventMessenger {
 	 */
 	public void sendToAllExcept(String topicURI, Object event, String excludeSessionId) {
 		pubSubHandler.sendToAllExcept(new EventMessage(topicURI, event), Collections.singleton(excludeSessionId));
-	}	
-	
+	}
+
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
-	 * provided topicURI except the ones listed in the excludeSessionIds set.
+	 * Send a {@link EventMessage} to every client that is currently subscribed
+	 * to the provided topicURI except the ones listed in the excludeSessionIds
+	 * set.
 	 * 
 	 * @param topicURI the name of the topic
 	 * @param event the message
@@ -89,9 +91,10 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to the clients that are subscribed to the provided
-	 * topicURI and are listed in the eligibleSessionIds set. If no session of
-	 * the provided set is subscribed to the topicURI nothing happens.
+	 * Send a {@link EventMessage} to the clients that are subscribed to the
+	 * provided topicURI and are listed in the eligibleSessionIds set. If no
+	 * session of the provided set is subscribed to the topicURI nothing
+	 * happens.
 	 * 
 	 * @param topicURI the name of the topic
 	 * @param event the message

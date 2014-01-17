@@ -62,7 +62,7 @@ public enum WampMessageType {
 		case 0:
 			return WELCOME;
 		case 1:
-		    return PREFIX;
+			return PREFIX;
 		case 2:
 			return CALL;
 		case 3:

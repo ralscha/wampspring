@@ -30,8 +30,7 @@ public class PrefixMessageTest extends BaseMessageTest {
 		PrefixMessage prefixMessage = new PrefixMessage(prefix, uri);
 
 		String json = prefixMessage.toJson(jsonFactory);
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.PREFIX.getTypeId(), prefix, uri));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.PREFIX.getTypeId(), prefix, uri));
 	}
 
 	@Test
