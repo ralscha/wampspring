@@ -81,6 +81,8 @@ public abstract class WampMessage {
 			switch (messageType) {
 			case WELCOME:
 				return (T) new WelcomeMessage(jp);
+			case PREFIX:
+			    return (T) new PrefixMessage(jp);
 			case CALL:
 				return (T) new CallMessage(jp);
 			case CALLRESULT:

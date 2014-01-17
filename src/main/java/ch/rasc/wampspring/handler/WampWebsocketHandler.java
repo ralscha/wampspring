@@ -110,6 +110,7 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 			unsubscribeMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, sessionId);
 			annotationMethodHandler.handleMessage(unsubscribeMessage);
 		}
+		annotationMethodHandler.unregisterSessionFromAllPrefixCurie(sessionId);
 	}
 
 	@Override

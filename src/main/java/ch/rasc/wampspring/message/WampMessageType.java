@@ -24,8 +24,7 @@ public enum WampMessageType {
 	WELCOME(0),
 
 	// Client-to-server Auxiliary
-	// Not supported
-	// PREFIX(1),
+	PREFIX(1),
 
 	// Client-to-server RPC
 	CALL(2),
@@ -62,6 +61,8 @@ public enum WampMessageType {
 		switch (typeId) {
 		case 0:
 			return WELCOME;
+		case 1:
+		    return PREFIX;
 		case 2:
 			return CALL;
 		case 3:

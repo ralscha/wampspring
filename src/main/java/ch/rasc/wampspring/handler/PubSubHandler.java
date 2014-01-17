@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ch.rasc.wampspring.message.EventMessage;
+import ch.rasc.wampspring.message.PrefixMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
@@ -72,12 +73,15 @@ public class PubSubHandler {
 		case UNSUBSCRIBE:
 			handleUnsubscribeMessage((UnsubscribeMessage) message);
 			break;
+		case PREFIX:
+		    handlePrefixMessage((PrefixMessage)message);
+		    break;
 		default:
 			break;
 		}
 	}
 
-	public void sendToAll(EventMessage eventMessage) {
+    public void sendToAll(EventMessage eventMessage) {
 		Set<String> sessions = topicSessionIds.get(eventMessage.getTopicURI());
 		wampMessageSender.sendMessageToClient(sessions, eventMessage);
 	}
@@ -125,6 +129,17 @@ public class PubSubHandler {
 			}
 		}
 	}
+	
+	private void handlePrefixMessage(PrefixMessage message) {
+	    //NOT much to do now
+	    
+	    //spec says:
+	    //The agreement is per-connection, and has a lifetime starting with the server receiving a 
+	    //PREFIX message establishing a prefix-to-URI mapping, and ending with the WebSocket connection.
+	    
+	    //this WAMP implementation is so flexible that we can handle any kind of topics uri, curie, or else
+	    //the maintenance of yet another map looks like overblown, considering it is operated by other handlers
+    }
 
 	private static boolean isSessionEligible(PublishMessage publishMessage, String mySessionId, String otherSessionId) {
 
