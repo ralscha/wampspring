@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.PathMatcher;
 
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.PrefixMessage;
@@ -54,8 +55,11 @@ public class PubSubHandler {
 
 	private final WampMessageSender wampMessageSender;
 
-	public PubSubHandler(WampMessageSender wampMessageSender) {
+	private final PathMatcher pathMatcher;
+
+	public PubSubHandler(WampMessageSender wampMessageSender, PathMatcher pathMatcher) {
 		this.wampMessageSender = wampMessageSender;
+		this.pathMatcher = pathMatcher;
 	}
 
 	void handleMessage(WampMessage message) {
@@ -82,13 +86,13 @@ public class PubSubHandler {
 	}
 
 	public void sendToAll(EventMessage eventMessage) {
-		Set<String> sessions = topicSessionIds.get(eventMessage.getTopicURI());
+		Set<String> sessions = getMatchingSubscriptionSessions(eventMessage.getTopicURI());
 		wampMessageSender.sendMessageToClient(sessions, eventMessage);
 	}
 
 	public void sendToAllExcept(EventMessage eventMessage, Set<String> excludeSessionIds) {
-		Set<String> subscriptionSessions = topicSessionIds.get(eventMessage.getTopicURI());
-		if (subscriptionSessions != null) {
+		Set<String> subscriptionSessions = getMatchingSubscriptionSessions(eventMessage.getTopicURI());
+		if ( subscriptionSessions != null && !subscriptionSessions.isEmpty()) {
 			Set<String> eligibleSessions = new HashSet<>();
 			for (String sessionId : subscriptionSessions) {
 				if (!excludeSessionIds.contains(sessionId)) {
@@ -100,8 +104,8 @@ public class PubSubHandler {
 	}
 
 	public void sendTo(EventMessage eventMessage, Set<String> eligibleSessionIds) {
-		Set<String> subscriptionSessions = topicSessionIds.get(eventMessage.getTopicURI());
-		if (subscriptionSessions != null) {
+		Set<String> subscriptionSessions = getMatchingSubscriptionSessions(eventMessage.getTopicURI());
+		if (subscriptionSessions != null && !subscriptionSessions.isEmpty()) {
 			Set<String> eligibleSessions = new HashSet<>();
 			for (String sessionId : subscriptionSessions) {
 				if (eligibleSessionIds.contains(sessionId)) {
@@ -112,9 +116,22 @@ public class PubSubHandler {
 		}
 	}
 
+	private Set<String> getMatchingSubscriptionSessions(String topicURI) {
+		Set<String> subscriptionSessions = new HashSet<String>();
+		if(pathMatcher.isPattern(topicURI)){
+			for (String destination : topicSessionIds.keySet()) {
+				if(pathMatcher.match(topicURI, destination))
+					subscriptionSessions.addAll(topicSessionIds.get(topicURI));
+			}
+		}else{
+			subscriptionSessions = topicSessionIds.get(topicURI);
+		}
+		return subscriptionSessions;
+	}
+
 	private void handlePublishMessage(PublishMessage publishMessage) {
-		Set<String> subscriptionSessions = topicSessionIds.get(publishMessage.getTopicURI());
-		if (subscriptionSessions != null) {
+		Set<String> subscriptionSessions = getMatchingSubscriptionSessions(publishMessage.getTopicURI());
+		if (subscriptionSessions != null && !subscriptionSessions.isEmpty()) {
 			String mySessionId = publishMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
 			Set<String> eligibleSessions = new HashSet<>();
 			for (String sessionId : subscriptionSessions) {

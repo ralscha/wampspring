@@ -20,6 +20,8 @@ import java.util.concurrent.Executor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,6 +59,11 @@ public class WampConfigurerAdapter implements WampConfigurer {
 	@Override
 	public void configureWampWebsocketHandler(WebSocketHandlerRegistration reg) {
 		// nothing here
+	}
+
+	@Override
+	public PathMatcher pathMatcher() {
+		return new AntPathMatcher();
 	}
 
 }

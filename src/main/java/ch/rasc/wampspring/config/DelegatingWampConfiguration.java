@@ -100,17 +100,18 @@ class DelegatingWampConfiguration implements WebSocketConfigurer {
 
 	@Bean
 	public PubSubHandler pubSubHandler() {
-		return new PubSubHandler(wampMessageSender());
+		return new PubSubHandler(wampMessageSender(), configurer.pathMatcher());
 	}
 
 	@Bean
 	public AnnotationMethodHandler annotationMethodHandler() {
 		return new AnnotationMethodHandler(wampMessageSender(), pubSubHandler(), configurer.objectMapper(),
-				configurer.conversionService());
+				configurer.conversionService(), configurer.pathMatcher());
 	}
 
 	@Bean
 	public WampWebsocketHandler wampWebsocketHandler() {
+		
 		return new WampWebsocketHandler(annotationMethodHandler(), pubSubHandler(), wampMessageSender(), jsonFactory);
 	}
 

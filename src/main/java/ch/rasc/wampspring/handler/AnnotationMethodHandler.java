@@ -32,10 +32,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.PathMatcher;
 import org.springframework.util.ReflectionUtils.MethodFilter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
@@ -101,13 +103,16 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 	private final ObjectMapper objectMapper;
 
 	private final ConversionService conversionService;
+	
+	private PathMatcher pathMatcher;
 
 	public AnnotationMethodHandler(WampMessageSender wampMessageSender, PubSubHandler pubSubHandler,
-			ObjectMapper objectMapper, ConversionService conversionService) {
+			ObjectMapper objectMapper, ConversionService conversionService, PathMatcher pathMatcher) {
 		this.wampMessageSender = wampMessageSender;
 		this.pubSubHandler = pubSubHandler;
 		this.objectMapper = objectMapper;
 		this.conversionService = conversionService;
+		this.pathMatcher = pathMatcher;
 	}
 
 	public void setCustomArgumentResolvers(List<HandlerMethodArgumentResolver> customArgumentResolvers) {
@@ -225,7 +230,7 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		String sessionId = callMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
 
 		List<WampHandlerMethod> matches = getHandlerMethod(callMessage.getProcURI(), callMethods);
-		if (matches == null) {
+		if (matches.isEmpty()) {
 			matches = searchIfPrefixSet(callMessage, callMessage.getProcURI(), callMethods);
 			if (matches == null) {
 				if (logger.isTraceEnabled()) {
@@ -277,12 +282,12 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 				matches = getHandlerMethod(uri, handlerMethods);
 				// question is? do we cache it or no to accelerate further use
 				// and avoid each call search (perf issue)
-				// problem is methods maps are cross session and spec say prefix
+				// problem is methods maps are cross session and spec says prefix
 				// is per session
 				// and multiple session can register same prefix
-				// something like following works, but how to track
+				// something like following works, but how to track efficiently
 				// prefix->method per session
-				if (null != matches) {
+				if (!matches.isEmpty()) {
 					for (WampHandlerMethod match : matches) {
 						handlerMethods.add(destination, match);
 					}
@@ -291,20 +296,18 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		}
 		return matches;
 	}
-
+	
 	private void handlePubSubMessage(WampMessage message, Object argument, String destination,
 			MultiValueMap<String, WampHandlerMethod> handlerMethods) {
 		Assert.notNull(destination, "destination is required");
 
 		List<WampHandlerMethod> matches = getHandlerMethod(destination, handlerMethods);
-		if (matches == null) {
+		if (matches.isEmpty()) {
 			matches = searchIfPrefixSet(message, destination, handlerMethods);
-			if (matches == null) {
-				if (logger.isTraceEnabled()) {
-					logger.trace("No matching method, destination " + destination);
-				}
-				return;
+			if (logger.isTraceEnabled()) {
+				logger.trace("No matching method, destination " + destination);
 			}
+			return;
 		}
 
 		for (WampHandlerMethod handlerMethod : matches) {
@@ -335,13 +338,18 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		}
 	}
 
-	List<WampHandlerMethod> getHandlerMethod(String destination, MultiValueMap<String, WampHandlerMethod> handlerMethods) {
+    List<WampHandlerMethod> getHandlerMethod(String destination, MultiValueMap<String, WampHandlerMethod> handlerMethods) {
+    	List<WampHandlerMethod> matches = new ArrayList<WampHandlerMethod>();
 		for (String mappingDestination : handlerMethods.keySet()) {
 			if (destination.equals(mappingDestination)) {
-				return handlerMethods.get(mappingDestination);
+				matches.addAll(handlerMethods.get(mappingDestination));
+			} 
+			if(pathMatcher.isPattern(mappingDestination)){
+				if(pathMatcher.match(mappingDestination, destination))
+					matches.addAll(handlerMethods.get(mappingDestination));
 			}
 		}
-		return null;
+        return matches;
 	}
 
 	public void unregisterSessionFromAllPrefixCurie(String sessionId) {
@@ -354,5 +362,32 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		}
 
 	}
+	
+	/**
+     * Set the PathMatcher implementation to use for matching destinations
+     * against configured destination patterns.
+     * <p>By default AntPathMatcher is used
+     */
+    public void setPathMatcher(PathMatcher pathMatcher) {
+        Assert.notNull(pathMatcher, "PathMatcher must not be null");
+        this.pathMatcher = pathMatcher;
+    }
+
+    /**
+     * Return the PathMatcher implementation to use for matching destinations
+     */
+    public PathMatcher getPathMatcher() {
+        return this.pathMatcher;
+    }
+    
+    /**
+     * Set the path separator to use for pattern parsing if {@link AntPathMatcher} is used as {@link PathMatcher} .
+     * Default is "/", as in Ant.
+     */
+    public void setPathSeparator(String pathSeparator) {
+        Assert.notNull(pathSeparator, "Path separator must not be null");
+        if(this.pathMatcher instanceof AntPathMatcher)
+            ((AntPathMatcher) this.pathMatcher).setPathSeparator(pathSeparator);
+    }
 
 }

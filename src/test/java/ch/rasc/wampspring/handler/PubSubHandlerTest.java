@@ -20,6 +20,8 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
@@ -28,10 +30,11 @@ import ch.rasc.wampspring.message.WampMessageHeader;
 
 public class PubSubHandlerTest {
 
+	PathMatcher pathMatcher = new AntPathMatcher();
 	@Test
 	public void testSendToAll() {
 		WampMessageSender messageSender = Mockito.mock(WampMessageSender.class);
-		PubSubHandler pubSubHandler = new PubSubHandler(messageSender);
+		PubSubHandler pubSubHandler = new PubSubHandler(messageSender, pathMatcher);
 
 		SubscribeMessage subMessage = new SubscribeMessage("theTopic");
 		subMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, "1");
@@ -75,7 +78,7 @@ public class PubSubHandlerTest {
 	@Test
 	public void testSendToAllExcept() {
 		WampMessageSender messageSender = Mockito.mock(WampMessageSender.class);
-		PubSubHandler pubSubHandler = new PubSubHandler(messageSender);
+		PubSubHandler pubSubHandler = new PubSubHandler(messageSender, pathMatcher);
 
 		SubscribeMessage subMessage = new SubscribeMessage("theTopic");
 		subMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, "1");
@@ -123,7 +126,7 @@ public class PubSubHandlerTest {
 	@Test
 	public void testSendTo() {
 		WampMessageSender messageSender = Mockito.mock(WampMessageSender.class);
-		PubSubHandler pubSubHandler = new PubSubHandler(messageSender);
+		PubSubHandler pubSubHandler = new PubSubHandler(messageSender, pathMatcher);
 
 		SubscribeMessage subMessage = new SubscribeMessage("theTopic");
 		subMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, "1");

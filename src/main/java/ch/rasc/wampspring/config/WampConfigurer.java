@@ -18,6 +18,7 @@ package ch.rasc.wampspring.config;
 import java.util.concurrent.Executor;
 
 import org.springframework.core.convert.ConversionService;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +51,13 @@ public interface WampConfigurer {
 	 * {@link WampMessageBodyMethodArgumentResolver}
 	 */
 	ConversionService conversionService();
+	
+	/**
+	 * Configures a PathMatcher to detect wildcard like destination mappings<br>
+	 * Default configured is {@link AntPathMatcher}
+	 * @return
+	 */
+	PathMatcher pathMatcher();
 
 	/**
 	 * Doing some additional configuration of the WampWebsocketHandler
