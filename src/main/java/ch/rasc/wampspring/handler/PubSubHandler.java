@@ -56,6 +56,11 @@ public class PubSubHandler {
 	private final WampMessageSender wampMessageSender;
 
 	private final PathMatcher pathMatcher;
+	
+	/**
+	 * cache of unique topic patterns
+	 */
+	private final Set<String> topicPattern = new HashSet<String>();
 
 	public PubSubHandler(WampMessageSender wampMessageSender, PathMatcher pathMatcher) {
 		this.wampMessageSender = wampMessageSender;
@@ -116,15 +121,33 @@ public class PubSubHandler {
 		}
 	}
 
+	/**
+	 * search pattern topics or non one if any
+	 * @param topicURI destination to look for
+	 * @return must return null or not empty Set otherwise unit test fails
+	 */
 	private Set<String> getMatchingSubscriptionSessions(String topicURI) {
-		Set<String> subscriptionSessions = new HashSet<String>();
+		Set<String> subscriptionSessions = null;
 		if(pathMatcher.isPattern(topicURI)){
 			for (String destination : topicSessionIds.keySet()) {
-				if(pathMatcher.match(topicURI, destination))
-					subscriptionSessions.addAll(topicSessionIds.get(topicURI));
+				if(pathMatcher.match(topicURI, destination)){
+					if(subscriptionSessions == null)
+						subscriptionSessions = new HashSet<String>(topicSessionIds.get(topicURI));
+					else
+						subscriptionSessions.addAll(topicSessionIds.get(topicURI));
+				}
 			}
 		}else{
-			subscriptionSessions = topicSessionIds.get(topicURI);
+			if(topicSessionIds.containsKey(topicURI))
+				subscriptionSessions = new HashSet<String>(topicSessionIds.get(topicURI));
+			for (String pattern : topicPattern) {
+				if(pathMatcher.match(pattern, topicURI)){
+					if(subscriptionSessions == null)
+						subscriptionSessions = new HashSet<String>(topicSessionIds.get(pattern));
+					else
+						subscriptionSessions.addAll(topicSessionIds.get(pattern));
+				}
+			}
 		}
 		return subscriptionSessions;
 	}
@@ -196,6 +219,8 @@ public class PubSubHandler {
 				topicSessionIds.put(topicURI, sessions);
 			}
 			sessions.add(sessionId);
+			if(pathMatcher.isPattern(topicURI))
+				topicPattern.add(topicURI);
 		}
 	}
 
@@ -228,6 +253,8 @@ public class PubSubHandler {
 				if (removed) {
 					if (sessions.isEmpty()) {
 						topicSessionIds.remove(topicURI);
+						//should use guava Multiset or equivalent to remove topics count at 0
+						topicPattern.remove(topicURI);
 					}
 				}
 				return removed;
@@ -235,5 +262,4 @@ public class PubSubHandler {
 			return false;
 		}
 	}
-
 }
