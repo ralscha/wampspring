@@ -19,9 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -49,7 +47,6 @@ import ch.rasc.wampspring.message.CallErrorMessage;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.EventMessage;
-import ch.rasc.wampspring.message.PrefixMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
@@ -60,6 +57,7 @@ import ch.rasc.wampspring.support.HandlerMethodArgumentResolverComposite;
 import ch.rasc.wampspring.support.InvocableHandlerMethod;
 import ch.rasc.wampspring.support.PrincipalMethodArgumentResolver;
 import ch.rasc.wampspring.support.WampMessageMethodArgumentResolver;
+import ch.rasc.wampspring.support.WampSessionMethodArgumentResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -82,13 +80,6 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 	private final MultiValueMap<String, WampHandlerMethod> unsubscribeMethods = new LinkedMultiValueMap<>();
 
 	private final MultiValueMap<String, WampHandlerMethod> callMethods = new LinkedMultiValueMap<>();
-
-	/**
-	 * SPEC says: The agreement is per-connection, and has a lifetime starting
-	 * with the server receiving a PREFIX message establishing a prefix-to-URI
-	 * mapping, and ending with the WebSocket connection.
-	 */
-	private final Map<String, Map<String, String>> sessionIdsPrefixUri = new HashMap<>();
 
 	private List<HandlerMethodArgumentResolver> customArgumentResolvers = new ArrayList<>();
 
@@ -130,6 +121,7 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		this.argumentResolvers.addResolver(new WampMessageMethodArgumentResolver());
 		this.argumentResolvers.addResolvers(this.customArgumentResolvers);
 		this.argumentResolvers.addResolver(new PrincipalMethodArgumentResolver());
+		this.argumentResolvers.addResolver(new WampSessionMethodArgumentResolver());
 	}
 
 	final void detectHandlerMethods(String beanName) {
@@ -198,31 +190,13 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 			UnsubscribeMessage unsubscribeMessage = (UnsubscribeMessage) message;
 			handlePubSubMessage(unsubscribeMessage, null, unsubscribeMessage.getTopicURI(), unsubscribeMethods);
 			break;
-		case PREFIX:
-			PrefixMessage prefixMessage = (PrefixMessage) message;
-			handlePrefixMessage(prefixMessage);
-			break;
 		default:
 			break;
 		}
 
 	}
 
-	private void handlePrefixMessage(PrefixMessage prefixMessage) {
-		String sessionId = prefixMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
-
-		if (sessionIdsPrefixUri.containsKey(sessionId)) {
-			Map<String, String> prefixUri = sessionIdsPrefixUri.get(sessionId);
-			prefixUri.put(prefixMessage.getPrefix(), prefixMessage.getUri());
-		} else {
-			Map<String, String> prefixUri = new HashMap<>();
-			prefixUri.put(prefixMessage.getPrefix(), prefixMessage.getUri());
-			sessionIdsPrefixUri.put(sessionId, prefixUri);
-		}
-	}
-
 	private void handleCallMessage(CallMessage callMessage) {
-		String sessionId = callMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
 
 		List<WampHandlerMethod> matches = getHandlerMethod(callMessage.getProcURI(), callMethods);
 		if (matches == null) {
@@ -235,6 +209,7 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 			}
 		}
 
+		String sessionId = callMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
 		for (HandlerMethod match : matches) {
 			HandlerMethod handlerMethod = match.createWithResolvedBean();
 
@@ -264,13 +239,12 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 
 	private List<WampHandlerMethod> searchIfPrefixSet(WampMessage message, String destination,
 			MultiValueMap<String, WampHandlerMethod> handlerMethods) {
-		String sessionId = message.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
+		WampSession wampSession = message.getWampSession();
 		List<WampHandlerMethod> matches = null;
-		if (sessionIdsPrefixUri.containsKey(sessionId)) {
-			Map<String, String> prefixUri = sessionIdsPrefixUri.get(sessionId);
+		if (wampSession.hasPrefixes()) {
 			String[] curie = destination.split(":");
 			// if it is a prefix, we search the original URI
-			String prefix = prefixUri.get(curie[0]);
+			String prefix = wampSession.getPrefix(curie[0]);
 			if (null != prefix && curie.length > 1) {
 				// we rebuild the original URI
 				String uri = String.format("%s%s", prefix, curie[1]);
@@ -342,17 +316,6 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 			}
 		}
 		return null;
-	}
-
-	public void unregisterSessionFromAllPrefixCurie(String sessionId) {
-		if (sessionIdsPrefixUri.containsKey(sessionId)) {
-			Map<String, String> prefixUri = sessionIdsPrefixUri.remove(sessionId);
-			// question is: now should we remove the mapping prefix->method
-			// other sessions may use this prefix->method
-			// we cannot for moment as we don't track prefix->method with
-			// session
-		}
-
 	}
 
 }

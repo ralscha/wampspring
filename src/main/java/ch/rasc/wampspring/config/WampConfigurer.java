@@ -20,6 +20,11 @@ import java.util.concurrent.Executor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
 
+import ch.rasc.wampspring.cra.AuthenticationHandler;
+import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
+import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
+import ch.rasc.wampspring.cra.NoOpAuthenticationSecretProvider;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -56,4 +61,22 @@ public interface WampConfigurer {
 	 * registration. For example reg.withSockJS() turns SockJS support on.
 	 */
 	void configureWampWebsocketHandler(WebSocketHandlerRegistration reg);
+
+	/**
+	 * Configures an implementation of the secret provider interface
+	 * {@link AuthenticationSecretProvider} for authentication. If not
+	 * configured the library creates and uses an instance of the class
+	 * {@link NoOpAuthenticationSecretProvider}.
+	 */
+	AuthenticationSecretProvider authenticationSecretProvider();
+
+	/**
+	 * Configures an implementation of the {@link AuthenticationHandler}
+	 * interface. If not configured the library creates and uses an instance of
+	 * the class {@link DefaultAuthenticationHandler}.
+	 * 
+	 * @param authenticationSecretProvider
+	 */
+	AuthenticationHandler authenticationHandler();
+
 }

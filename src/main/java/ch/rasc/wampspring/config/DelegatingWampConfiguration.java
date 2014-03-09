@@ -28,6 +28,8 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistra
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import ch.rasc.wampspring.EventMessenger;
+import ch.rasc.wampspring.cra.AuthenticationHandler;
+import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
 import ch.rasc.wampspring.handler.AnnotationMethodHandler;
 import ch.rasc.wampspring.handler.PubSubHandler;
 import ch.rasc.wampspring.handler.WampMessageSender;
@@ -112,6 +114,16 @@ class DelegatingWampConfiguration implements WebSocketConfigurer {
 	@Bean
 	public WampWebsocketHandler wampWebsocketHandler() {
 		return new WampWebsocketHandler(annotationMethodHandler(), pubSubHandler(), wampMessageSender(), jsonFactory);
+	}
+
+	@Bean
+	public AuthenticationSecretProvider authenticationSecretProvider() {
+		return configurer.authenticationSecretProvider();
+	}
+
+	@Bean
+	public AuthenticationHandler authenticationHandler() {
+		return configurer.authenticationHandler();
 	}
 
 }

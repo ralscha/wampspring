@@ -22,6 +22,10 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
 
+import ch.rasc.wampspring.cra.AuthenticationHandler;
+import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
+import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -57,6 +61,16 @@ public class WampConfigurerAdapter implements WampConfigurer {
 	@Override
 	public void configureWampWebsocketHandler(WebSocketHandlerRegistration reg) {
 		// nothing here
+	}
+
+	@Override
+	public AuthenticationSecretProvider authenticationSecretProvider() {
+		return null;
+	}
+
+	@Override
+	public AuthenticationHandler authenticationHandler() {
+		return new DefaultAuthenticationHandler();
 	}
 
 }

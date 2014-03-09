@@ -13,13 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.message;
+package ch.rasc.wampspring.cra;
 
-/**
- * Enumeration of supported headers in a {@link WampMessage}. The method
- * {@link WampMessage#getHeader(WampMessageHeader)} returns the value of the
- * specific header
- */
-public enum WampMessageHeader {
-	PRINCIPAL, WEBSOCKET_SESSION_ID, WAMP_SESSION
+public interface AuthenticationSecretProvider {
+	public String getSecret(final String authKey);
 }

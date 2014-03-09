@@ -21,6 +21,8 @@ package ch.rasc.wampspring.message;
 import java.io.IOException;
 import java.util.EnumMap;
 
+import ch.rasc.wampspring.handler.WampSession;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -49,6 +51,7 @@ public abstract class WampMessage {
 		headers.put(header, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T getHeader(WampMessageHeader header) {
 		if (headers == null) {
 			return null;
@@ -61,6 +64,10 @@ public abstract class WampMessage {
 	 */
 	public String getWebSocketSessionId() {
 		return getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
+	}
+
+	public WampSession getWampSession() {
+		return getHeader(WampMessageHeader.WAMP_SESSION);
 	}
 
 	public abstract String toJson(JsonFactory jsonFactory) throws IOException;

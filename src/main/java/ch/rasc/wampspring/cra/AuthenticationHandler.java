@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.message;
+package ch.rasc.wampspring.cra;
 
-/**
- * Enumeration of supported headers in a {@link WampMessage}. The method
- * {@link WampMessage#getHeader(WampMessageHeader)} returns the value of the
- * specific header
- */
-public enum WampMessageHeader {
-	PRINCIPAL, WEBSOCKET_SESSION_ID, WAMP_SESSION
+import java.util.Map;
+
+import ch.rasc.wampspring.annotation.WampCallListener;
+import ch.rasc.wampspring.message.CallMessage;
+
+public interface AuthenticationHandler {
+
+	@WampCallListener("http://api.wamp.ws/procedure#authreq")
+	public Object handleAuthReq(String authKey, Map<String, Object> extra, CallMessage message);
+
+	@WampCallListener("http://api.wamp.ws/procedure#auth")
+	public Object handleAuth(String clientSignature, CallMessage message);
+
 }

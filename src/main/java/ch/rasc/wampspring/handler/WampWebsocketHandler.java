@@ -17,6 +17,7 @@ package ch.rasc.wampspring.handler;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.util.Assert;
 import org.springframework.web.socket.CloseStatus;
@@ -26,6 +27,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import ch.rasc.wampspring.message.PrefixMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.message.WampMessageHeader;
@@ -54,6 +56,8 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 
 	private final JsonFactory jsonFactory;
 
+	private final ConcurrentHashMap<String, WampSession> webSocketSessionIdToWampSession = new ConcurrentHashMap<>();
+
 	public WampWebsocketHandler(AnnotationMethodHandler annotationMethodHandler, PubSubHandler pubSubHandler,
 			WampMessageSender wampMessageSender, JsonFactory jsonFactory) {
 		this.annotationMethodHandler = annotationMethodHandler;
@@ -77,8 +81,30 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 		message.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, session.getId());
 		message.addHeader(WampMessageHeader.PRINCIPAL, session.getPrincipal());
 
-		pubSubHandler.handleMessage(message);
-		annotationMethodHandler.handleMessage(message);
+		WampSession wampSession = getOrCreateWampSession(session);
+		message.addHeader(WampMessageHeader.WAMP_SESSION, wampSession);
+
+		if (message instanceof PrefixMessage) {
+			PrefixMessage prefixMessage = (PrefixMessage) message;
+			wampSession.addPrefix(prefixMessage.getPrefix(), prefixMessage.getUri());
+		} else {
+			pubSubHandler.handleMessage(message);
+			annotationMethodHandler.handleMessage(message);
+		}
+	}
+
+	WampSession getOrCreateWampSession(WebSocketSession session) {
+		WampSession wampSession = webSocketSessionIdToWampSession.get(session.getId());
+		if (wampSession == null) {
+			wampSession = new WampSession();
+			WampSession sessionFromAnotherThread = webSocketSessionIdToWampSession.putIfAbsent(session.getId(),
+					wampSession);
+			if (sessionFromAnotherThread != null) {
+				wampSession = sessionFromAnotherThread;
+			}
+
+		}
+		return wampSession;
 	}
 
 	@Override
@@ -91,6 +117,8 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
 		String sessionId = session.getId();
+
+		webSocketSessionIdToWampSession.remove(sessionId);
 
 		wampMessageSender.remove(sessionId);
 
@@ -108,9 +136,10 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 		for (String topicURI : topicURIs) {
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(topicURI);
 			unsubscribeMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, sessionId);
+			unsubscribeMessage.addHeader(WampMessageHeader.WAMP_SESSION, getOrCreateWampSession(session));
 			annotationMethodHandler.handleMessage(unsubscribeMessage);
 		}
-		annotationMethodHandler.unregisterSessionFromAllPrefixCurie(sessionId);
+
 	}
 
 	@Override
