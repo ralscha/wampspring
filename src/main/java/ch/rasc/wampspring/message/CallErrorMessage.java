@@ -24,10 +24,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * When the remote procedure call could not be executed, an error or exception
- * occurred during the execution or the execution of the remote procedure
- * finishes unsuccessfully for any other reason, the server responds by sending
- * this message
+ * When the remote procedure call could not be executed, an error or exception occurred during the execution or the
+ * execution of the remote procedure finishes unsuccessfully for any other reason, the server responds by sending this
+ * message
  * <p>
  * Server-to-Client message
  * 

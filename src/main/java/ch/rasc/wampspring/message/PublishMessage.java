@@ -26,8 +26,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
- * The client will send an event to all clients connected to the server who have
- * subscribed to the topicURI.
+ * The client will send an event to all clients connected to the server who have subscribed to the topicURI.
  * 
  * <p>
  * Client-to-Server message

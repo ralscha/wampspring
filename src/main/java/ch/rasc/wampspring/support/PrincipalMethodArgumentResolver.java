@@ -26,9 +26,8 @@ import ch.rasc.wampspring.message.WampMessageHeader;
  * Argument resolver that handles parameters of type {@link Principal}
  * <p>
  * Credit goes to the Spring class
- * {@link org.springframework.messaging.simp.annotation.support.PrincipalMethodArgumentResolver}
- * . This class is just a copy where the resolveArgument parameter is changed to
- * {@link WampMessage}
+ * {@link org.springframework.messaging.simp.annotation.support.PrincipalMethodArgumentResolver} . This class is just a
+ * copy where the resolveArgument parameter is changed to {@link WampMessage}
  */
 public class PrincipalMethodArgumentResolver implements HandlerMethodArgumentResolver {
 

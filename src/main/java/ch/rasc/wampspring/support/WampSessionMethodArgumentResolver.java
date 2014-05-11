@@ -22,13 +22,12 @@ import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.message.WampMessageHeader;
 
 /**
- * Strategy interface for resolving method parameters into argument values in
- * the context of a given {@link WampSession}.
+ * Strategy interface for resolving method parameters into argument values in the context of a given {@link WampSession}
+ * .
  * <p>
  * Credit goes to the Spring class
- * {@link org.springframework.messaging.handler.annotation.support.MessageMethodArgumentResolver}
- * . This class is just a copy where the resolveArgument parameter is changed to
- * {@link WampSession}
+ * {@link org.springframework.messaging.handler.annotation.support.MessageMethodArgumentResolver} . This class is just a
+ * copy where the resolveArgument parameter is changed to {@link WampSession}
  */
 public class WampSessionMethodArgumentResolver implements HandlerMethodArgumentResolver {
 

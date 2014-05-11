@@ -22,10 +22,9 @@ import ch.rasc.wampspring.handler.PubSubHandler;
 import ch.rasc.wampspring.message.EventMessage;
 
 /**
- * A messenger that allows the calling code to send {@link EventMessage}s back
- * to the client. This is a spring bean that can be autowired into any other
- * spring bean and allows any part of the application to send messages back to
- * the client
+ * A messenger that allows the calling code to send {@link EventMessage}s back to the client. This is a spring bean that
+ * can be autowired into any other spring bean and allows any part of the application to send messages back to the
+ * client
  * 
  * e.g.
  * 
@@ -41,9 +40,8 @@ import ch.rasc.wampspring.message.EventMessage;
  * }
  * </pre>
  * <p>
- * This is very similar to the
- * {@link org.springframework.messaging.simp.SimpMessagingTemplate} class from
- * Spring's STOMP support.
+ * This is very similar to the {@link org.springframework.messaging.simp.SimpMessagingTemplate} class from Spring's
+ * STOMP support.
  */
 public class EventMessenger {
 
@@ -54,8 +52,7 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed
-	 * to the provided topicURI
+	 * Send a {@link EventMessage} to every client that is currently subscribed to the provided topicURI
 	 * 
 	 * @param topicURI the name of the topic
 	 * @param event the message
@@ -65,9 +62,8 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed
-	 * to the provided topicURI except the one provided with the
-	 * excludeSessionId parameter.
+	 * Send a {@link EventMessage} to every client that is currently subscribed to the provided topicURI except the one
+	 * provided with the excludeSessionId parameter.
 	 * 
 	 * @param topicURI the name of the topic
 	 * @param event the message
@@ -78,9 +74,8 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed
-	 * to the provided topicURI except the ones listed in the excludeSessionIds
-	 * set.
+	 * Send a {@link EventMessage} to every client that is currently subscribed to the provided topicURI except the ones
+	 * listed in the excludeSessionIds set.
 	 * 
 	 * @param topicURI the name of the topic
 	 * @param event the message
@@ -91,15 +86,12 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to the clients that are subscribed to the
-	 * provided topicURI and are listed in the eligibleSessionIds set. If no
-	 * session of the provided set is subscribed to the topicURI nothing
-	 * happens.
+	 * Send a {@link EventMessage} to the clients that are subscribed to the provided topicURI and are listed in the
+	 * eligibleSessionIds set. If no session of the provided set is subscribed to the topicURI nothing happens.
 	 * 
 	 * @param topicURI the name of the topic
 	 * @param event the message
-	 * @param eligibleSessionIds only the session ids listed here will receive
-	 *            the message
+	 * @param eligibleSessionIds only the session ids listed here will receive the message
 	 */
 	public void sendTo(String topicURI, Object event, Set<String> eligibleSessionIds) {
 		pubSubHandler.sendTo(new EventMessage(topicURI, event), eligibleSessionIds);

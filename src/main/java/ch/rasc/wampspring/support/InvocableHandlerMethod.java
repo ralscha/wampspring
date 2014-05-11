@@ -38,18 +38,14 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 /**
- * Invokes the handler method for a given message after resolving its method
- * argument values through registered {@link HandlerMethodArgumentResolver}s.
+ * Invokes the handler method for a given message after resolving its method argument values through registered
+ * {@link HandlerMethodArgumentResolver}s.
  * <p>
- * Use
- * {@link #setMessageMethodArgumentResolvers(HandlerMethodArgumentResolverComposite)}
- * to customize the list of argument resolvers.
+ * Use {@link #setMessageMethodArgumentResolvers(HandlerMethodArgumentResolverComposite)} to customize the list of
+ * argument resolvers.
  * <p>
- * Credit goes to the Spring class
- * {@link org.springframework.messaging.handler.invocation.InvocableHandlerMethod}
- * . This class is just a copy where
- * {@link org.springframework.messaging.Message} is replaced with
- * {@link WampMessage}
+ * Credit goes to the Spring class {@link org.springframework.messaging.handler.invocation.InvocableHandlerMethod} .
+ * This class is just a copy where {@link org.springframework.messaging.Message} is replaced with {@link WampMessage}
  */
 public class InvocableHandlerMethod extends HandlerMethod {
 
@@ -72,19 +68,16 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	}
 
 	/**
-	 * Set {@link HandlerMethodArgumentResolver}s to use to use for resolving
-	 * method argument values.
+	 * Set {@link HandlerMethodArgumentResolver}s to use to use for resolving method argument values.
 	 */
 	public void setMessageMethodArgumentResolvers(HandlerMethodArgumentResolverComposite argumentResolvers) {
 		this.argumentResolvers = argumentResolvers;
 	}
 
 	/**
-	 * Set the ParameterNameDiscoverer for resolving parameter names when needed
-	 * (e.g. default request attribute name).
+	 * Set the ParameterNameDiscoverer for resolving parameter names when needed (e.g. default request attribute name).
 	 * <p>
-	 * Default is a
-	 * {@link org.springframework.core.DefaultParameterNameDiscoverer}.
+	 * Default is a {@link org.springframework.core.DefaultParameterNameDiscoverer}.
 	 */
 	public void setParameterNameDiscoverer(ParameterNameDiscoverer parameterNameDiscoverer) {
 		this.parameterNameDiscoverer = parameterNameDiscoverer;
@@ -93,8 +86,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	/**
 	 * Invoke the method with the given message.
 	 * 
-	 * @throws Exception raised if no suitable argument resolver can be found,
-	 *             or the method raised an exception
+	 * @throws Exception raised if no suitable argument resolver can be found, or the method raised an exception
 	 */
 	public final Object invoke(WampMessage message, Object... providedArgs) throws Exception {
 		Object[] args = getMethodArgumentValues(message, providedArgs);
@@ -156,8 +148,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	}
 
 	/**
-	 * Adds HandlerMethod details such as the controller type and method
-	 * signature to the given error message.
+	 * Adds HandlerMethod details such as the controller type and method signature to the given error message.
 	 * 
 	 * @param message error message to append the HandlerMethod details to
 	 */
@@ -167,8 +158,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	}
 
 	/**
-	 * Attempt to resolve a method parameter from the list of provided argument
-	 * values.
+	 * Attempt to resolve a method parameter from the list of provided argument values.
 	 */
 	private Object resolveProvidedArgument(MethodParameter parameter, Object argument) {
 		if (argument == null) {

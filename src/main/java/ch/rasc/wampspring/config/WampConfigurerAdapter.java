@@ -29,9 +29,8 @@ import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Defines the default implementation of the {@link WampConfigurer} interface. A @Configuration
- * class can implement the {@link WampConfigurer} interface or subclass this
- * class.
+ * Defines the default implementation of the {@link WampConfigurer} interface. A @Configuration class can implement the
+ * {@link WampConfigurer} interface or subclass this class.
  */
 public class WampConfigurerAdapter implements WampConfigurer {
 

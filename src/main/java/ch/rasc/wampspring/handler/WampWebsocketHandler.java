@@ -36,11 +36,9 @@ import ch.rasc.wampspring.message.WelcomeMessage;
 import com.fasterxml.jackson.core.JsonFactory;
 
 /**
- * A {@link WebSocketHandler} implementation that handles incoming WAMP
- * requests. It registers the {@link WebSocketSession}s in the
- * {@link WampMessageSender} object, converts the incoming String into a
- * {@link WampMessage} and forwards the message to {@link PubSubHandler} and
- * {@link AnnotationMethodHandler}.
+ * A {@link WebSocketHandler} implementation that handles incoming WAMP requests. It registers the
+ * {@link WebSocketSession}s in the {@link WampMessageSender} object, converts the incoming String into a
+ * {@link WampMessage} and forwards the message to {@link PubSubHandler} and {@link AnnotationMethodHandler}.
  */
 public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapable {
 

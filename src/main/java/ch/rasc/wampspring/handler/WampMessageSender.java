@@ -32,8 +32,7 @@ import ch.rasc.wampspring.message.WampMessage;
 import com.fasterxml.jackson.core.JsonFactory;
 
 /**
- * Internal class that is responsible for sending {@link WampMessage}s back to
- * the client.
+ * Internal class that is responsible for sending {@link WampMessage}s back to the client.
  */
 public class WampMessageSender {
 

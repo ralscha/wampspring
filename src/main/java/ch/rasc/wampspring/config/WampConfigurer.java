@@ -33,47 +33,43 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public interface WampConfigurer {
 
 	/**
-	 * Configures an {@link Executor} which is used for sending outbound WAMP
-	 * messages.
+	 * Configures an {@link Executor} which is used for sending outbound WAMP messages.
 	 */
 	Executor outboundExecutor();
 
 	/**
-	 * Configures the endpoint path where the WebSocket WAMP handler is
-	 * listening for requests. This path must start with an / character.
+	 * Configures the endpoint path where the WebSocket WAMP handler is listening for requests. This path must start
+	 * with an / character.
 	 */
 	String wampEndpointPath();
 
 	/**
-	 * Configures Jackson's {@link ObjectMapper} instance. This mapper is used
-	 * for serializing and deserializing wamp messages.
+	 * Configures Jackson's {@link ObjectMapper} instance. This mapper is used for serializing and deserializing wamp
+	 * messages.
 	 */
 	ObjectMapper objectMapper();
 
 	/**
-	 * Configures a ConversionService that is used by the
-	 * {@link WampMessageBodyMethodArgumentResolver}
+	 * Configures a ConversionService that is used by the {@link WampMessageBodyMethodArgumentResolver}
 	 */
 	ConversionService conversionService();
 
 	/**
-	 * Doing some additional configuration of the WampWebsocketHandler
-	 * registration. For example reg.withSockJS() turns SockJS support on.
+	 * Doing some additional configuration of the WampWebsocketHandler registration. For example reg.withSockJS() turns
+	 * SockJS support on.
 	 */
 	void configureWampWebsocketHandler(WebSocketHandlerRegistration reg);
 
 	/**
-	 * Configures an implementation of the secret provider interface
-	 * {@link AuthenticationSecretProvider} for authentication. If not
-	 * configured the library creates and uses an instance of the class
+	 * Configures an implementation of the secret provider interface {@link AuthenticationSecretProvider} for
+	 * authentication. If not configured the library creates and uses an instance of the class
 	 * {@link NoOpAuthenticationSecretProvider}.
 	 */
 	AuthenticationSecretProvider authenticationSecretProvider();
 
 	/**
-	 * Configures an implementation of the {@link AuthenticationHandler}
-	 * interface. If not configured the library creates and uses an instance of
-	 * the class {@link DefaultAuthenticationHandler}.
+	 * Configures an implementation of the {@link AuthenticationHandler} interface. If not configured the library
+	 * creates and uses an instance of the class {@link DefaultAuthenticationHandler}.
 	 * 
 	 * @param authenticationSecretProvider
 	 */

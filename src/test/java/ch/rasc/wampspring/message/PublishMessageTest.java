@@ -135,7 +135,7 @@ public class PublishMessageTest extends BaseMessageTest {
 		assertThat(publishMessage.getTopicURI()).isEqualTo("event:myevent1");
 		assertThat(publishMessage.getEvent()).isEqualTo("hello");
 		assertThat(publishMessage.getExcludeMe()).isNull();
-		assertThat(publishMessage.getExclude()).containsExactly("NwtXQ8rdfPsy-ewS", "dYqgDl0FthI6_hjb");
+		assertThat(publishMessage.getExclude()).containsOnly("NwtXQ8rdfPsy-ewS", "dYqgDl0FthI6_hjb");
 		assertThat(publishMessage.getEligible()).isNull();
 
 		json = toJsonArray(7, "event:myevent1", "hello", Collections.emptyList(), Arrays.asList("NwtXQ8rdfPsy-ewS"));

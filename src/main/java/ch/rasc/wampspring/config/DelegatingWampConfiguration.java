@@ -39,9 +39,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 
 /**
- * A configuration class that is imported by the {@link EnableWamp} annotation.
- * It detects any implementation of the {@link WampConfigurer} interface and
- * configures the WAMP support accordingly.
+ * A configuration class that is imported by the {@link EnableWamp} annotation. It detects any implementation of the
+ * {@link WampConfigurer} interface and configures the WAMP support accordingly.
  */
 @Configuration
 class DelegatingWampConfiguration implements WebSocketConfigurer {

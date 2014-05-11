@@ -62,9 +62,8 @@ import ch.rasc.wampspring.support.WampSessionMethodArgumentResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Internal class that is responsible for calling methods that are annotated
- * with {@link WampCallListener}, {@link WampPublishListener},
- * {@link WampSubscribeListener} or {@link WampUnsubscribeListener}
+ * Internal class that is responsible for calling methods that are annotated with {@link WampCallListener},
+ * {@link WampPublishListener}, {@link WampSubscribeListener} or {@link WampUnsubscribeListener}
  * 
  */
 public class AnnotationMethodHandler implements ApplicationContextAware, InitializingBean {

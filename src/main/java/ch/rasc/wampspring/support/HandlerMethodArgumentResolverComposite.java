@@ -27,15 +27,12 @@ import org.springframework.util.Assert;
 import ch.rasc.wampspring.message.WampMessage;
 
 /**
- * Resolves method parameters by delegating to a list of registered
- * {@link HandlerMethodArgumentResolver}. Previously resolved method parameters
- * are cached for faster lookups.
+ * Resolves method parameters by delegating to a list of registered {@link HandlerMethodArgumentResolver}. Previously
+ * resolved method parameters are cached for faster lookups.
  * <p>
  * Credit goes to the Spring class
- * {@link org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolverComposite}
- * . This class is just a copy where
- * {@link org.springframework.messaging.Message} is replaced with
- * {@link WampMessage}
+ * {@link org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolverComposite} . This class is just
+ * a copy where {@link org.springframework.messaging.Message} is replaced with {@link WampMessage}
  */
 public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgumentResolver {
 
@@ -59,8 +56,8 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	}
 
 	/**
-	 * Whether the given {@linkplain MethodParameter method parameter} is
-	 * supported by any registered {@link HandlerMethodArgumentResolver}.
+	 * Whether the given {@linkplain MethodParameter method parameter} is supported by any registered
+	 * {@link HandlerMethodArgumentResolver}.
 	 */
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
@@ -68,11 +65,9 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	}
 
 	/**
-	 * Iterate over registered {@link HandlerMethodArgumentResolver}s and invoke
-	 * the one that supports it.
+	 * Iterate over registered {@link HandlerMethodArgumentResolver}s and invoke the one that supports it.
 	 * 
-	 * @exception IllegalStateException if no suitable
-	 *                {@link HandlerMethodArgumentResolver} is found.
+	 * @exception IllegalStateException if no suitable {@link HandlerMethodArgumentResolver} is found.
 	 */
 	@Override
 	public Object resolveArgument(MethodParameter parameter, WampMessage message) throws Exception {
@@ -83,8 +78,7 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	}
 
 	/**
-	 * Find a registered {@link HandlerMethodArgumentResolver} that supports the
-	 * given method parameter.
+	 * Find a registered {@link HandlerMethodArgumentResolver} that supports the given method parameter.
 	 */
 	private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
 		HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter);

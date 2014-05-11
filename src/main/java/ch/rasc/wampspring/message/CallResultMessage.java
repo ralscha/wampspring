@@ -24,8 +24,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * When the execution of the remote procedure finishes successfully, the server
- * responds by sending this message
+ * When the execution of the remote procedure finishes successfully, the server responds by sending this message
  * <p>
  * Server-to-Client message
  * 

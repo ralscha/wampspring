@@ -36,12 +36,10 @@ import ch.rasc.wampspring.message.WampMessageHeader;
 /**
  * Internal handler that handles the Publish and Subscribe part of WAMP.
  * <p>
- * The messages that are handled here are {@link EventMessage},
- * {@link PublishMessage}, {@link SubscribeMessage} and
+ * The messages that are handled here are {@link EventMessage}, {@link PublishMessage}, {@link SubscribeMessage} and
  * {@link UnsubscribeMessage}
  * <p>
- * The handler manages a map (topicSessionIds) that holds a set of WebSocket
- * session ids per topicURI.
+ * The handler manages a map (topicSessionIds) that holds a set of WebSocket session ids per topicURI.
  */
 public class PubSubHandler {
 

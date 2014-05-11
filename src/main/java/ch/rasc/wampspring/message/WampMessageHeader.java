@@ -17,8 +17,7 @@ package ch.rasc.wampspring.message;
 
 /**
  * Enumeration of supported headers in a {@link WampMessage}. The method
- * {@link WampMessage#getHeader(WampMessageHeader)} returns the value of the
- * specific header
+ * {@link WampMessage#getHeader(WampMessageHeader)} returns the value of the specific header
  */
 public enum WampMessageHeader {
 	PRINCIPAL, WEBSOCKET_SESSION_ID, WAMP_SESSION

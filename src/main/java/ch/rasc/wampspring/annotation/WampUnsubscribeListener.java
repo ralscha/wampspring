@@ -25,15 +25,13 @@ import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
 
 /**
- * Annotation that denotes a method that is called when the server receives a
- * {@link UnsubscribeMessage} and the topicURI matches one of the listed values
- * of the annotation.
+ * Annotation that denotes a method that is called when the server receives a {@link UnsubscribeMessage} and the
+ * topicURI matches one of the listed values of the annotation.
  * 
- * If no topicURI is provided the method is accessible by the topicURI
- * 'beanName.methodName'
+ * If no topicURI is provided the method is accessible by the topicURI 'beanName.methodName'
  * 
- * In the following example the method can be called by sending a
- * UnsubscribeMessage with the topicURI 'myService.doSomething'
+ * In the following example the method can be called by sending a UnsubscribeMessage with the topicURI
+ * 'myService.doSomething'
  * 
  * <pre class="code">
  * &#064;Service
@@ -46,10 +44,9 @@ import ch.rasc.wampspring.message.UnsubscribeMessage;
  * }
  * </pre>
  * 
- * If the attribute replyTo has a value the return value of the method (if any)
- * will be wrapped into an {@link EventMessage} and sent to the listed
- * topicURI(s). Additionally if the excludeSender attribute is true the sender
- * of the {@link UnsubscribeMessage} does not receive an {@link EventMessage}.
+ * If the attribute replyTo has a value the return value of the method (if any) will be wrapped into an
+ * {@link EventMessage} and sent to the listed topicURI(s). Additionally if the excludeSender attribute is true the
+ * sender of the {@link UnsubscribeMessage} does not receive an {@link EventMessage}.
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -62,15 +59,13 @@ public @interface WampUnsubscribeListener {
 	String[] value() default {};
 
 	/**
-	 * Send the return value with an {@link EventMessage} to the listed
-	 * TopicURI(s)
+	 * Send the return value with an {@link EventMessage} to the listed TopicURI(s)
 	 */
 	String[] replyTo() default {};
 
 	/**
-	 * Exclude the sender of the {@link UnsubscribeMessage} from the replyTo
-	 * receivers. This attribut will be ignored if no {@link EventMessage} is
-	 * created.
+	 * Exclude the sender of the {@link UnsubscribeMessage} from the replyTo receivers. This attribut will be ignored if
+	 * no {@link EventMessage} is created.
 	 */
 	boolean excludeSender() default false;
 }

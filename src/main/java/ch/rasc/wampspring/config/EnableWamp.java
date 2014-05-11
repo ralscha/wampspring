@@ -25,8 +25,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 /**
- * Add this annotation to an {@code @Configuration} class to enable WAMP
- * support:
+ * Add this annotation to an {@code @Configuration} class to enable WAMP support:
  * 
  * <pre class="code">
  * &#064;Configuration
@@ -36,8 +35,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
  * }
  * </pre>
  * <p>
- * Customize the imported configuration by implementing the
- * {@link WampConfigurer} interface:
+ * Customize the imported configuration by implementing the {@link WampConfigurer} interface:
  * 
  * <pre class="code">
  * &#064;Configuration
@@ -61,8 +59,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
  * </pre>
  * 
  * <p>
- * Or by extending the {@link WampConfigurerAdapter} class and overriding only
- * the methods that need to be different.
+ * Or by extending the {@link WampConfigurerAdapter} class and overriding only the methods that need to be different.
  * 
  * <pre class="code">
  * &#064;Configuration

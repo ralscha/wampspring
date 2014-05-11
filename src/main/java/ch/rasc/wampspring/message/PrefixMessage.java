@@ -24,8 +24,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * A client requests access to a valid topicURI to receive events published to
- * the given topicURI.
+ * A client requests access to a valid topicURI to receive events published to the given topicURI.
  * 
  * <p>
  * Auxiliary Messages

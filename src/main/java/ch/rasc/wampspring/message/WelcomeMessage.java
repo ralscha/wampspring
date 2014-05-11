@@ -24,8 +24,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * When a WAMP client connects to a WAMP server, the very first message sent by
- * the server is always this message.
+ * When a WAMP client connects to a WAMP server, the very first message sent by the server is always this message.
  * 
  * <p>
  * Server-to-Client message
