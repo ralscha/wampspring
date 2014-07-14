@@ -24,12 +24,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * When the remote procedure call could not be executed, an error or exception occurred during the execution or the
- * execution of the remote procedure finishes unsuccessfully for any other reason, the server responds by sending this
- * message
+ * When the remote procedure call could not be executed, an error or exception occurred
+ * during the execution or the execution of the remote procedure finishes unsuccessfully
+ * for any other reason, the server responds by sending this message
  * <p>
  * Server-to-Client message
- * 
+ *
  * @see <a href="http://wamp.ws/spec/#callerror_message">WAMP specification</a>
  */
 public class CallErrorMessage extends WampMessage {
@@ -45,7 +45,8 @@ public class CallErrorMessage extends WampMessage {
 		this(callID, errorURI, errorDesc, null);
 	}
 
-	public CallErrorMessage(String callID, String errorURI, String errorDesc, Object errorDetails) {
+	public CallErrorMessage(String callID, String errorURI, String errorDesc,
+			Object errorDetails) {
 		super(WampMessageType.CALLERROR);
 		this.callID = callID;
 		this.errorURI = errorURI;
@@ -73,7 +74,8 @@ public class CallErrorMessage extends WampMessage {
 
 		if (jp.nextToken() != JsonToken.END_ARRAY) {
 			this.errorDetails = jp.readValueAs(Object.class);
-		} else {
+		}
+		else {
 			this.errorDetails = null;
 		}
 	}
@@ -96,7 +98,8 @@ public class CallErrorMessage extends WampMessage {
 
 	@Override
 	public String toJson(JsonFactory jsonFactory) throws IOException {
-		try (StringWriter sw = new StringWriter(); JsonGenerator jg = jsonFactory.createGenerator(sw)) {
+		try (StringWriter sw = new StringWriter();
+				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
 			jg.writeString(callID);
@@ -114,8 +117,8 @@ public class CallErrorMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "CallErrorMessage [callID=" + callID + ", errorURI=" + errorURI + ", errorDesc=" + errorDesc
-				+ ", errorDetails=" + errorDetails + "]";
+		return "CallErrorMessage [callID=" + callID + ", errorURI=" + errorURI
+				+ ", errorDesc=" + errorDesc + ", errorDetails=" + errorDetails + "]";
 	}
 
 }

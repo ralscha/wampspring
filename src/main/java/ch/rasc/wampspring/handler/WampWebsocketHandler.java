@@ -36,13 +36,15 @@ import ch.rasc.wampspring.message.WelcomeMessage;
 import com.fasterxml.jackson.core.JsonFactory;
 
 /**
- * A {@link WebSocketHandler} implementation that handles incoming WAMP requests. It registers the
- * {@link WebSocketSession}s in the {@link WampMessageSender} object, converts the incoming String into a
- * {@link WampMessage} and forwards the message to {@link PubSubHandler} and {@link AnnotationMethodHandler}.
+ * A {@link WebSocketHandler} implementation that handles incoming WAMP requests. It
+ * registers the {@link WebSocketSession}s in the {@link WampMessageSender} object,
+ * converts the incoming String into a {@link WampMessage} and forwards the message to
+ * {@link PubSubHandler} and {@link AnnotationMethodHandler}.
  */
 public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapable {
 
-	private static final List<String> SUPPORTED_SUB_PROTOCOL_LIST = Collections.singletonList("wamp");
+	private static final List<String> SUPPORTED_SUB_PROTOCOL_LIST = Collections
+			.singletonList("wamp");
 
 	private static final String SERVER_IDENTIFIER = "wampspring/1.0";
 
@@ -56,8 +58,9 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 
 	private final ConcurrentHashMap<String, WampSession> webSocketSessionIdToWampSession = new ConcurrentHashMap<>();
 
-	public WampWebsocketHandler(AnnotationMethodHandler annotationMethodHandler, PubSubHandler pubSubHandler,
-			WampMessageSender wampMessageSender, JsonFactory jsonFactory) {
+	public WampWebsocketHandler(AnnotationMethodHandler annotationMethodHandler,
+			PubSubHandler pubSubHandler, WampMessageSender wampMessageSender,
+			JsonFactory jsonFactory) {
 		this.annotationMethodHandler = annotationMethodHandler;
 		this.pubSubHandler = pubSubHandler;
 		this.wampMessageSender = wampMessageSender;
@@ -67,15 +70,18 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		wampMessageSender.put(session.getId(), session);
-		WelcomeMessage welcomeMessage = new WelcomeMessage(session.getId(), SERVER_IDENTIFIER);
+		WelcomeMessage welcomeMessage = new WelcomeMessage(session.getId(),
+				SERVER_IDENTIFIER);
 		session.sendMessage(new TextMessage(welcomeMessage.toJson(jsonFactory)));
 	}
 
 	@Override
-	public void handleMessage(WebSocketSession session, WebSocketMessage<?> webSocketMessage) throws Exception {
+	public void handleMessage(WebSocketSession session,
+			WebSocketMessage<?> webSocketMessage) throws Exception {
 		Assert.isInstanceOf(TextMessage.class, webSocketMessage);
 
-		WampMessage message = WampMessage.fromJson(jsonFactory, ((TextMessage) webSocketMessage).getPayload());
+		WampMessage message = WampMessage.fromJson(jsonFactory,
+				((TextMessage) webSocketMessage).getPayload());
 		message.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, session.getId());
 		message.addHeader(WampMessageHeader.PRINCIPAL, session.getPrincipal());
 
@@ -85,7 +91,8 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 		if (message instanceof PrefixMessage) {
 			PrefixMessage prefixMessage = (PrefixMessage) message;
 			wampSession.addPrefix(prefixMessage.getPrefix(), prefixMessage.getUri());
-		} else {
+		}
+		else {
 			pubSubHandler.handleMessage(message);
 			annotationMethodHandler.handleMessage(message);
 		}
@@ -95,8 +102,8 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 		WampSession wampSession = webSocketSessionIdToWampSession.get(session.getId());
 		if (wampSession == null) {
 			wampSession = new WampSession();
-			WampSession sessionFromAnotherThread = webSocketSessionIdToWampSession.putIfAbsent(session.getId(),
-					wampSession);
+			WampSession sessionFromAnotherThread = webSocketSessionIdToWampSession
+					.putIfAbsent(session.getId(), wampSession);
 			if (sessionFromAnotherThread != null) {
 				wampSession = sessionFromAnotherThread;
 			}
@@ -106,21 +113,24 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 	}
 
 	@Override
-	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+	public void handleTransportError(WebSocketSession session, Throwable exception)
+			throws Exception {
 		// Do nothing for now. Not sure if we should handle this. After calling
 		// this method Spring does close the connection and then calls the
 		// afterConnectionClosed method
 	}
 
 	@Override
-	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus)
+			throws Exception {
 		String sessionId = session.getId();
 
 		webSocketSessionIdToWampSession.remove(sessionId);
 
 		wampMessageSender.remove(sessionId);
 
-		List<String> topicURIs = pubSubHandler.unregisterSessionFromAllSubscriptions(sessionId);
+		List<String> topicURIs = pubSubHandler
+				.unregisterSessionFromAllSubscriptions(sessionId);
 
 		// topicURIs contains a list of all the topics where the sessionId was
 		// subscribed to. This list is not empty when the WebSocket session was
@@ -133,8 +143,10 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 		// @WampUnsubscribeListener
 		for (String topicURI : topicURIs) {
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(topicURI);
-			unsubscribeMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, sessionId);
-			unsubscribeMessage.addHeader(WampMessageHeader.WAMP_SESSION, getOrCreateWampSession(session));
+			unsubscribeMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID,
+					sessionId);
+			unsubscribeMessage.addHeader(WampMessageHeader.WAMP_SESSION,
+					getOrCreateWampSession(session));
 			annotationMethodHandler.handleMessage(unsubscribeMessage);
 		}
 

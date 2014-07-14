@@ -70,7 +70,8 @@ public class WampMessageSender {
 		String json = null;
 		try {
 			json = message.toJson(jsonFactory);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			logger.error("Conversion of message " + message + " into json failed", e);
 		}
 
@@ -78,7 +79,8 @@ public class WampMessageSender {
 			for (String sessionId : sessionIds) {
 				sendMessage(sessionId, json);
 			}
-		} else {
+		}
+		else {
 			final String textMessage = json;
 			this.outboundExecutor.execute(new Runnable() {
 				@Override
@@ -104,10 +106,12 @@ public class WampMessageSender {
 		try {
 			if (session.isOpen()) {
 				session.sendMessage(new TextMessage(json));
-			} else {
+			}
+			else {
 				sessions.remove(session.getId());
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			logger.error("Sending of message '" + json + "' failed", e);
 		}
 	}

@@ -24,11 +24,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * When a WAMP client connects to a WAMP server, the very first message sent by the server is always this message.
- * 
+ * When a WAMP client connects to a WAMP server, the very first message sent by the server
+ * is always this message.
+ *
  * <p>
  * Server-to-Client message
- * 
+ *
  * @see <a href="http://wamp.ws/spec/#welcome_message">WAMP specification</a>
  */
 public class WelcomeMessage extends WampMessage {
@@ -81,7 +82,8 @@ public class WelcomeMessage extends WampMessage {
 
 	@Override
 	public String toJson(JsonFactory jsonFactory) throws IOException {
-		try (StringWriter sw = new StringWriter(); JsonGenerator jg = jsonFactory.createGenerator(sw)) {
+		try (StringWriter sw = new StringWriter();
+				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
 			jg.writeString(sessionId);
@@ -95,8 +97,8 @@ public class WelcomeMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "WelcomeMessage [sessionId=" + sessionId + ", protocolVersion=" + protocolVersion + ", serverIdent="
-				+ serverIdent + "]";
+		return "WelcomeMessage [sessionId=" + sessionId + ", protocolVersion="
+				+ protocolVersion + ", serverIdent=" + serverIdent + "]";
 	}
 
 }

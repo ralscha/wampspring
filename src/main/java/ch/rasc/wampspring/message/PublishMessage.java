@@ -26,11 +26,12 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
- * The client will send an event to all clients connected to the server who have subscribed to the topicURI.
- * 
+ * The client will send an event to all clients connected to the server who have
+ * subscribed to the topicURI.
+ *
  * <p>
  * Client-to-Server message
- * 
+ *
  * @see <a href="http://wamp.ws/spec/#publish_message">WAMP specification</a>
  */
 public class PublishMessage extends WampMessage {
@@ -56,11 +57,13 @@ public class PublishMessage extends WampMessage {
 		this(topicURI, event, null, exclude, null);
 	}
 
-	public PublishMessage(String topicURI, Object event, Set<String> exclude, Set<String> eligible) {
+	public PublishMessage(String topicURI, Object event, Set<String> exclude,
+			Set<String> eligible) {
 		this(topicURI, event, null, exclude, eligible);
 	}
 
-	private PublishMessage(String topicURI, Object event, Boolean excludeMe, Set<String> exclude, Set<String> eligible) {
+	private PublishMessage(String topicURI, Object event, Boolean excludeMe,
+			Set<String> exclude, Set<String> eligible) {
 		super(WampMessageType.PUBLISH);
 		this.topicURI = topicURI;
 		this.event = event;
@@ -81,7 +84,8 @@ public class PublishMessage extends WampMessage {
 		this.event = jp.readValueAs(Object.class);
 
 		if (jp.nextToken() != JsonToken.END_ARRAY) {
-			if (jp.getCurrentToken() == JsonToken.VALUE_TRUE || jp.getCurrentToken() == JsonToken.VALUE_FALSE) {
+			if (jp.getCurrentToken() == JsonToken.VALUE_TRUE
+					|| jp.getCurrentToken() == JsonToken.VALUE_FALSE) {
 				this.excludeMe = jp.getValueAsBoolean();
 
 				this.exclude = null;
@@ -93,7 +97,8 @@ public class PublishMessage extends WampMessage {
 					// any value
 					throw new IOException();
 				}
-			} else {
+			}
+			else {
 				this.excludeMe = null;
 
 				TypeReference<Set<String>> typRef = new TypeReference<Set<String>>() {
@@ -107,11 +112,13 @@ public class PublishMessage extends WampMessage {
 
 				if (jp.nextToken() == JsonToken.START_ARRAY) {
 					this.eligible = jp.readValueAs(typRef);
-				} else {
+				}
+				else {
 					this.eligible = null;
 				}
 			}
-		} else {
+		}
+		else {
 			this.excludeMe = null;
 			this.exclude = null;
 			this.eligible = null;
@@ -141,7 +148,8 @@ public class PublishMessage extends WampMessage {
 
 	@Override
 	public String toJson(JsonFactory jsonFactory) throws IOException {
-		try (StringWriter sw = new StringWriter(); JsonGenerator jg = jsonFactory.createGenerator(sw)) {
+		try (StringWriter sw = new StringWriter();
+				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
 			jg.writeString(topicURI);
@@ -149,7 +157,8 @@ public class PublishMessage extends WampMessage {
 			jg.writeObject(event);
 			if (excludeMe != null && excludeMe) {
 				jg.writeBoolean(true);
-			} else if (exclude != null) {
+			}
+			else if (exclude != null) {
 				jg.writeObject(exclude);
 				if (eligible != null) {
 					jg.writeObject(eligible);
@@ -164,8 +173,9 @@ public class PublishMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "PublishMessage [topicURI=" + topicURI + ", event=" + event + ", excludeMe=" + excludeMe + ", exclude="
-				+ exclude + ", eligible=" + eligible + "]";
+		return "PublishMessage [topicURI=" + topicURI + ", event=" + event
+				+ ", excludeMe=" + excludeMe + ", exclude=" + exclude + ", eligible="
+				+ eligible + "]";
 	}
 
 }

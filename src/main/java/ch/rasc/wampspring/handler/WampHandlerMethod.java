@@ -25,11 +25,13 @@ public class WampHandlerMethod extends HandlerMethod {
 
 	private final Boolean excludeSender;
 
-	public WampHandlerMethod(Object bean, Method method, String[] replyTo, Boolean excludeSender) {
+	public WampHandlerMethod(Object bean, Method method, String[] replyTo,
+			Boolean excludeSender) {
 		super(bean, method);
 		if (replyTo != null) {
 			this.replyTo = replyTo;
-		} else {
+		}
+		else {
 			this.replyTo = new String[0];
 		}
 		this.excludeSender = excludeSender;

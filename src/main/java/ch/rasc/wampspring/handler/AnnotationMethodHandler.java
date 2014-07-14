@@ -62,9 +62,10 @@ import ch.rasc.wampspring.support.WampSessionMethodArgumentResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Internal class that is responsible for calling methods that are annotated with {@link WampCallListener},
- * {@link WampPublishListener}, {@link WampSubscribeListener} or {@link WampUnsubscribeListener}
- * 
+ * Internal class that is responsible for calling methods that are annotated with
+ * {@link WampCallListener}, {@link WampPublishListener}, {@link WampSubscribeListener} or
+ * {@link WampUnsubscribeListener}
+ *
  */
 public class AnnotationMethodHandler implements ApplicationContextAware, InitializingBean {
 
@@ -92,21 +93,25 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 
 	private final ConversionService conversionService;
 
-	public AnnotationMethodHandler(WampMessageSender wampMessageSender, PubSubHandler pubSubHandler,
-			ObjectMapper objectMapper, ConversionService conversionService) {
+	public AnnotationMethodHandler(WampMessageSender wampMessageSender,
+			PubSubHandler pubSubHandler, ObjectMapper objectMapper,
+			ConversionService conversionService) {
 		this.wampMessageSender = wampMessageSender;
 		this.pubSubHandler = pubSubHandler;
 		this.objectMapper = objectMapper;
 		this.conversionService = conversionService;
 	}
 
-	public void setCustomArgumentResolvers(List<HandlerMethodArgumentResolver> customArgumentResolvers) {
-		Assert.notNull(customArgumentResolvers, "The 'customArgumentResolvers' cannot be null.");
+	public void setCustomArgumentResolvers(
+			List<HandlerMethodArgumentResolver> customArgumentResolvers) {
+		Assert.notNull(customArgumentResolvers,
+				"The 'customArgumentResolvers' cannot be null.");
 		this.customArgumentResolvers = customArgumentResolvers;
 	}
 
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+	public void setApplicationContext(ApplicationContext applicationContext)
+			throws BeansException {
 		this.applicationContext = applicationContext;
 	}
 
@@ -127,46 +132,55 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		Class<?> handlerType = this.applicationContext.getType(beanName);
 		handlerType = ClassUtils.getUserClass(handlerType);
 
-		initHandlerMethods(beanName, handlerType, WampCallListener.class, this.callMethods);
-		initHandlerMethods(beanName, handlerType, WampPublishListener.class, this.publishMethods);
-		initHandlerMethods(beanName, handlerType, WampSubscribeListener.class, this.subscribeMethods);
-		initHandlerMethods(beanName, handlerType, WampUnsubscribeListener.class, this.unsubscribeMethods);
+		initHandlerMethods(beanName, handlerType, WampCallListener.class,
+				this.callMethods);
+		initHandlerMethods(beanName, handlerType, WampPublishListener.class,
+				this.publishMethods);
+		initHandlerMethods(beanName, handlerType, WampSubscribeListener.class,
+				this.subscribeMethods);
+		initHandlerMethods(beanName, handlerType, WampUnsubscribeListener.class,
+				this.unsubscribeMethods);
 	}
 
-	private <A extends Annotation> void initHandlerMethods(String beanName, Class<?> handlerType,
-			final Class<A> annotationType, MultiValueMap<String, WampHandlerMethod> handlerMethods) {
+	private <A extends Annotation> void initHandlerMethods(String beanName,
+			Class<?> handlerType, final Class<A> annotationType,
+			MultiValueMap<String, WampHandlerMethod> handlerMethods) {
 
-		Set<Method> methods = HandlerMethodSelector.selectMethods(handlerType, new MethodFilter() {
-			@Override
-			public boolean matches(Method method) {
-				return AnnotationUtils.findAnnotation(method, annotationType) != null;
-			}
-		});
+		Set<Method> methods = HandlerMethodSelector.selectMethods(handlerType,
+				new MethodFilter() {
+					@Override
+					public boolean matches(Method method) {
+						return AnnotationUtils.findAnnotation(method, annotationType) != null;
+					}
+				});
 
 		for (Method method : methods) {
 			A annotation = AnnotationUtils.findAnnotation(method, annotationType);
 			String[] destinations = (String[]) AnnotationUtils.getValue(annotation);
 
 			String[] replyTo = (String[]) AnnotationUtils.getValue(annotation, "replyTo");
-			Boolean excludeSender = (Boolean) AnnotationUtils.getValue(annotation, "excludeSender");
+			Boolean excludeSender = (Boolean) AnnotationUtils.getValue(annotation,
+					"excludeSender");
 
 			Object bean = applicationContext.getBean(beanName);
-			WampHandlerMethod newHandlerMethod = new WampHandlerMethod(bean, method, replyTo, excludeSender);
+			WampHandlerMethod newHandlerMethod = new WampHandlerMethod(bean, method,
+					replyTo, excludeSender);
 			if (destinations.length > 0) {
 				for (String destination : destinations) {
 					handlerMethods.add(destination, newHandlerMethod);
 					if (logger.isInfoEnabled()) {
-						logger.info("Mapped \"@" + annotationType.getSimpleName() + " " + destination + "\" onto "
-								+ newHandlerMethod);
+						logger.info("Mapped \"@" + annotationType.getSimpleName() + " "
+								+ destination + "\" onto " + newHandlerMethod);
 					}
 				}
-			} else {
+			}
+			else {
 				// by default use beanName.methodName as destination
 				String destination = beanName + "." + method.getName();
 				handlerMethods.add(destination, newHandlerMethod);
 				if (logger.isInfoEnabled()) {
-					logger.info("Mapped \"@" + annotationType.getSimpleName() + " " + destination + "\" onto "
-							+ newHandlerMethod);
+					logger.info("Mapped \"@" + annotationType.getSimpleName() + " "
+							+ destination + "\" onto " + newHandlerMethod);
 				}
 			}
 		}
@@ -179,15 +193,18 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 			break;
 		case PUBLISH:
 			PublishMessage publishMessage = (PublishMessage) message;
-			handlePubSubMessage(publishMessage, publishMessage.getEvent(), publishMessage.getTopicURI(), publishMethods);
+			handlePubSubMessage(publishMessage, publishMessage.getEvent(),
+					publishMessage.getTopicURI(), publishMethods);
 			break;
 		case SUBSCRIBE:
 			SubscribeMessage subscribeMessage = (SubscribeMessage) message;
-			handlePubSubMessage(subscribeMessage, null, subscribeMessage.getTopicURI(), subscribeMethods);
+			handlePubSubMessage(subscribeMessage, null, subscribeMessage.getTopicURI(),
+					subscribeMethods);
 			break;
 		case UNSUBSCRIBE:
 			UnsubscribeMessage unsubscribeMessage = (UnsubscribeMessage) message;
-			handlePubSubMessage(unsubscribeMessage, null, unsubscribeMessage.getTopicURI(), unsubscribeMethods);
+			handlePubSubMessage(unsubscribeMessage, null,
+					unsubscribeMessage.getTopicURI(), unsubscribeMethods);
 			break;
 		default:
 			break;
@@ -197,12 +214,15 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 
 	private void handleCallMessage(CallMessage callMessage) {
 
-		List<WampHandlerMethod> matches = getHandlerMethod(callMessage.getProcURI(), callMethods);
+		List<WampHandlerMethod> matches = getHandlerMethod(callMessage.getProcURI(),
+				callMethods);
 		if (matches == null) {
-			matches = searchIfPrefixSet(callMessage, callMessage.getProcURI(), callMethods);
+			matches = searchIfPrefixSet(callMessage, callMessage.getProcURI(),
+					callMethods);
 			if (matches == null) {
 				if (logger.isTraceEnabled()) {
-					logger.trace("No matching method, destination " + callMessage.getProcURI());
+					logger.trace("No matching method, destination "
+							+ callMessage.getProcURI());
 				}
 				return;
 			}
@@ -212,32 +232,39 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		for (HandlerMethod match : matches) {
 			HandlerMethod handlerMethod = match.createWithResolvedBean();
 
-			InvocableHandlerMethod invocableHandlerMethod = new InvocableHandlerMethod(handlerMethod, objectMapper,
-					conversionService);
-			invocableHandlerMethod.setMessageMethodArgumentResolvers(this.argumentResolvers);
+			InvocableHandlerMethod invocableHandlerMethod = new InvocableHandlerMethod(
+					handlerMethod, objectMapper, conversionService);
+			invocableHandlerMethod
+					.setMessageMethodArgumentResolvers(this.argumentResolvers);
 
 			try {
 				Object[] arguments = null;
 				if (callMessage.getArguments() != null) {
 					arguments = callMessage.getArguments().toArray();
 				}
-				Object returnValue = invocableHandlerMethod.invoke(callMessage, arguments);
-				CallResultMessage callResultMessage = new CallResultMessage(callMessage.getCallID(), returnValue);
+				Object returnValue = invocableHandlerMethod
+						.invoke(callMessage, arguments);
+				CallResultMessage callResultMessage = new CallResultMessage(
+						callMessage.getCallID(), returnValue);
 				wampMessageSender.sendMessageToClient(sessionId, callResultMessage);
-			} catch (Exception ex) {
-				CallErrorMessage callErrorMessage = new CallErrorMessage(callMessage.getCallID(), "", ex.toString());
+			}
+			catch (Exception ex) {
+				CallErrorMessage callErrorMessage = new CallErrorMessage(
+						callMessage.getCallID(), "", ex.toString());
 				wampMessageSender.sendMessageToClient(sessionId, callErrorMessage);
 				logger.error("Error while processing message " + callMessage, ex);
-			} catch (Throwable ex) {
-				CallErrorMessage callErrorMessage = new CallErrorMessage(callMessage.getCallID(), "", ex.toString());
+			}
+			catch (Throwable ex) {
+				CallErrorMessage callErrorMessage = new CallErrorMessage(
+						callMessage.getCallID(), "", ex.toString());
 				wampMessageSender.sendMessageToClient(sessionId, callErrorMessage);
 				logger.error("Error while processing message " + callErrorMessage, ex);
 			}
 		}
 	}
 
-	private List<WampHandlerMethod> searchIfPrefixSet(WampMessage message, String destination,
-			MultiValueMap<String, WampHandlerMethod> handlerMethods) {
+	private List<WampHandlerMethod> searchIfPrefixSet(WampMessage message,
+			String destination, MultiValueMap<String, WampHandlerMethod> handlerMethods) {
 		WampSession wampSession = message.getWampSession();
 		List<WampHandlerMethod> matches = null;
 		if (wampSession.hasPrefixes()) {
@@ -265,8 +292,8 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		return matches;
 	}
 
-	private void handlePubSubMessage(WampMessage message, Object argument, String destination,
-			MultiValueMap<String, WampHandlerMethod> handlerMethods) {
+	private void handlePubSubMessage(WampMessage message, Object argument,
+			String destination, MultiValueMap<String, WampHandlerMethod> handlerMethods) {
 		Assert.notNull(destination, "destination is required");
 
 		List<WampHandlerMethod> matches = getHandlerMethod(destination, handlerMethods);
@@ -282,9 +309,10 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 
 		for (WampHandlerMethod handlerMethod : matches) {
 
-			InvocableHandlerMethod invocableHandlerMethod = new InvocableHandlerMethod(handlerMethod, objectMapper,
-					conversionService);
-			invocableHandlerMethod.setMessageMethodArgumentResolvers(this.argumentResolvers);
+			InvocableHandlerMethod invocableHandlerMethod = new InvocableHandlerMethod(
+					handlerMethod, objectMapper, conversionService);
+			invocableHandlerMethod
+					.setMessageMethodArgumentResolvers(this.argumentResolvers);
 
 			try {
 				Object returnValue = invocableHandlerMethod.invoke(message, argument);
@@ -293,22 +321,27 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 							.<String> getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID));
 					for (String replyToTopicURI : handlerMethod.getReplyTo()) {
 						if (StringUtils.hasText(replyToTopicURI)) {
-							if (handlerMethod.isExcludeSender() != null && handlerMethod.isExcludeSender()) {
-								pubSubHandler.sendToAllExcept(new EventMessage(replyToTopicURI, returnValue),
-										mySessionId);
-							} else {
-								pubSubHandler.sendToAll(new EventMessage(replyToTopicURI, returnValue));
+							if (handlerMethod.isExcludeSender() != null
+									&& handlerMethod.isExcludeSender()) {
+								pubSubHandler.sendToAllExcept(new EventMessage(
+										replyToTopicURI, returnValue), mySessionId);
+							}
+							else {
+								pubSubHandler.sendToAll(new EventMessage(replyToTopicURI,
+										returnValue));
 							}
 						}
 					}
 				}
-			} catch (Throwable ex) {
+			}
+			catch (Throwable ex) {
 				logger.error("Error while processing message " + message, ex);
 			}
 		}
 	}
 
-	List<WampHandlerMethod> getHandlerMethod(String destination, MultiValueMap<String, WampHandlerMethod> handlerMethods) {
+	List<WampHandlerMethod> getHandlerMethod(String destination,
+			MultiValueMap<String, WampHandlerMethod> handlerMethods) {
 		for (String mappingDestination : handlerMethods.keySet()) {
 			if (destination.equals(mappingDestination)) {
 				return handlerMethods.get(mappingDestination);

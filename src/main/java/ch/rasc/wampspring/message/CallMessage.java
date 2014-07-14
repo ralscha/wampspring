@@ -31,7 +31,7 @@ import com.fasterxml.jackson.core.JsonToken;
  * A client initiates a RPC by sending this message
  * <p>
  * Client-to-Server message
- * 
+ *
  * @see <a href="http://wamp.ws/spec/#call_message">WAMP specification</a>
  */
 public class CallMessage extends WampMessage {
@@ -47,7 +47,8 @@ public class CallMessage extends WampMessage {
 		this.procURI = procURI;
 		if (arguments != null) {
 			this.arguments = Arrays.asList(arguments);
-		} else {
+		}
+		else {
 			this.arguments = null;
 		}
 	}
@@ -72,7 +73,8 @@ public class CallMessage extends WampMessage {
 
 		if (!args.isEmpty()) {
 			this.arguments = Collections.unmodifiableList(args);
-		} else {
+		}
+		else {
 			this.arguments = null;
 		}
 	}
@@ -91,7 +93,8 @@ public class CallMessage extends WampMessage {
 
 	@Override
 	public String toJson(JsonFactory jsonFactory) throws IOException {
-		try (StringWriter sw = new StringWriter(); JsonGenerator jg = jsonFactory.createGenerator(sw)) {
+		try (StringWriter sw = new StringWriter();
+				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
 			jg.writeString(callID);
@@ -110,7 +113,8 @@ public class CallMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "CallMessage [callID=" + callID + ", procURI=" + procURI + ", arguments=" + arguments + "]";
+		return "CallMessage [callID=" + callID + ", procURI=" + procURI + ", arguments="
+				+ arguments + "]";
 	}
 
 }

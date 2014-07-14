@@ -42,7 +42,8 @@ public class PubSubHandlerTest {
 		EventMessage eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendToAll(eventMessage);
 
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(sessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(sessions,
+				eventMessage);
 
 		subMessage = new SubscribeMessage("theTopic");
 		subMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, "2");
@@ -52,7 +53,8 @@ public class PubSubHandlerTest {
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendToAll(eventMessage);
 
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(sessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(sessions,
+				eventMessage);
 
 		UnsubscribeMessage unsubMessage = new UnsubscribeMessage("theTopic");
 		unsubMessage.addHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, "1");
@@ -62,14 +64,16 @@ public class PubSubHandlerTest {
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendToAll(eventMessage);
 
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(sessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(sessions,
+				eventMessage);
 
 		pubSubHandler.unregisterSessionFromAllSubscriptions("2");
 		sessions.remove("2");
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendToAll(eventMessage);
 
-		Mockito.verify(messageSender, Mockito.never()).sendMessageToClient(sessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.never()).sendMessageToClient(sessions,
+				eventMessage);
 	}
 
 	@Test
@@ -91,7 +95,8 @@ public class PubSubHandlerTest {
 		expectedSessions.add("2");
 		EventMessage eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendToAllExcept(eventMessage, excludeSessions);
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(expectedSessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(
+				expectedSessions, eventMessage);
 
 		excludeSessions = new HashSet<>();
 		expectedSessions = new HashSet<>();
@@ -99,7 +104,8 @@ public class PubSubHandlerTest {
 		expectedSessions.add("2");
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendToAllExcept(eventMessage, excludeSessions);
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(expectedSessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(
+				expectedSessions, eventMessage);
 
 		excludeSessions = new HashSet<>();
 		expectedSessions = new HashSet<>();
@@ -107,7 +113,8 @@ public class PubSubHandlerTest {
 		excludeSessions.add("2");
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendToAllExcept(eventMessage, excludeSessions);
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(expectedSessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(
+				expectedSessions, eventMessage);
 
 		excludeSessions = new HashSet<>();
 		expectedSessions = new HashSet<>();
@@ -117,7 +124,8 @@ public class PubSubHandlerTest {
 		excludeSessions.add("4");
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendToAllExcept(eventMessage, excludeSessions);
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(expectedSessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(
+				expectedSessions, eventMessage);
 	}
 
 	@Test
@@ -137,7 +145,8 @@ public class PubSubHandlerTest {
 		Set<String> expectedSessions = new HashSet<>();
 		EventMessage eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendTo(eventMessage, eligibleSessions);
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(expectedSessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(
+				expectedSessions, eventMessage);
 
 		eligibleSessions = new HashSet<>();
 		eligibleSessions.add("1");
@@ -145,7 +154,8 @@ public class PubSubHandlerTest {
 		expectedSessions.add("1");
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendTo(eventMessage, eligibleSessions);
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(expectedSessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(
+				expectedSessions, eventMessage);
 
 		eligibleSessions = new HashSet<>();
 		eligibleSessions.add("1");
@@ -155,7 +165,8 @@ public class PubSubHandlerTest {
 		expectedSessions.add("2");
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendTo(eventMessage, eligibleSessions);
-		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(expectedSessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.times(1)).sendMessageToClient(
+				expectedSessions, eventMessage);
 
 		pubSubHandler.unregisterSessionFromAllSubscriptions("1");
 		pubSubHandler.unregisterSessionFromAllSubscriptions("2");
@@ -166,7 +177,8 @@ public class PubSubHandlerTest {
 		expectedSessions = new HashSet<>();
 		eventMessage = new EventMessage("theTopic", "payload");
 		pubSubHandler.sendTo(eventMessage, eligibleSessions);
-		Mockito.verify(messageSender, Mockito.never()).sendMessageToClient(expectedSessions, eventMessage);
+		Mockito.verify(messageSender, Mockito.never()).sendMessageToClient(
+				expectedSessions, eventMessage);
 	}
 
 }

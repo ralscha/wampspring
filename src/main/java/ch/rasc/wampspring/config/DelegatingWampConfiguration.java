@@ -39,8 +39,9 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 
 /**
- * A configuration class that is imported by the {@link EnableWamp} annotation. It detects any implementation of the
- * {@link WampConfigurer} interface and configures the WAMP support accordingly.
+ * A configuration class that is imported by the {@link EnableWamp} annotation. It detects
+ * any implementation of the {@link WampConfigurer} interface and configures the WAMP
+ * support accordingly.
  */
 @Configuration
 class DelegatingWampConfiguration implements WebSocketConfigurer {
@@ -57,7 +58,8 @@ class DelegatingWampConfiguration implements WebSocketConfigurer {
 
 		if (configurers.size() > 1) {
 			throw new IllegalStateException("Only one WampConfigurer may exist");
-		} else if (configurers.size() == 1) {
+		}
+		else if (configurers.size() == 1) {
 			configurer = configurers.iterator().next();
 		}
 
@@ -78,14 +80,17 @@ class DelegatingWampConfiguration implements WebSocketConfigurer {
 		String path;
 		if (wampEndpointPath != null) {
 			if (!wampEndpointPath.startsWith("/")) {
-				throw new IllegalArgumentException("wampEndpointPath must start with an /");
+				throw new IllegalArgumentException(
+						"wampEndpointPath must start with an /");
 			}
 			path = wampEndpointPath;
-		} else {
+		}
+		else {
 			path = "/wamp";
 		}
 
-		WebSocketHandlerRegistration reg = registry.addHandler(wampWebsocketHandler(), path);
+		WebSocketHandlerRegistration reg = registry.addHandler(wampWebsocketHandler(),
+				path);
 		configurer.configureWampWebsocketHandler(reg);
 	}
 
@@ -106,13 +111,14 @@ class DelegatingWampConfiguration implements WebSocketConfigurer {
 
 	@Bean
 	public AnnotationMethodHandler annotationMethodHandler() {
-		return new AnnotationMethodHandler(wampMessageSender(), pubSubHandler(), configurer.objectMapper(),
-				configurer.conversionService());
+		return new AnnotationMethodHandler(wampMessageSender(), pubSubHandler(),
+				configurer.objectMapper(), configurer.conversionService());
 	}
 
 	@Bean
 	public WampWebsocketHandler wampWebsocketHandler() {
-		return new WampWebsocketHandler(annotationMethodHandler(), pubSubHandler(), wampMessageSender(), jsonFactory);
+		return new WampWebsocketHandler(annotationMethodHandler(), pubSubHandler(),
+				wampMessageSender(), jsonFactory);
 	}
 
 	@Bean

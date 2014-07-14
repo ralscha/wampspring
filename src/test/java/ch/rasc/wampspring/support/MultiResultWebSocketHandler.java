@@ -53,24 +53,29 @@ public class MultiResultWebSocketHandler extends AbstractWebSocketHandler {
 	}
 
 	@Override
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+	protected void handleTextMessage(WebSocketSession session, TextMessage message)
+			throws Exception {
 		try {
-			WampMessage wampMessage = WampMessage.fromJson(jsonFactory, message.getPayload());
+			WampMessage wampMessage = WampMessage.fromJson(jsonFactory,
+					message.getPayload());
 			if (wampMessage instanceof WelcomeMessage) {
 				welcomeReceived = true;
 				welcomeDeferred.resolve(((WelcomeMessage) wampMessage).getSessionId());
-			} else {
+			}
+			else {
 				if (welcomeReceived) {
 					receivedMessages.add(wampMessage);
 					if (receivedMessages.size() == noOfResults) {
 						resultDeferred.resolve(receivedMessages);
 					}
-				} else {
+				}
+				else {
 					resultDeferred.reject(wampMessage);
 				}
 			}
 
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			resultDeferred.reject(e);
 		}
 	}

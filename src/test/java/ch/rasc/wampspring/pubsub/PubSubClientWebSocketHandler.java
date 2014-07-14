@@ -58,7 +58,8 @@ public abstract class PubSubClientWebSocketHandler extends AbstractTestWebSocket
 	}
 
 	@Override
-	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+	protected void handleTextMessage(WebSocketSession session, TextMessage message)
+			throws Exception {
 		System.out.println(message.getPayload());
 		WampMessage wampMessage = WampMessage.fromJson(jsonFactory, message.getPayload());
 
@@ -68,7 +69,8 @@ public abstract class PubSubClientWebSocketHandler extends AbstractTestWebSocket
 			assertThat(wm.getServerIdent()).isEqualTo("wampspring/1.0");
 
 			countDownLatch.countDown();
-		} else if (wampMessage instanceof EventMessage) {
+		}
+		else if (wampMessage instanceof EventMessage) {
 			assertEventResult((EventMessage) wampMessage);
 			countDownLatch.countDown();
 		}

@@ -36,10 +36,11 @@ import ch.rasc.wampspring.message.WampMessageHeader;
 /**
  * Internal handler that handles the Publish and Subscribe part of WAMP.
  * <p>
- * The messages that are handled here are {@link EventMessage}, {@link PublishMessage}, {@link SubscribeMessage} and
- * {@link UnsubscribeMessage}
+ * The messages that are handled here are {@link EventMessage}, {@link PublishMessage},
+ * {@link SubscribeMessage} and {@link UnsubscribeMessage}
  * <p>
- * The handler manages a map (topicSessionIds) that holds a set of WebSocket session ids per topicURI.
+ * The handler manages a map (topicSessionIds) that holds a set of WebSocket session ids
+ * per topicURI.
  */
 public class PubSubHandler {
 
@@ -81,7 +82,8 @@ public class PubSubHandler {
 	}
 
 	public void sendToAllExcept(EventMessage eventMessage, Set<String> excludeSessionIds) {
-		Set<String> subscriptionSessions = topicSessionIds.get(eventMessage.getTopicURI());
+		Set<String> subscriptionSessions = topicSessionIds
+				.get(eventMessage.getTopicURI());
 		if (subscriptionSessions != null) {
 			Set<String> eligibleSessions = new HashSet<>();
 			for (String sessionId : subscriptionSessions) {
@@ -94,7 +96,8 @@ public class PubSubHandler {
 	}
 
 	public void sendTo(EventMessage eventMessage, Set<String> eligibleSessionIds) {
-		Set<String> subscriptionSessions = topicSessionIds.get(eventMessage.getTopicURI());
+		Set<String> subscriptionSessions = topicSessionIds
+				.get(eventMessage.getTopicURI());
 		if (subscriptionSessions != null) {
 			Set<String> eligibleSessions = new HashSet<>();
 			for (String sessionId : subscriptionSessions) {
@@ -107,9 +110,11 @@ public class PubSubHandler {
 	}
 
 	private void handlePublishMessage(PublishMessage publishMessage) {
-		Set<String> subscriptionSessions = topicSessionIds.get(publishMessage.getTopicURI());
+		Set<String> subscriptionSessions = topicSessionIds.get(publishMessage
+				.getTopicURI());
 		if (subscriptionSessions != null) {
-			String mySessionId = publishMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
+			String mySessionId = publishMessage
+					.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
 			Set<String> eligibleSessions = new HashSet<>();
 			for (String sessionId : subscriptionSessions) {
 				if (isSessionEligible(publishMessage, mySessionId, sessionId)) {
@@ -118,13 +123,15 @@ public class PubSubHandler {
 			}
 
 			if (!eligibleSessions.isEmpty()) {
-				EventMessage eventMessage = new EventMessage(publishMessage.getTopicURI(), publishMessage.getEvent());
+				EventMessage eventMessage = new EventMessage(
+						publishMessage.getTopicURI(), publishMessage.getEvent());
 				wampMessageSender.sendMessageToClient(eligibleSessions, eventMessage);
 			}
 		}
 	}
 
-	private static boolean isSessionEligible(PublishMessage publishMessage, String mySessionId, String otherSessionId) {
+	private static boolean isSessionEligible(PublishMessage publishMessage,
+			String mySessionId, String otherSessionId) {
 
 		if (publishMessage.getExcludeMe() != null && publishMessage.getExcludeMe()) {
 			if (mySessionId.equals(otherSessionId)) {

@@ -24,12 +24,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * Calling unsubscribe on a topicURI informs the server to stop delivering messages to the client previously subscribed
- * to that topicURI.
- * 
+ * Calling unsubscribe on a topicURI informs the server to stop delivering messages to the
+ * client previously subscribed to that topicURI.
+ *
  * <p>
  * Client-to-Server message
- * 
+ *
  * @see <a href="http://wamp.ws/spec/#unsubscribe_message">WAMP specification</a>
  */
 public class UnsubscribeMessage extends WampMessage {
@@ -54,7 +54,8 @@ public class UnsubscribeMessage extends WampMessage {
 
 	@Override
 	public String toJson(JsonFactory jsonFactory) throws IOException {
-		try (StringWriter sw = new StringWriter(); JsonGenerator jg = jsonFactory.createGenerator(sw)) {
+		try (StringWriter sw = new StringWriter();
+				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
 			jg.writeString(topicURI);

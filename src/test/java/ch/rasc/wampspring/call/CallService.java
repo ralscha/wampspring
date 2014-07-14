@@ -57,7 +57,8 @@ public class CallService {
 	}
 
 	@WampCallListener
-	public String callWithObjectAndMessage(TestDto testDto, CallMessage callMessage, String secondArgument) {
+	public String callWithObjectAndMessage(TestDto testDto, CallMessage callMessage,
+			String secondArgument) {
 		assertThat(callMessage).isNotNull();
 		assertThat(testDto.getName()).isEqualTo("Hi");
 		assertThat(secondArgument).isEqualTo("thesecondargument");

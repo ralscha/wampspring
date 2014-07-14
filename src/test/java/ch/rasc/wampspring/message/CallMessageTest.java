@@ -29,50 +29,54 @@ public class CallMessageTest extends BaseMessageTest {
 
 	@Test
 	public void serializationTest() throws IOException {
-		CallMessage callMessage = new CallMessage("7DK6TdN4wLiUJgNM", "http://example.com/api#howdy");
+		CallMessage callMessage = new CallMessage("7DK6TdN4wLiUJgNM",
+				"http://example.com/api#howdy");
 		String json = callMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALL.getTypeId(), "7DK6TdN4wLiUJgNM", "http://example.com/api#howdy"));
+				toJsonArray(WampMessageType.CALL.getTypeId(), "7DK6TdN4wLiUJgNM",
+						"http://example.com/api#howdy"));
 
 		callMessage = new CallMessage("Yp9EFZt9DFkuKndg", "api:add2", 23, 99);
 		json = callMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALL.getTypeId(), "Yp9EFZt9DFkuKndg", "api:add2", 23, 99));
+				toJsonArray(WampMessageType.CALL.getTypeId(), "Yp9EFZt9DFkuKndg",
+						"api:add2", 23, 99));
 
 		Map<String, Object> callObject = new HashMap<>();
 		callObject.put("category", "dinner");
 		callObject.put("calories", 2309);
-		callMessage = new CallMessage("J5DkZJgByutvaDWc", "http://example.com/api#storeMeal", callObject);
+		callMessage = new CallMessage("J5DkZJgByutvaDWc",
+				"http://example.com/api#storeMeal", callObject);
 		json = callMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALL.getTypeId(), "J5DkZJgByutvaDWc", "http://example.com/api#storeMeal",
-						callObject));
+				toJsonArray(WampMessageType.CALL.getTypeId(), "J5DkZJgByutvaDWc",
+						"http://example.com/api#storeMeal", callObject));
 
-		callMessage = new CallMessage("Dns3wuQo0ipOX1Xc", "http://example.com/api#woooat", new Object[] { null });
+		callMessage = new CallMessage("Dns3wuQo0ipOX1Xc",
+				"http://example.com/api#woooat", new Object[] { null });
 		json = callMessage.toJson(jsonFactory);
-		assertThat(json)
-				.isEqualTo(
-						toJsonArray(WampMessageType.CALL.getTypeId(), "Dns3wuQo0ipOX1Xc",
-								"http://example.com/api#woooat", null));
+		assertThat(json).isEqualTo(
+				toJsonArray(WampMessageType.CALL.getTypeId(), "Dns3wuQo0ipOX1Xc",
+						"http://example.com/api#woooat", null));
 
-		callMessage = new CallMessage("M0nncaH0ywCSYzRv", "api:sum", Arrays.asList(9, 1, 3, 4));
+		callMessage = new CallMessage("M0nncaH0ywCSYzRv", "api:sum", Arrays.asList(9, 1,
+				3, 4));
 		json = callMessage.toJson(jsonFactory);
-		assertThat(json)
-				.isEqualTo(
-						toJsonArray(WampMessageType.CALL.getTypeId(), "M0nncaH0ywCSYzRv", "api:sum",
-								Arrays.asList(9, 1, 3, 4)));
+		assertThat(json).isEqualTo(
+				toJsonArray(WampMessageType.CALL.getTypeId(), "M0nncaH0ywCSYzRv",
+						"api:sum", Arrays.asList(9, 1, 3, 4)));
 
 		callObject = new HashMap<>();
 		callObject.put("value1", "23");
 		callObject.put("value2", "singsing");
-		callObject.put("value3", true);
+		callObject.put("value3", Boolean.TRUE);
 		callObject.put("modified", "2012-03-29T10:29:16.625Z");
-		callMessage = new CallMessage("ujL7WKGXCn8bkvFV", "keyvalue:set", "foobar", callObject);
+		callMessage = new CallMessage("ujL7WKGXCn8bkvFV", "keyvalue:set", "foobar",
+				callObject);
 		json = callMessage.toJson(jsonFactory);
-		assertThat(json)
-				.isEqualTo(
-						toJsonArray(WampMessageType.CALL.getTypeId(), "ujL7WKGXCn8bkvFV", "keyvalue:set", "foobar",
-								callObject));
+		assertThat(json).isEqualTo(
+				toJsonArray(WampMessageType.CALL.getTypeId(), "ujL7WKGXCn8bkvFV",
+						"keyvalue:set", "foobar", callObject));
 	}
 
 	@Test
@@ -94,12 +98,14 @@ public class CallMessageTest extends BaseMessageTest {
 		Map<String, Object> callObject = new HashMap<>();
 		callObject.put("category", "dinner");
 		callObject.put("calories", 2309);
-		json = toJsonArray(2, "J5DkZJgByutvaDWc", "http://example.com/api#storeMeal", callObject);
+		json = toJsonArray(2, "J5DkZJgByutvaDWc", "http://example.com/api#storeMeal",
+				callObject);
 
 		callMessage = WampMessage.fromJson(jsonFactory, json);
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALL);
 		assertThat(callMessage.getCallID()).isEqualTo("J5DkZJgByutvaDWc");
-		assertThat(callMessage.getProcURI()).isEqualTo("http://example.com/api#storeMeal");
+		assertThat(callMessage.getProcURI())
+				.isEqualTo("http://example.com/api#storeMeal");
 		assertThat(callMessage.getArguments()).hasSize(1);
 		assertThat((Map<String, Object>) callMessage.getArguments().get(0)).contains(
 				MapEntry.entry("category", "dinner"), MapEntry.entry("calories", 2309));
@@ -116,10 +122,11 @@ public class CallMessageTest extends BaseMessageTest {
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALL);
 		assertThat(callMessage.getCallID()).isEqualTo("M0nncaH0ywCSYzRv");
 		assertThat(callMessage.getProcURI()).isEqualTo("api:sum");
-		assertThat(callMessage.getArguments()).hasSize(1).contains(Arrays.asList(9, 1, 3, 4));
+		assertThat(callMessage.getArguments()).hasSize(1).contains(
+				Arrays.asList(9, 1, 3, 4));
 
 		callObject = new HashMap<>();
-		callObject.put("value3", true);
+		callObject.put("value3", Boolean.TRUE);
 		callObject.put("value2", "singsing");
 		callObject.put("value1", 23);
 		callObject.put("modified", "2012-03-29T10:29:16.625Z");
@@ -131,7 +138,8 @@ public class CallMessageTest extends BaseMessageTest {
 		assertThat(callMessage.getProcURI()).isEqualTo("keyvalue:set");
 		assertThat(callMessage.getArguments()).hasSize(2);
 		assertThat(callMessage.getArguments().get(0)).isEqualTo("foobar");
-		assertThat((Map<String, Object>) callMessage.getArguments().get(1)).contains(MapEntry.entry("value3", true),
+		assertThat((Map<String, Object>) callMessage.getArguments().get(1)).contains(
+				MapEntry.entry("value3", Boolean.TRUE),
 				MapEntry.entry("value2", "singsing"), MapEntry.entry("value1", 23),
 				MapEntry.entry("modified", "2012-03-29T10:29:16.625Z"));
 

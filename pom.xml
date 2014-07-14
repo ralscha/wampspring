@@ -7,10 +7,6 @@
 		<version>7</version>
 	</parent>
 
-	<prerequisites>
-		<maven>3.0.0</maven>
-	</prerequisites>
-
 	<groupId>ch.rasc</groupId>
 	<artifactId>wampspring</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
@@ -56,7 +52,7 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-framework-bom</artifactId>
-				<version>4.0.4.RELEASE</version>
+				<version>4.0.6.RELEASE</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -77,7 +73,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.4.0-rc3</version>
+			<version>2.4.1.2</version>
 		</dependency>
 
 		<dependency>
@@ -117,7 +113,7 @@
 		<dependency>
 			<groupId>ch.rasc</groupId>
 			<artifactId>embeddedtc</artifactId>
-			<version>1.13</version>
+			<version>1.14</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -165,7 +161,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
+				<version>2.3</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -216,7 +212,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.3</version>
+				<version>3.4</version>
 				<configuration>
 					<reportPlugins>
 						<plugin>
@@ -231,19 +227,20 @@
 							<configuration>
 								<links>
 									<link>http://docs.spring.io/spring/docs/3.2.x/javadoc-api/</link>
-									<link>http://docs.oracle.com/javase/6/docs/api/</link>
+									<link>http://docs.oracle.com/javase/7/docs/api/</link>
 								</links>
+								<additionalparam>-Xdoclint:none</additionalparam>
 							</configuration>
 						</plugin>
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-jxr-plugin</artifactId>
-							<version>2.3</version>
+							<version>2.4</version>
 						</plugin>
 						<plugin>
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-pmd-plugin</artifactId>
-							<version>3.0.1</version>
+							<version>3.1</version>
 							<configuration>
 								<targetJdk>1.7</targetJdk>
 							</configuration>
@@ -272,13 +269,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
+				<version>2.5</version>
 			</plugin>
 
 			<plugin>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<version>1.10.b1</version>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.6</version>
 				<configuration>
 					<header>${basedir}/src/main/config/header.txt</header>
 					<properties>

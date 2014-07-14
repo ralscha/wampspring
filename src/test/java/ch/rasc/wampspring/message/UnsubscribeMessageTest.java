@@ -25,10 +25,13 @@ public class UnsubscribeMessageTest extends BaseMessageTest {
 
 	@Test
 	public void serializationTest() throws IOException {
-		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage("http://example.com/simple");
+		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
+				"http://example.com/simple");
 
 		String json = unsubscribeMessage.toJson(jsonFactory);
-		assertThat(json).isEqualTo(toJsonArray(WampMessageType.UNSUBSCRIBE.getTypeId(), "http://example.com/simple"));
+		assertThat(json).isEqualTo(
+				toJsonArray(WampMessageType.UNSUBSCRIBE.getTypeId(),
+						"http://example.com/simple"));
 	}
 
 	@Test
@@ -38,7 +41,8 @@ public class UnsubscribeMessageTest extends BaseMessageTest {
 		UnsubscribeMessage unsubscribeMessage = WampMessage.fromJson(jsonFactory, json);
 
 		assertThat(unsubscribeMessage.getType()).isEqualTo(WampMessageType.UNSUBSCRIBE);
-		assertThat(unsubscribeMessage.getTopicURI()).isEqualTo("http://example.com/simple");
+		assertThat(unsubscribeMessage.getTopicURI()).isEqualTo(
+				"http://example.com/simple");
 
 	}
 }

@@ -28,33 +28,39 @@ public class EventMessageTest extends BaseMessageTest {
 
 	@Test
 	public void serializationTest() throws IOException {
-		EventMessage eventMessage = new EventMessage("http://example.com/simple", "Hello, I am a simple event.");
+		EventMessage eventMessage = new EventMessage("http://example.com/simple",
+				"Hello, I am a simple event.");
 		String json = eventMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.EVENT.getTypeId(), "http://example.com/simple",
-						"Hello, I am a simple event."));
+				toJsonArray(WampMessageType.EVENT.getTypeId(),
+						"http://example.com/simple", "Hello, I am a simple event."));
 
 		eventMessage = new EventMessage("http://example.com/simple", null);
 		json = eventMessage.toJson(jsonFactory);
-		assertThat(json).isEqualTo(toJsonArray(WampMessageType.EVENT.getTypeId(), "http://example.com/simple", null));
+		assertThat(json).isEqualTo(
+				toJsonArray(WampMessageType.EVENT.getTypeId(),
+						"http://example.com/simple", null));
 
 		Map<String, Object> eventObject = new HashMap<>();
 		eventObject.put("rand", 0.09187032734575862);
-		eventObject.put("flag", false);
+		eventObject.put("flag", Boolean.FALSE);
 		eventObject.put("num", 23);
 		eventObject.put("name", "Kross");
 		eventObject.put("created", "2012-03-29T10:41:09.864Z");
 
-		EventMessage mapEventMessage = new EventMessage("http://example.com/event#myevent2", eventObject);
+		EventMessage mapEventMessage = new EventMessage(
+				"http://example.com/event#myevent2", eventObject);
 		json = mapEventMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.EVENT.getTypeId(), "http://example.com/event#myevent2", eventObject));
+				toJsonArray(WampMessageType.EVENT.getTypeId(),
+						"http://example.com/event#myevent2", eventObject));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void deserializationTest() throws IOException {
-		String json = toJsonArray(8, "http://example.com/simple", "Hello, I am a simple event.");
+		String json = toJsonArray(8, "http://example.com/simple",
+				"Hello, I am a simple event.");
 		EventMessage eventMessage = WampMessage.fromJson(jsonFactory, json);
 		assertThat(eventMessage.getType()).isEqualTo(WampMessageType.EVENT);
 		assertThat(eventMessage.getTopicURI()).isEqualTo("http://example.com/simple");
@@ -68,7 +74,7 @@ public class EventMessageTest extends BaseMessageTest {
 
 		Map<String, Object> eventObject = new HashMap<>();
 		eventObject.put("rand", 0.09187032734575862);
-		eventObject.put("flag", false);
+		eventObject.put("flag", Boolean.FALSE);
 		eventObject.put("num", 23);
 		eventObject.put("name", "Kross");
 		eventObject.put("created", "2012-03-29T10:41:09.864Z");
@@ -77,9 +83,12 @@ public class EventMessageTest extends BaseMessageTest {
 
 		EventMessage mapEventMessage = WampMessage.fromJson(jsonFactory, json);
 		assertThat(mapEventMessage.getType()).isEqualTo(WampMessageType.EVENT);
-		assertThat(mapEventMessage.getTopicURI()).isEqualTo("http://example.com/event#myevent2");
-		assertThat((Map) mapEventMessage.getEvent()).hasSize(5).contains(MapEntry.entry("rand", 0.09187032734575862),
-				MapEntry.entry("flag", false), MapEntry.entry("num", 23), MapEntry.entry("name", "Kross"),
+		assertThat(mapEventMessage.getTopicURI()).isEqualTo(
+				"http://example.com/event#myevent2");
+		assertThat((Map) mapEventMessage.getEvent()).hasSize(5).contains(
+				MapEntry.entry("rand", 0.09187032734575862),
+				MapEntry.entry("flag", Boolean.FALSE), MapEntry.entry("num", 23),
+				MapEntry.entry("name", "Kross"),
 				MapEntry.entry("created", "2012-03-29T10:41:09.864Z"));
 	}
 }

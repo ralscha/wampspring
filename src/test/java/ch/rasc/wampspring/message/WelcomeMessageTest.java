@@ -31,8 +31,8 @@ public class WelcomeMessageTest extends BaseMessageTest {
 
 		String json = welcomeMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.WELCOME.getTypeId(), sessionId, WelcomeMessage.PROTOCOL_VERSION,
-						serverIdent));
+				toJsonArray(WampMessageType.WELCOME.getTypeId(), sessionId,
+						WelcomeMessage.PROTOCOL_VERSION, serverIdent));
 	}
 
 	@Test

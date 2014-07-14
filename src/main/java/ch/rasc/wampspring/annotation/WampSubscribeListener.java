@@ -25,14 +25,16 @@ import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 
 /**
- * Annotation that denotes a method that is called when the server receives a {@link SubscribeMessage} and the topicURI
- * matches one of the listed values of the annotation.
- * 
- * If no topicURI is provided the method is accessible by the topicURI 'beanName.methodName'
- * 
- * In the following example the method can be called by sending a SubscribeMessage with the topicURI
- * 'myService.doSomething'
- * 
+ * Annotation that denotes a method that is called when the server receives a
+ * {@link SubscribeMessage} and the topicURI matches one of the listed values of the
+ * annotation.
+ *
+ * If no topicURI is provided the method is accessible by the topicURI
+ * 'beanName.methodName'
+ *
+ * In the following example the method can be called by sending a SubscribeMessage with
+ * the topicURI 'myService.doSomething'
+ *
  * <pre class="code">
  * &#064;Service
  * public class MyService {
@@ -43,10 +45,11 @@ import ch.rasc.wampspring.message.SubscribeMessage;
  * 	}
  * }
  * </pre>
- * 
- * If the attribute replyTo has a value the return value of the method (if any) will be wrapped into an
- * {@link EventMessage} and sent to the listed topicURI(s). Additionally if the excludeSender attribute is true the
- * sender of the {@link SubscribeMessage} does not receive an {@link EventMessage}.
+ *
+ * If the attribute replyTo has a value the return value of the method (if any) will be
+ * wrapped into an {@link EventMessage} and sent to the listed topicURI(s). Additionally
+ * if the excludeSender attribute is true the sender of the {@link SubscribeMessage} does
+ * not receive an {@link EventMessage}.
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -64,8 +67,8 @@ public @interface WampSubscribeListener {
 	String[] replyTo() default {};
 
 	/**
-	 * Exclude the sender of the {@link SubscribeMessage} from the replyTo receivers. This attribut will be ignored if
-	 * no {@link EventMessage} is created.
+	 * Exclude the sender of the {@link SubscribeMessage} from the replyTo receivers. This
+	 * attribut will be ignored if no {@link EventMessage} is created.
 	 */
 	boolean excludeSender() default false;
 }

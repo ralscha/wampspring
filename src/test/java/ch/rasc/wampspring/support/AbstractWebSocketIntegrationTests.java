@@ -94,19 +94,22 @@ public abstract class AbstractWebSocketIntegrationTests {
 			if (this.webSocketClient instanceof Lifecycle) {
 				((Lifecycle) this.webSocketClient).stop();
 			}
-		} catch (Throwable t) {
+		}
+		catch (Throwable t) {
 			logger.error("Failed to stop WebSocket client", t);
 		}
 
 		try {
 			this.server.undeployConfig();
-		} catch (Throwable t) {
+		}
+		catch (Throwable t) {
 			logger.error("Failed to undeploy application config", t);
 		}
 
 		try {
 			this.server.stop();
-		} catch (Throwable t) {
+		}
+		catch (Throwable t) {
 			logger.error("Failed to stop server", t);
 		}
 	}
@@ -115,8 +118,10 @@ public abstract class AbstractWebSocketIntegrationTests {
 		return "ws://localhost:" + this.server.getPort();
 	}
 
-	protected ListenableFuture<WebSocketSession> doHandshake(WebSocketHandler clientHandler, String endpointPath) {
-		return this.webSocketClient.doHandshake(clientHandler, getWsBaseUrl() + endpointPath);
+	protected ListenableFuture<WebSocketSession> doHandshake(
+			WebSocketHandler clientHandler, String endpointPath) {
+		return this.webSocketClient.doHandshake(clientHandler, getWsBaseUrl()
+				+ endpointPath);
 	}
 
 	static abstract class AbstractRequestUpgradeStrategyConfig {
@@ -139,24 +144,28 @@ public abstract class AbstractWebSocketIntegrationTests {
 		}
 	}
 
-	protected void runInWebSocketSession(AbstractTestWebSocketHandler callClientWebSocketHandler)
+	protected void runInWebSocketSession(
+			AbstractTestWebSocketHandler callClientWebSocketHandler)
 			throws InterruptedException, ExecutionException, IOException {
-		WebSocketSession webSocketSession = this.webSocketClient.doHandshake(callClientWebSocketHandler,
-				getWsBaseUrl() + wampEndpointPath()).get();
+		WebSocketSession webSocketSession = this.webSocketClient.doHandshake(
+				callClientWebSocketHandler, getWsBaseUrl() + wampEndpointPath()).get();
 		callClientWebSocketHandler.waitForConversationEnd();
 		webSocketSession.close();
 	}
 
-	protected WebSocketSession startWebSocketSession(AbstractTestWebSocketHandler callClientWebSocketHandler)
+	protected WebSocketSession startWebSocketSession(
+			AbstractTestWebSocketHandler callClientWebSocketHandler)
 			throws InterruptedException, ExecutionException {
-		return this.webSocketClient.doHandshake(callClientWebSocketHandler, getWsBaseUrl() + wampEndpointPath()).get();
+		return this.webSocketClient.doHandshake(callClientWebSocketHandler,
+				getWsBaseUrl() + wampEndpointPath()).get();
 	}
 
 	protected String wampEndpointPath() {
 		return "/wamp";
 	}
 
-	protected WampMessage sendWampMessage(WampMessage msg) throws IOException, InterruptedException, ExecutionException {
+	protected WampMessage sendWampMessage(WampMessage msg) throws IOException,
+			InterruptedException, ExecutionException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,

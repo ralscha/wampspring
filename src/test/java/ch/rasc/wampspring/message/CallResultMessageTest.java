@@ -28,25 +28,31 @@ public class CallResultMessageTest extends BaseMessageTest {
 
 	@Test
 	public void serializationTest() throws IOException {
-		CallResultMessage callResultMessage = new CallResultMessage("CcDnuI2bl2oLGBzO", "Hello, I am a simple event.");
+		CallResultMessage callResultMessage = new CallResultMessage("CcDnuI2bl2oLGBzO",
+				"Hello, I am a simple event.");
 		String json = callResultMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO", "Hello, I am a simple event."));
+				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
+						"Hello, I am a simple event."));
 
 		callResultMessage = new CallResultMessage("CcDnuI2bl2oLGBzO", null);
 		json = callResultMessage.toJson(jsonFactory);
-		assertThat(json).isEqualTo(toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO", null));
+		assertThat(json).isEqualTo(
+				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
+						null));
 
 		Map<String, Object> eventObject = new HashMap<>();
-		eventObject.put("value3", true);
+		eventObject.put("value3", Boolean.TRUE);
 		eventObject.put("value2", "singsing");
 		eventObject.put("value1", 23);
 		eventObject.put("modified", "2012-03-29T10:29:16.625Z");
 
-		CallResultMessage mapCallResultMessage = new CallResultMessage("CcDnuI2bl2oLGBzO", eventObject);
+		CallResultMessage mapCallResultMessage = new CallResultMessage(
+				"CcDnuI2bl2oLGBzO", eventObject);
 		json = mapCallResultMessage.toJson(jsonFactory);
-		assertThat(json)
-				.isEqualTo(toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO", eventObject));
+		assertThat(json).isEqualTo(
+				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
+						eventObject));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -65,7 +71,7 @@ public class CallResultMessageTest extends BaseMessageTest {
 		assertThat(callResultMessage.getResult()).isEqualTo("Awesome result ..");
 
 		Map<String, Object> eventObject = new HashMap<>();
-		eventObject.put("value3", true);
+		eventObject.put("value3", Boolean.TRUE);
 		eventObject.put("value2", "singsing");
 		eventObject.put("value1", 23);
 		eventObject.put("modified", "2012-03-29T10:29:16.625Z");
@@ -75,7 +81,8 @@ public class CallResultMessageTest extends BaseMessageTest {
 		CallResultMessage mapCallResultMessage = WampMessage.fromJson(jsonFactory, json);
 		assertThat(mapCallResultMessage.getType()).isEqualTo(WampMessageType.CALLRESULT);
 		assertThat(mapCallResultMessage.getCallID()).isEqualTo("CcDnuI2bl2oLGBzO");
-		assertThat((Map) mapCallResultMessage.getResult()).hasSize(4).contains(MapEntry.entry("value3", true),
+		assertThat((Map) mapCallResultMessage.getResult()).hasSize(4).contains(
+				MapEntry.entry("value3", Boolean.TRUE),
 				MapEntry.entry("value2", "singsing"), MapEntry.entry("value1", 23),
 				MapEntry.entry("modified", "2012-03-29T10:29:16.625Z"));
 	}

@@ -44,7 +44,8 @@ import ch.rasc.wampspring.support.ResultWebSocketHandler;
 public class PubSubTest extends AbstractWebSocketIntegrationTests {
 
 	@Test
-	public void testSimplePublishEvent() throws InterruptedException, ExecutionException, IOException {
+	public void testSimplePublishEvent() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -73,7 +74,8 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 	}
 
 	@Test
-	public void testDtoPublishEvent() throws InterruptedException, ExecutionException, IOException {
+	public void testDtoPublishEvent() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -94,7 +96,8 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 	}
 
 	@Test
-	public void testEventMessenger() throws InterruptedException, ExecutionException, IOException {
+	public void testEventMessenger() throws InterruptedException, ExecutionException,
+			IOException {
 
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
@@ -111,7 +114,8 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 	}
 
 	@Test
-	public void testPublishToMethod() throws InterruptedException, ExecutionException, IOException {
+	public void testPublishToMethod() throws InterruptedException, ExecutionException,
+			IOException {
 
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
@@ -130,8 +134,9 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 		webSocketSession.close();
 	}
 
-	private void testExcludeEligible(Boolean excludeMe, List<Integer> exclude, List<Integer> eligible,
-			List<Integer> expectedReceiver) throws InterruptedException, ExecutionException, IOException {
+	private void testExcludeEligible(Boolean excludeMe, List<Integer> exclude,
+			List<Integer> eligible, List<Integer> expectedReceiver)
+			throws InterruptedException, ExecutionException, IOException {
 		ResultWebSocketHandler result1 = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession1 = webSocketClient.doHandshake(result1,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -148,7 +153,8 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 		PublishMessage pm;
 		if (excludeMe != null) {
 			pm = new PublishMessage("anotherTopic", "the test message", excludeMe);
-		} else if (exclude != null) {
+		}
+		else if (exclude != null) {
 			Set<String> excludeSet = new HashSet<>();
 			if (exclude.contains(1)) {
 				excludeSet.add(result1.getSessionId());
@@ -166,11 +172,14 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 					eligibleSet.add(result2.getSessionId());
 				}
 
-				pm = new PublishMessage("anotherTopic", "the test message", excludeSet, eligibleSet);
-			} else {
+				pm = new PublishMessage("anotherTopic", "the test message", excludeSet,
+						eligibleSet);
+			}
+			else {
 				pm = new PublishMessage("anotherTopic", "the test message", excludeSet);
 			}
-		} else {
+		}
+		else {
 			pm = new PublishMessage("anotherTopic", "the test message");
 		}
 		webSocketSession1.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
@@ -179,7 +188,8 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 		if (expectedReceiver.contains(1)) {
 			assertThat(event1.getTopicURI()).isEqualTo("anotherTopic");
 			assertThat(event1.getEvent()).isEqualTo("the test message");
-		} else {
+		}
+		else {
 			assertThat(event1).isNull();
 		}
 
@@ -187,7 +197,8 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 		if (expectedReceiver.contains(2)) {
 			assertThat(event2.getTopicURI()).isEqualTo("anotherTopic");
 			assertThat(event2.getEvent()).isEqualTo("the test message");
-		} else {
+		}
+		else {
 			assertThat(event2).isNull();
 		}
 
@@ -196,40 +207,51 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 	}
 
 	@Test
-	public void testExcludeEligible() throws InterruptedException, ExecutionException, IOException {
+	public void testExcludeEligible() throws InterruptedException, ExecutionException,
+			IOException {
 		// excludeMe, exclude, eligible, expectedReceivers
 		testExcludeEligible(null, null, null, Arrays.asList(1, 2));
-		testExcludeEligible(true, null, null, Arrays.asList(2));
-		testExcludeEligible(false, null, null, Arrays.asList(1, 2));
+		testExcludeEligible(Boolean.TRUE, null, null, Arrays.asList(2));
+		testExcludeEligible(Boolean.FALSE, null, null, Arrays.asList(1, 2));
 
-		testExcludeEligible(null, Collections.<Integer> emptyList(), null, Arrays.asList(1, 2));
+		testExcludeEligible(null, Collections.<Integer> emptyList(), null,
+				Arrays.asList(1, 2));
 		testExcludeEligible(null, Arrays.asList(1), null, Arrays.asList(2));
 		testExcludeEligible(null, Arrays.asList(2), null, Arrays.asList(1));
-		testExcludeEligible(null, Arrays.asList(1, 2), null, Collections.<Integer> emptyList());
-
-		testExcludeEligible(null, Collections.<Integer> emptyList(), Collections.<Integer> emptyList(),
+		testExcludeEligible(null, Arrays.asList(1, 2), null,
 				Collections.<Integer> emptyList());
-		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(1), Arrays.asList(1));
-		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(2), Arrays.asList(2));
-		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(1, 2), Arrays.asList(1, 2));
+
+		testExcludeEligible(null, Collections.<Integer> emptyList(),
+				Collections.<Integer> emptyList(), Collections.<Integer> emptyList());
+		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(1),
+				Arrays.asList(1));
+		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(2),
+				Arrays.asList(2));
+		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(1, 2),
+				Arrays.asList(1, 2));
 
 		testExcludeEligible(null, Arrays.asList(1), Collections.<Integer> emptyList(),
 				Collections.<Integer> emptyList());
-		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(1), Collections.<Integer> emptyList());
+		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(1),
+				Collections.<Integer> emptyList());
 		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(2), Arrays.asList(2));
 		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(1, 2), Arrays.asList(2));
 
 		testExcludeEligible(null, Arrays.asList(2), Collections.<Integer> emptyList(),
 				Collections.<Integer> emptyList());
 		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(1), Arrays.asList(1));
-		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(2), Collections.<Integer> emptyList());
+		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(2),
+				Collections.<Integer> emptyList());
 		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(1, 2), Arrays.asList(1));
 
 		testExcludeEligible(null, Arrays.asList(1, 2), Collections.<Integer> emptyList(),
 				Collections.<Integer> emptyList());
-		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(1), Collections.<Integer> emptyList());
-		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(2), Collections.<Integer> emptyList());
-		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(1, 2), Collections.<Integer> emptyList());
+		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(1),
+				Collections.<Integer> emptyList());
+		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(2),
+				Collections.<Integer> emptyList());
+		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(1, 2),
+				Collections.<Integer> emptyList());
 	}
 
 	@Override

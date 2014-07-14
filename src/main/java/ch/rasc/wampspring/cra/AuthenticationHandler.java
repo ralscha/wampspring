@@ -23,7 +23,8 @@ import ch.rasc.wampspring.message.CallMessage;
 public interface AuthenticationHandler {
 
 	@WampCallListener("http://api.wamp.ws/procedure#authreq")
-	public Object handleAuthReq(String authKey, Map<String, Object> extra, CallMessage message);
+	public Object handleAuthReq(String authKey, Map<String, Object> extra,
+			CallMessage message);
 
 	@WampCallListener("http://api.wamp.ws/procedure#auth")
 	public Object handleAuth(String clientSignature, CallMessage message);

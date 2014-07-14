@@ -41,7 +41,8 @@ import ch.rasc.wampspring.support.ResultWebSocketHandler;
 public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests {
 
 	@Test
-	public void testPublish1() throws InterruptedException, ExecutionException, IOException {
+	public void testPublish1() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -49,7 +50,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 		SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo1");
 		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
 
-		PublishMessage pm = new PublishMessage("pubSubService.incomingPublish1", "testPublish1");
+		PublishMessage pm = new PublishMessage("pubSubService.incomingPublish1",
+				"testPublish1");
 		webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
 
 		EventMessage event = (EventMessage) result.getWampMessage();
@@ -60,7 +62,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testPublish2() throws InterruptedException, ExecutionException, IOException {
+	public void testPublish2() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -68,7 +71,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 		SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo2");
 		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
 
-		PublishMessage pm = new PublishMessage("pubSubService.incomingPublish2", "testPublish2");
+		PublishMessage pm = new PublishMessage("pubSubService.incomingPublish2",
+				"testPublish2");
 		webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
 
 		EventMessage event = (EventMessage) result.getWampMessage();
@@ -78,7 +82,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testPublish3() throws InterruptedException, ExecutionException, IOException {
+	public void testPublish3() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -97,14 +102,19 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testPublish4() throws InterruptedException, ExecutionException, IOException {
-		MultiResultWebSocketHandler result = new MultiResultWebSocketHandler(3, jsonFactory);
+	public void testPublish4() throws InterruptedException, ExecutionException,
+			IOException {
+		MultiResultWebSocketHandler result = new MultiResultWebSocketHandler(3,
+				jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
 
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_1").toJson(jsonFactory)));
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_2").toJson(jsonFactory)));
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_3").toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_1")
+				.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_2")
+				.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_3")
+				.toJson(jsonFactory)));
 
 		PublishMessage pm = new PublishMessage("incomingPublish4", "testPublish4");
 		webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
@@ -121,7 +131,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testSubscribe1() throws InterruptedException, ExecutionException, IOException {
+	public void testSubscribe1() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -140,7 +151,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testSubscribe2() throws InterruptedException, ExecutionException, IOException {
+	public void testSubscribe2() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -158,7 +170,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testSubscribe3() throws InterruptedException, ExecutionException, IOException {
+	public void testSubscribe3() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -177,14 +190,19 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testSubscribe4() throws InterruptedException, ExecutionException, IOException {
-		MultiResultWebSocketHandler result = new MultiResultWebSocketHandler(3, jsonFactory);
+	public void testSubscribe4() throws InterruptedException, ExecutionException,
+			IOException {
+		MultiResultWebSocketHandler result = new MultiResultWebSocketHandler(3,
+				jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
 
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_1").toJson(jsonFactory)));
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_2").toJson(jsonFactory)));
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_3").toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_1")
+				.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_2")
+				.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_3")
+				.toJson(jsonFactory)));
 
 		SubscribeMessage subscribeMsg = new SubscribeMessage("incomingSub4");
 		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
@@ -201,7 +219,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testUnsubscribe1() throws InterruptedException, ExecutionException, IOException {
+	public void testUnsubscribe1() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -209,8 +228,10 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 		SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo1");
 		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
 
-		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage("pubSubService.incomingUnsubscribe1");
-		webSocketSession.sendMessage(new TextMessage(unsubscribeMessage.toJson(jsonFactory)));
+		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
+				"pubSubService.incomingUnsubscribe1");
+		webSocketSession.sendMessage(new TextMessage(unsubscribeMessage
+				.toJson(jsonFactory)));
 
 		EventMessage event = (EventMessage) result.getWampMessage();
 		assertThat(event.getTopicURI()).isEqualTo("replyTo1");
@@ -220,7 +241,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testUnsubscribe2() throws InterruptedException, ExecutionException, IOException {
+	public void testUnsubscribe2() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -228,8 +250,10 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 		SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo2");
 		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
 
-		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage("pubSubService.incomingUnsubscribe2");
-		webSocketSession.sendMessage(new TextMessage(unsubscribeMessage.toJson(jsonFactory)));
+		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
+				"pubSubService.incomingUnsubscribe2");
+		webSocketSession.sendMessage(new TextMessage(unsubscribeMessage
+				.toJson(jsonFactory)));
 
 		EventMessage event = (EventMessage) result.getWampMessage();
 		assertThat(event).isNull();
@@ -238,7 +262,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testUnsubscribe3() throws InterruptedException, ExecutionException, IOException {
+	public void testUnsubscribe3() throws InterruptedException, ExecutionException,
+			IOException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
@@ -247,7 +272,8 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
 
 		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage("incomingUnsub3");
-		webSocketSession.sendMessage(new TextMessage(unsubscribeMessage.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(unsubscribeMessage
+				.toJson(jsonFactory)));
 
 		EventMessage event = (EventMessage) result.getWampMessage();
 		assertThat(event.getTopicURI()).isEqualTo("replyTo3");
@@ -257,17 +283,23 @@ public class PubSubReplyAnnotationTest extends AbstractWebSocketIntegrationTests
 	}
 
 	@Test
-	public void testUnsubscribe4() throws InterruptedException, ExecutionException, IOException {
-		MultiResultWebSocketHandler result = new MultiResultWebSocketHandler(3, jsonFactory);
+	public void testUnsubscribe4() throws InterruptedException, ExecutionException,
+			IOException {
+		MultiResultWebSocketHandler result = new MultiResultWebSocketHandler(3,
+				jsonFactory);
 		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				getWsBaseUrl() + wampEndpointPath()).get();
 
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_1").toJson(jsonFactory)));
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_2").toJson(jsonFactory)));
-		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_3").toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_1")
+				.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_2")
+				.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(new SubscribeMessage("replyTo4_3")
+				.toJson(jsonFactory)));
 
 		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage("incomingUnsub4");
-		webSocketSession.sendMessage(new TextMessage(unsubscribeMessage.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(unsubscribeMessage
+				.toJson(jsonFactory)));
 
 		List<WampMessage> resultList = result.getWampMessages();
 

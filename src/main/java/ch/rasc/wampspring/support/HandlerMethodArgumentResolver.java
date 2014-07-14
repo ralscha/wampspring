@@ -20,17 +20,19 @@ import org.springframework.core.MethodParameter;
 import ch.rasc.wampspring.message.WampMessage;
 
 /**
- * Strategy interface for resolving method parameters into argument values in the context of a given {@link WampMessage}
- * .
+ * Strategy interface for resolving method parameters into argument values in the context
+ * of a given {@link WampMessage} .
  * <p>
  * Credit goes to the Spring class
- * {@link org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver} . This class is just a copy
- * where {@link org.springframework.messaging.Message} is replaced with {@link WampMessage}
+ * {@link org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver}
+ * . This class is just a copy where {@link org.springframework.messaging.Message} is
+ * replaced with {@link WampMessage}
  */
 public interface HandlerMethodArgumentResolver {
 
 	boolean supportsParameter(MethodParameter parameter);
 
-	Object resolveArgument(MethodParameter parameter, WampMessage message) throws Exception;
+	Object resolveArgument(MethodParameter parameter, WampMessage message)
+			throws Exception;
 
 }

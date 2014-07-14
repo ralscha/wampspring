@@ -40,34 +40,41 @@ public class BaseMessageTest {
 			if (argument != null) {
 				if (argument instanceof Number) {
 					sb.append(argument);
-				} else if (argument instanceof Boolean) {
+				}
+				else if (argument instanceof Boolean) {
 					sb.append(argument);
-				} else if (argument instanceof String) {
+				}
+				else if (argument instanceof String) {
 					sb.append("\"").append(argument).append("\"");
-				} else if (argument instanceof List) {
+				}
+				else if (argument instanceof List) {
 					sb.append("[");
 					boolean first = true;
 					for (Object entry : (List) argument) {
 						if (!first) {
 							sb.append(",");
-						} else {
+						}
+						else {
 							first = false;
 						}
 						if (entry instanceof String) {
 							sb.append("\"").append(entry).append("\"");
-						} else {
+						}
+						else {
 							sb.append(entry);
 						}
 					}
 					sb.append("]");
-				} else if (argument instanceof Map) {
+				}
+				else if (argument instanceof Map) {
 					Map<String, Object> map = (Map<String, Object>) argument;
 					sb.append("{");
 					boolean first = true;
 					for (String key : map.keySet()) {
 						if (!first) {
 							sb.append(",");
-						} else {
+						}
+						else {
 							first = false;
 						}
 						sb.append("\"").append(key).append("\"");
@@ -75,13 +82,15 @@ public class BaseMessageTest {
 						Object value = map.get(key);
 						if (value instanceof String) {
 							sb.append("\"").append(value).append("\"");
-						} else {
+						}
+						else {
 							sb.append(value);
 						}
 					}
 					sb.append("}");
 				}
-			} else {
+			}
+			else {
 				sb.append("null");
 			}
 		}

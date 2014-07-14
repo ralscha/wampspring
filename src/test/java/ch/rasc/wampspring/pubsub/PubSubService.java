@@ -49,7 +49,8 @@ public class PubSubService {
 	@WampPublishListener
 	public void dto(TestDto testDto) {
 		assertThat(testDto.getName()).isEqualTo("Hello PubSub");
-		eventMessenger.sendToAll("pubSubService.dto.result", "Server says: " + testDto.getName());
+		eventMessenger.sendToAll("pubSubService.dto.result",
+				"Server says: " + testDto.getName());
 	}
 
 	@WampPublishListener(replyTo = "replyTo1")
@@ -62,12 +63,14 @@ public class PubSubService {
 		return "return2:" + incoming;
 	}
 
-	@WampPublishListener(value = "incomingPublish3", replyTo = "replyTo3", excludeSender = false)
+	@WampPublishListener(value = "incomingPublish3", replyTo = "replyTo3",
+			excludeSender = false)
 	public String incomingPublish3(String incoming) {
 		return "return3:" + incoming;
 	}
 
-	@WampPublishListener(value = "incomingPublish4", replyTo = { "replyTo4_1", "replyTo4_2", "replyTo4_3" })
+	@WampPublishListener(value = "incomingPublish4", replyTo = { "replyTo4_1",
+			"replyTo4_2", "replyTo4_3" })
 	public String incomingPublish4(String incoming) {
 		return "return4:" + incoming;
 	}
@@ -82,12 +85,14 @@ public class PubSubService {
 		return "returnSub2";
 	}
 
-	@WampSubscribeListener(value = "incomingSub3", replyTo = "replyTo3", excludeSender = false)
+	@WampSubscribeListener(value = "incomingSub3", replyTo = "replyTo3",
+			excludeSender = false)
 	public String incomingSubscribe3() {
 		return "returnSub3";
 	}
 
-	@WampSubscribeListener(value = "incomingSub4", replyTo = { "replyTo4_1", "replyTo4_2", "replyTo4_3" })
+	@WampSubscribeListener(value = "incomingSub4", replyTo = { "replyTo4_1",
+			"replyTo4_2", "replyTo4_3" })
 	public String incomingSubscribe4() {
 		return "returnSub4";
 	}
@@ -102,12 +107,14 @@ public class PubSubService {
 		return "returnUnsub2";
 	}
 
-	@WampUnsubscribeListener(value = "incomingUnsub3", replyTo = "replyTo3", excludeSender = false)
+	@WampUnsubscribeListener(value = "incomingUnsub3", replyTo = "replyTo3",
+			excludeSender = false)
 	public String incomingUnsubscribe3() {
 		return "returnUnsub3";
 	}
 
-	@WampUnsubscribeListener(value = "incomingUnsub4", replyTo = { "replyTo4_1", "replyTo4_2", "replyTo4_3" })
+	@WampUnsubscribeListener(value = "incomingUnsub4", replyTo = { "replyTo4_1",
+			"replyTo4_2", "replyTo4_3" })
 	public String incomingUnsubscribe4() {
 		return "returnUnsub4";
 	}

@@ -30,7 +30,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 /**
  * Tomcat based {@link WebSocketTestServer}.
- * 
+ *
  * @author Rossen Stoyanchev
  */
 public class TomcatWebSocketTestServer implements WebSocketTestServer {
@@ -68,7 +68,8 @@ public class TomcatWebSocketTestServer implements WebSocketTestServer {
 			tempFolder.mkdir();
 			tempFolder.deleteOnExit();
 			return tempFolder;
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			throw new RuntimeException("Unable to create temp directory", ex);
 		}
 	}
@@ -80,7 +81,8 @@ public class TomcatWebSocketTestServer implements WebSocketTestServer {
 
 	@Override
 	public void deployConfig(WebApplicationContext wac) {
-		this.context = this.tomcatServer.addContext("", System.getProperty("java.io.tmpdir"));
+		this.context = this.tomcatServer.addContext("",
+				System.getProperty("java.io.tmpdir"));
 		this.context.addApplicationListener(WS_APPLICATION_LISTENER);
 		Tomcat.addServlet(context, "dispatcherServlet", new DispatcherServlet(wac));
 		this.context.addServletMapping("/", "dispatcherServlet");

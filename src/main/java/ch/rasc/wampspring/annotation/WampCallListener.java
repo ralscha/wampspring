@@ -26,13 +26,14 @@ import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 
 /**
- * Annotation that denotes a method that is called when the server receives a {@link CallMessage} and the procURI
- * matches one of the listed values of the annotation.
- * 
+ * Annotation that denotes a method that is called when the server receives a
+ * {@link CallMessage} and the procURI matches one of the listed values of the annotation.
+ *
  * If no procURI is provided the method is accessible by the procURI 'beanName.methodName'
- * 
- * In the following example the method can be called by sending a CallMessage with the procURI 'myService.doSomething'
- * 
+ *
+ * In the following example the method can be called by sending a CallMessage with the
+ * procURI 'myService.doSomething'
+ *
  * <pre class="code">
  * &#064;Service
  * public class MyService {
@@ -43,10 +44,10 @@ import ch.rasc.wampspring.message.CallResultMessage;
  * 	}
  * }
  * </pre>
- * 
- * The return value of such annotated method (if any) will be sent back to the calling client with a
- * {@link CallResultMessage} or {@link CallErrorMessage}.
- * 
+ *
+ * The return value of such annotated method (if any) will be sent back to the calling
+ * client with a {@link CallResultMessage} or {@link CallErrorMessage}.
+ *
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

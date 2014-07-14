@@ -45,7 +45,8 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 	}
 
 	@Override
-	public Object handleAuthReq(String authKey, Map<String, Object> extra, CallMessage message) {
+	public Object handleAuthReq(String authKey, Map<String, Object> extra,
+			CallMessage message) {
 		WampSession wampSession = message.getWampSession();
 		if (wampSession.isAuthRequested()) {
 			throw new IllegalStateException("Already authenticated");
@@ -56,12 +57,13 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 		}
 
 		try {
-			final String challenge = generateHMacSHA256(message.getWebSocketSessionId() + System.currentTimeMillis(),
-					authKey);
+			final String challenge = generateHMacSHA256(message.getWebSocketSessionId()
+					+ System.currentTimeMillis(), authKey);
 			wampSession.setAuthKey(authKey);
 			wampSession.setChallenge(challenge);
 			return challenge;
-		} catch (InvalidKeyException | NoSuchAlgorithmException e) {
+		}
+		catch (InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new IllegalStateException("invalid key", e);
 		}
 	}
@@ -75,12 +77,14 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 
 		final String correctSignature;
 		try {
-			final String secret = authenticationSecretProvider.getSecret(wampSession.getAuthKey());
+			final String secret = authenticationSecretProvider.getSecret(wampSession
+					.getAuthKey());
 			if (!StringUtils.hasText(secret)) {
 				throw new IllegalStateException("Secret does not exist");
 			}
 			correctSignature = generateHMacSHA256(secret, wampSession.getChallenge());
-		} catch (InvalidKeyException | NoSuchAlgorithmException e) {
+		}
+		catch (InvalidKeyException | NoSuchAlgorithmException e) {
 			throw new IllegalStateException("invalid key", e);
 		}
 
@@ -95,8 +99,8 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 		throw new SecurityException("Signature for authentication request is invalid");
 	}
 
-	private static String generateHMacSHA256(final String key, final String data) throws InvalidKeyException,
-			NoSuchAlgorithmException {
+	private static String generateHMacSHA256(final String key, final String data)
+			throws InvalidKeyException, NoSuchAlgorithmException {
 		Assert.notNull(key, "key is required");
 		Assert.notNull(data, "data is required");
 

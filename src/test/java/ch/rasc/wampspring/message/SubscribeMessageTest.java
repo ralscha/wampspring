@@ -25,10 +25,13 @@ public class SubscribeMessageTest extends BaseMessageTest {
 
 	@Test
 	public void serializationTest() throws IOException {
-		SubscribeMessage subscribeMessage = new SubscribeMessage("http://example.com/simple");
+		SubscribeMessage subscribeMessage = new SubscribeMessage(
+				"http://example.com/simple");
 
 		String json = subscribeMessage.toJson(jsonFactory);
-		assertThat(json).isEqualTo(toJsonArray(WampMessageType.SUBSCRIBE.getTypeId(), "http://example.com/simple"));
+		assertThat(json).isEqualTo(
+				toJsonArray(WampMessageType.SUBSCRIBE.getTypeId(),
+						"http://example.com/simple"));
 	}
 
 	@Test

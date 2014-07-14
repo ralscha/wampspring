@@ -19,7 +19,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Contract for a test server to use for WebSocket integration tests.
- * 
+ *
  * @author Rossen Stoyanchev
  */
 public interface WebSocketTestServer {

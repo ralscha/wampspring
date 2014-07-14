@@ -24,11 +24,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * A client requests access to a valid topicURI to receive events published to the given topicURI.
- * 
+ * A client requests access to a valid topicURI to receive events published to the given
+ * topicURI.
+ *
  * <p>
  * Auxiliary Messages
- * 
+ *
  * @see <a href="http://wamp.ws/spec/#prefix_message">WAMP specification</a>
  */
 public class PrefixMessage extends WampMessage {
@@ -78,7 +79,8 @@ public class PrefixMessage extends WampMessage {
 
 	@Override
 	public String toJson(JsonFactory jsonFactory) throws IOException {
-		try (StringWriter sw = new StringWriter(); JsonGenerator jg = jsonFactory.createGenerator(sw)) {
+		try (StringWriter sw = new StringWriter();
+				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
 			jg.writeString(prefix);
