@@ -73,8 +73,6 @@ public interface WampConfigurer {
 	 * Configures an implementation of the {@link AuthenticationHandler} interface. If not
 	 * configured the library creates and uses an instance of the class
 	 * {@link DefaultAuthenticationHandler}.
-	 *
-	 * @param authenticationSecretProvider
 	 */
 	AuthenticationHandler authenticationHandler();
 
