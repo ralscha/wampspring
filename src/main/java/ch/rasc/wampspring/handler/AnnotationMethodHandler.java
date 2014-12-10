@@ -350,4 +350,8 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		return null;
 	}
 
+	List<WampHandlerMethod> getCallHandlerMethod(CallMessage callMessage) {
+		return this.getHandlerMethod(callMessage.getProcURI(), this.callMethods);
+	}
+
 }

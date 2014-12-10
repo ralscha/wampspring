@@ -27,6 +27,8 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import ch.rasc.wampspring.cra.AuthenticationHandler;
+import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.PrefixMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.message.WampMessage;
@@ -87,6 +89,26 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 
 		WampSession wampSession = getOrCreateWampSession(session);
 		message.addHeader(WampMessageHeader.WAMP_SESSION, wampSession);
+
+		// Start authentication check
+		if (!wampSession.isAuthenticated()) {
+			if (message instanceof CallMessage) {
+				List<WampHandlerMethod> matches = this.annotationMethodHandler
+						.getCallHandlerMethod((CallMessage) message);
+
+				boolean isAuthMethod = false;
+				for (WampHandlerMethod match : matches) {
+					if (match.getBean() instanceof AuthenticationHandler) {
+						isAuthMethod = true;
+					}
+				}
+
+				if (!isAuthMethod) {
+					throw new SecurityException("Not authenticated");
+				}
+			}
+		}
+		// End authentication check
 
 		if (message instanceof PrefixMessage) {
 			PrefixMessage prefixMessage = (PrefixMessage) message;
