@@ -91,22 +91,11 @@ public class WampWebsocketHandler implements WebSocketHandler, SubProtocolCapabl
 		message.addHeader(WampMessageHeader.WAMP_SESSION, wampSession);
 
 		// Start authentication check
-		if (!wampSession.isAuthenticated()) {
-			if (message instanceof CallMessage) {
-				List<WampHandlerMethod> matches = this.annotationMethodHandler
-						.getCallHandlerMethod((CallMessage) message);
-
-				boolean isAuthMethod = false;
-				for (WampHandlerMethod match : matches) {
-					if (match.getBean() instanceof AuthenticationHandler) {
-						isAuthMethod = true;
-					}
-				}
-
-				if (!isAuthMethod) {
-					throw new SecurityException("Not authenticated");
-				}
-			}
+		if (!wampSession.isAuthenticated()
+				&& message instanceof CallMessage
+				&& annotationMethodHandler
+						.isAuthenticationRequired((CallMessage) message)) {
+			throw new SecurityException("Not authenticated");
 		}
 		// End authentication check
 

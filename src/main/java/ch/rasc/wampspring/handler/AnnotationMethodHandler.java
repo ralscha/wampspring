@@ -39,6 +39,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.HandlerMethodSelector;
 
+import ch.rasc.wampspring.annotation.Authenticated;
 import ch.rasc.wampspring.annotation.WampCallListener;
 import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.annotation.WampSubscribeListener;
@@ -163,8 +164,13 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 					"excludeSender");
 
 			Object bean = applicationContext.getBean(beanName);
+
+			boolean authenticationRequired = AnnotationUtils.findAnnotation(
+					bean.getClass(), Authenticated.class) != null
+					|| AnnotationUtils.findAnnotation(method, Authenticated.class) != null;
+
 			WampHandlerMethod newHandlerMethod = new WampHandlerMethod(bean, method,
-					replyTo, excludeSender);
+					replyTo, excludeSender, authenticationRequired);
 			if (destinations.length > 0) {
 				for (String destination : destinations) {
 					handlerMethods.add(destination, newHandlerMethod);
@@ -350,8 +356,17 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 		return null;
 	}
 
-	List<WampHandlerMethod> getCallHandlerMethod(CallMessage callMessage) {
-		return this.getHandlerMethod(callMessage.getProcURI(), this.callMethods);
+	boolean isAuthenticationRequired(CallMessage callMessage) {
+
+		List<WampHandlerMethod> methods = getHandlerMethod(callMessage.getProcURI(),
+				this.callMethods);
+		for (WampHandlerMethod method : methods) {
+			if (method.isAuthenticationRequired()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }
