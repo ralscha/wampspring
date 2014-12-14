@@ -22,11 +22,12 @@ import ch.rasc.wampspring.message.CallMessage;
 
 public interface AuthenticationHandler {
 
-	@WampCallListener("http://api.wamp.ws/procedure#authreq")
+	@WampCallListener(value = "http://api.wamp.ws/procedure#authreq",
+			authenticated = false)
 	public Object handleAuthReq(String authKey, Map<String, Object> extra,
 			CallMessage message);
 
-	@WampCallListener("http://api.wamp.ws/procedure#auth")
+	@WampCallListener(value = "http://api.wamp.ws/procedure#auth", authenticated = false)
 	public Object handleAuth(String clientSignature, CallMessage message);
 
 }
