@@ -112,7 +112,8 @@ class DelegatingWampConfiguration implements WebSocketConfigurer {
 	@Bean
 	public AnnotationMethodHandler annotationMethodHandler() {
 		return new AnnotationMethodHandler(wampMessageSender(), pubSubHandler(),
-				configurer.objectMapper(), configurer.conversionService());
+				configurer.objectMapper(), configurer.conversionService(),
+				configurer.authenticationRequired());
 	}
 
 	@Bean

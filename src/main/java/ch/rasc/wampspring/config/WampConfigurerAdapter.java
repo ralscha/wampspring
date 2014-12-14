@@ -72,4 +72,9 @@ public class WampConfigurerAdapter implements WampConfigurer {
 		return new DefaultAuthenticationHandler();
 	}
 
+	@Override
+	public boolean authenticationRequired() {
+		return false;
+	}
+
 }

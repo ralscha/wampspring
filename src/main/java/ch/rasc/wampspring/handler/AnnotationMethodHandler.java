@@ -39,7 +39,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.HandlerMethodSelector;
 
-import ch.rasc.wampspring.annotation.Authenticated;
+import ch.rasc.wampspring.annotation.WampAuthenticated;
 import ch.rasc.wampspring.annotation.WampCallListener;
 import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.annotation.WampSubscribeListener;
@@ -94,13 +94,16 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 
 	private final ConversionService conversionService;
 
+	private final boolean authenticationRequiredGlobal;
+
 	public AnnotationMethodHandler(WampMessageSender wampMessageSender,
 			PubSubHandler pubSubHandler, ObjectMapper objectMapper,
-			ConversionService conversionService) {
+			ConversionService conversionService, boolean authenticationRequiredGlobal) {
 		this.wampMessageSender = wampMessageSender;
 		this.pubSubHandler = pubSubHandler;
 		this.objectMapper = objectMapper;
 		this.conversionService = conversionService;
+		this.authenticationRequiredGlobal = authenticationRequiredGlobal;
 	}
 
 	public void setCustomArgumentResolvers(
@@ -165,9 +168,19 @@ public class AnnotationMethodHandler implements ApplicationContextAware, Initial
 
 			Object bean = applicationContext.getBean(beanName);
 
-			boolean authenticationRequired = AnnotationUtils.findAnnotation(
-					bean.getClass(), Authenticated.class) != null
-					|| AnnotationUtils.findAnnotation(method, Authenticated.class) != null;
+			boolean authenticationRequiredClass = AnnotationUtils.findAnnotation(
+					bean.getClass(), WampAuthenticated.class) != null;
+			boolean[] authenticationRequiredMethod = (boolean[]) AnnotationUtils
+					.getValue(annotation, "authenticated");
+
+			boolean authenticationRequired = false;
+			if (authenticationRequiredMethod != null
+					&& authenticationRequiredMethod.length == 1) {
+				authenticationRequired = authenticationRequiredMethod[0];
+			}
+			else if (authenticationRequiredClass || authenticationRequiredGlobal) {
+				authenticationRequired = true;
+			}
 
 			WampHandlerMethod newHandlerMethod = new WampHandlerMethod(bean, method,
 					replyTo, excludeSender, authenticationRequired);

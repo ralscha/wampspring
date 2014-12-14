@@ -20,6 +20,10 @@ import java.util.concurrent.Executor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
 
+import ch.rasc.wampspring.annotation.WampCallListener;
+import ch.rasc.wampspring.annotation.WampPublishListener;
+import ch.rasc.wampspring.annotation.WampSubscribeListener;
+import ch.rasc.wampspring.annotation.WampUnsubscribeListener;
 import ch.rasc.wampspring.cra.AuthenticationHandler;
 import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
 import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
@@ -76,4 +80,11 @@ public interface WampConfigurer {
 	 */
 	AuthenticationHandler authenticationHandler();
 
+	/**
+	 * When this method returns true, all calls to a wamp server endpoint (methods
+	 * annotated with {@link WampCallListener}, {@link WampPublishListener},
+	 * {@link WampSubscribeListener} or {@link WampUnsubscribeListener}) have to be
+	 * authenticated.
+	 */
+	boolean authenticationRequired();
 }
