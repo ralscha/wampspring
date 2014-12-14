@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
-import org.apache.catalina.deploy.ApplicationListener;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.tomcat.websocket.server.WsContextListener;
@@ -34,9 +33,6 @@ import org.springframework.web.servlet.DispatcherServlet;
  * @author Rossen Stoyanchev
  */
 public class TomcatWebSocketTestServer implements WebSocketTestServer {
-
-	private static final ApplicationListener WS_APPLICATION_LISTENER = new ApplicationListener(
-			WsContextListener.class.getName(), false);
 
 	private final Tomcat tomcatServer;
 
@@ -83,7 +79,7 @@ public class TomcatWebSocketTestServer implements WebSocketTestServer {
 	public void deployConfig(WebApplicationContext wac) {
 		this.context = this.tomcatServer.addContext("",
 				System.getProperty("java.io.tmpdir"));
-		this.context.addApplicationListener(WS_APPLICATION_LISTENER);
+		this.context.addApplicationListener(WsContextListener.class.getName());
 		Tomcat.addServlet(context, "dispatcherServlet", new DispatcherServlet(wac));
 		this.context.addServletMapping("/", "dispatcherServlet");
 	}
