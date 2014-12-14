@@ -292,6 +292,7 @@
 						<exclude>**/*.py</exclude>
 						<exclude>**/*.yml</exclude>
 						<exclude>**/.gitignore</exclude>
+						<exclude>LICENSE</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>
