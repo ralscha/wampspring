@@ -27,7 +27,6 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import ch.rasc.wampspring.cra.AuthenticationHandler;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.PrefixMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;

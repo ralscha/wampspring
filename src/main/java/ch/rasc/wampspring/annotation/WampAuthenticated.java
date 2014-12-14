@@ -22,9 +22,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import ch.rasc.wampspring.config.WampConfigurer;
-import ch.rasc.wampspring.message.CallErrorMessage;
-import ch.rasc.wampspring.message.CallMessage;
-import ch.rasc.wampspring.message.CallResultMessage;
 
 /**
  * Class level annotation.
