@@ -99,7 +99,7 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 		throw new SecurityException("Signature for authentication request is invalid");
 	}
 
-	private static String generateHMacSHA256(final String key, final String data)
+	public static String generateHMacSHA256(final String key, final String data)
 			throws InvalidKeyException, NoSuchAlgorithmException {
 		Assert.notNull(key, "key is required");
 		Assert.notNull(data, "data is required");
