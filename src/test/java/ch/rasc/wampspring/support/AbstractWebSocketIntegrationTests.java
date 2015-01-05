@@ -30,7 +30,12 @@
 
 package ch.rasc.wampspring.support;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.logging.Log;
@@ -50,6 +55,9 @@ import org.springframework.web.socket.server.RequestUpgradeStrategy;
 import org.springframework.web.socket.server.standard.TomcatRequestUpgradeStrategy;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
+import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
+import ch.rasc.wampspring.message.CallMessage;
+import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -114,6 +122,40 @@ public abstract class AbstractWebSocketIntegrationTests {
 		}
 	}
 
+	protected void authenticate(ResultWebSocketHandler result,
+			WebSocketSession webSocketSession) throws IOException, InterruptedException,
+			InvalidKeyException, NoSuchAlgorithmException {
+		CallMessage authReqCallMessage = new CallMessage("1",
+				"http://api.wamp.ws/procedure#authreq", "a", Collections.emptyMap());
+		webSocketSession.sendMessage(new TextMessage(authReqCallMessage
+				.toJson(jsonFactory)));
+		WampMessage response = result.getWampMessage();
+
+		assertThat(response).isInstanceOf(CallResultMessage.class);
+		CallResultMessage resultMessage = (CallResultMessage) response;
+		assertThat(resultMessage.getCallID()).isEqualTo("1");
+		assertThat(resultMessage.getResult()).isNotNull();
+
+		result.reset();
+
+		String challengeBase64 = (String) resultMessage.getResult();
+		String signature = DefaultAuthenticationHandler.generateHMacSHA256("secretofa",
+				challengeBase64);
+
+		CallMessage authCallMessage = new CallMessage("2",
+				"http://api.wamp.ws/procedure#auth", signature);
+		webSocketSession
+				.sendMessage(new TextMessage(authCallMessage.toJson(jsonFactory)));
+		response = result.getWampMessage();
+
+		assertThat(response).isInstanceOf(CallResultMessage.class);
+		resultMessage = (CallResultMessage) response;
+		assertThat(resultMessage.getCallID()).isEqualTo("2");
+		assertThat(resultMessage.getResult()).isNull();
+
+		result.reset();
+	}
+
 	protected String getWsBaseUrl() {
 		return "ws://localhost:" + this.server.getPort();
 	}
@@ -147,10 +189,10 @@ public abstract class AbstractWebSocketIntegrationTests {
 	protected void runInWebSocketSession(
 			AbstractTestWebSocketHandler callClientWebSocketHandler)
 			throws InterruptedException, ExecutionException, IOException {
-		WebSocketSession webSocketSession = this.webSocketClient.doHandshake(
-				callClientWebSocketHandler, getWsBaseUrl() + wampEndpointPath()).get();
-		callClientWebSocketHandler.waitForConversationEnd();
-		webSocketSession.close();
+		try (WebSocketSession webSocketSession = this.webSocketClient.doHandshake(
+				callClientWebSocketHandler, getWsBaseUrl() + wampEndpointPath()).get()) {
+			callClientWebSocketHandler.waitForConversationEnd();
+		}
 	}
 
 	protected WebSocketSession startWebSocketSession(
@@ -168,13 +210,26 @@ public abstract class AbstractWebSocketIntegrationTests {
 			InterruptedException, ExecutionException {
 		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
 
-		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
-				getWsBaseUrl() + wampEndpointPath()).get();
-		webSocketSession.sendMessage(new TextMessage(msg.toJson(jsonFactory)));
+		try (WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
+				getWsBaseUrl() + wampEndpointPath()).get()) {
+			webSocketSession.sendMessage(new TextMessage(msg.toJson(jsonFactory)));
+			WampMessage response = result.getWampMessage();
+			return response;
+		}
+	}
 
-		WampMessage receivedMessage = result.getWampMessage();
-		webSocketSession.close();
-		return receivedMessage;
+	protected WampMessage sendAuthenticatedMessage(WampMessage msg) throws Exception {
+		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
+
+		try (WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
+				getWsBaseUrl() + wampEndpointPath()).get()) {
+
+			authenticate(result, webSocketSession);
+
+			webSocketSession.sendMessage(new TextMessage(msg.toJson(jsonFactory)));
+			WampMessage response = result.getWampMessage();
+			return response;
+		}
 	}
 
 }

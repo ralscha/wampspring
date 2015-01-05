@@ -17,11 +17,15 @@ package ch.rasc.wampspring.cra;
 
 import ch.rasc.wampspring.annotation.WampCallListener;
 
-public class AuthenticatedService {
+public class AuthenticatedMethodService {
 
-	@WampCallListener
+	@WampCallListener(authenticated = true)
 	public Integer sum(Integer a, Integer b) {
 		return a + b;
 	}
 
+	@WampCallListener(authenticated = false)
+	public Integer subtract(Integer a, Integer b) {
+		return a - b;
+	}
 }

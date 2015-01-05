@@ -35,7 +35,7 @@ import ch.rasc.wampspring.config.WampConfigurer;
  *
  * This annotation is ignored when authentication is globally enabled (
  * {@link WampConfigurer#authenticationRequired()})
- * 
+ *
  * @see WampCallListener#authenticated()
  * @see WampPublishListener#authenticated()
  * @see WampSubscribeListener#authenticated()
