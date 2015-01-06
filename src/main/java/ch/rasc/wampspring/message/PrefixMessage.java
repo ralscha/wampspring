@@ -39,7 +39,6 @@ public class PrefixMessage extends WampMessage {
 	private final String uri;
 
 	/**
-	 * @param type
 	 * @param prefix
 	 * @param uri
 	 */

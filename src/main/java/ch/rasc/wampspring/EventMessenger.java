@@ -69,7 +69,7 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the message
-	 * @param excludeSessionIds a set of session ids that will be excluded
+	 * @param excludeSessionId a session id that will be excluded
 	 */
 	public void sendToAllExcept(String topicURI, Object event, String excludeSessionId) {
 		pubSubHandler.sendToAllExcept(new EventMessage(topicURI, event),
