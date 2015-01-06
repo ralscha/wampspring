@@ -16,5 +16,5 @@
 package ch.rasc.wampspring.cra;
 
 public interface AuthenticationSecretProvider {
-	public String getSecret(final String authKey);
+	String getSecret(final String authKey);
 }
