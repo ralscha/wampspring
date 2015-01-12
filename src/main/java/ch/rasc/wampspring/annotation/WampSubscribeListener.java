@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import ch.rasc.wampspring.config.WampConfigurer;
+import ch.rasc.wampspring.config.DefaultWampConfiguration;
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 
@@ -69,14 +69,14 @@ public @interface WampSubscribeListener {
 
 	/**
 	 * Exclude the sender of the {@link SubscribeMessage} from the replyTo receivers. This
-	 * attribut will be ignored if no {@link EventMessage} is created.
+	 * attribute will be ignored if no {@link EventMessage} is created.
 	 */
 	boolean excludeSender() default false;
 
 	/**
 	 * If true a call to this annotated method has to be authenticated. If false no
 	 * authentication is required. Takes precedence over {@link WampAuthenticated} and the
-	 * global setting {@link WampConfigurer#authenticationRequired()}
+	 * global setting {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
 	boolean[] authenticated() default {};
 }

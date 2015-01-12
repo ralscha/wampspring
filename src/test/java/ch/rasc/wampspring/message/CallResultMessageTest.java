@@ -28,14 +28,15 @@ public class CallResultMessageTest extends BaseMessageTest {
 
 	@Test
 	public void serializationTest() throws IOException {
-		CallResultMessage callResultMessage = new CallResultMessage("CcDnuI2bl2oLGBzO",
+		CallMessage callMessage = new CallMessage("CcDnuI2bl2oLGBzO", "testProcURI");
+		CallResultMessage callResultMessage = new CallResultMessage(callMessage,
 				"Hello, I am a simple event.");
 		String json = callResultMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
 						"Hello, I am a simple event."));
 
-		callResultMessage = new CallResultMessage("CcDnuI2bl2oLGBzO", null);
+		callResultMessage = new CallResultMessage(callMessage, null);
 		json = callResultMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
@@ -47,8 +48,8 @@ public class CallResultMessageTest extends BaseMessageTest {
 		eventObject.put("value1", 23);
 		eventObject.put("modified", "2012-03-29T10:29:16.625Z");
 
-		CallResultMessage mapCallResultMessage = new CallResultMessage(
-				"CcDnuI2bl2oLGBzO", eventObject);
+		CallResultMessage mapCallResultMessage = new CallResultMessage(callMessage,
+				eventObject);
 		json = mapCallResultMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
@@ -85,5 +86,13 @@ public class CallResultMessageTest extends BaseMessageTest {
 				MapEntry.entry("value3", Boolean.TRUE),
 				MapEntry.entry("value2", "singsing"), MapEntry.entry("value1", 23),
 				MapEntry.entry("modified", "2012-03-29T10:29:16.625Z"));
+	}
+
+	@Test
+	public void copyConstructorTest() {
+		CallMessage callMessage = new CallMessage("1", "procURI");
+		CallResultMessage result = new CallResultMessage(callMessage, "response");
+		assertThat(result.getCallID()).isEqualTo("1");
+		assertThat(result.getResult()).isEqualTo("response");
 	}
 }

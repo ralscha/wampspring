@@ -20,12 +20,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -34,20 +32,18 @@ import ch.rasc.wampspring.message.CallMessage;
 
 public class DefaultAuthenticationHandler implements AuthenticationHandler {
 
-	@Autowired
-	private AuthenticationSecretProvider authenticationSecretProvider = null;
+	private final AuthenticationSecretProvider authenticationSecretProvider;
 
-	@PostConstruct
-	void postConstruct() {
-		if (authenticationSecretProvider == null) {
-			authenticationSecretProvider = new NoOpAuthenticationSecretProvider();
-		}
+	public DefaultAuthenticationHandler(AuthenticationSecretProvider provider) {
+		authenticationSecretProvider = provider;
 	}
 
 	@Override
 	public Object handleAuthReq(String authKey, Map<String, Object> extra,
 			CallMessage message) {
+
 		WampSession wampSession = message.getWampSession();
+
 		if (wampSession.isAuthRequested()) {
 			throw new IllegalStateException("Already authenticated");
 		}
@@ -57,8 +53,8 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 		}
 
 		try {
-			final String challenge = generateHMacSHA256(message.getWebSocketSessionId()
-					+ System.currentTimeMillis(), authKey);
+			final String challenge = generateHMacSHA256(
+					message.getSessionId() + System.currentTimeMillis(), authKey);
 			wampSession.setAuthKey(authKey);
 			wampSession.setChallenge(challenge);
 			return challenge;
@@ -71,6 +67,7 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 	@Override
 	public Object handleAuth(String clientSignature, CallMessage message) {
 		WampSession wampSession = message.getWampSession();
+
 		if (!wampSession.isAuthRequested()) {
 			throw new IllegalStateException("No authentication previously requested");
 		}
@@ -113,4 +110,5 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 
 		return DatatypeConverter.printBase64Binary(res);
 	}
+
 }

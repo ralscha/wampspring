@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import ch.rasc.wampspring.config.WampConfigurer;
+import ch.rasc.wampspring.config.DefaultWampConfiguration;
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 
@@ -64,20 +64,21 @@ public @interface WampPublishListener {
 
 	/**
 	 * Send the return value with an {@link EventMessage} to the listed topicURI(s). No
-	 * {@link EventMessage} will be created when the method returns nothing (void) or null
+	 * {@link EventMessage} will be created when the attribute is set to null or an empty
+	 * array.
 	 */
 	String[] replyTo() default {};
 
 	/**
 	 * Exclude the sender of the {@link PublishMessage} from the replyTo receivers. This
-	 * attribut will be ignored if no {@link EventMessage} is created.
+	 * attribute will be ignored if no {@link EventMessage} is created.
 	 */
 	boolean excludeSender() default false;
 
 	/**
 	 * If true a call to this annotated method has to be authenticated. If false no
 	 * authentication is required. Takes precedence over {@link WampAuthenticated} and the
-	 * global setting {@link WampConfigurer#authenticationRequired()}
+	 * global setting {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
 	boolean[] authenticated() default {};
 }

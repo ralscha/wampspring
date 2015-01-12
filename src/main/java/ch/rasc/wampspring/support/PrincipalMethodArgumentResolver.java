@@ -18,17 +18,18 @@ package ch.rasc.wampspring.support;
 import java.security.Principal;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
+import org.springframework.messaging.simp.annotation.support.MissingSessionUserException;
 
 import ch.rasc.wampspring.message.WampMessage;
-import ch.rasc.wampspring.message.WampMessageHeader;
 
 /**
  * Argument resolver that handles parameters of type {@link Principal}
  * <p>
  * Credit goes to the Spring class
  * {@link org.springframework.messaging.simp.annotation.support.PrincipalMethodArgumentResolver}
- * . This class is just a copy where the resolveArgument parameter is changed to
- * {@link WampMessage}
+ * . This class expects a {@link WampMessage} and access the header differently.
  */
 public class PrincipalMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -39,9 +40,13 @@ public class PrincipalMethodArgumentResolver implements HandlerMethodArgumentRes
 	}
 
 	@Override
-	public Object resolveArgument(MethodParameter parameter, WampMessage message)
+	public Object resolveArgument(MethodParameter parameter, Message<?> message)
 			throws Exception {
-		return message.getHeader(WampMessageHeader.PRINCIPAL);
+		Principal user = ((WampMessage) message).getPrincipal();
+		if (user == null) {
+			throw new MissingSessionUserException(message);
+		}
+		return user;
 	}
 
 }

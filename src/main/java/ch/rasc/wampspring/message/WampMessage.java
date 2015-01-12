@@ -19,7 +19,12 @@ package ch.rasc.wampspring.message;
  * Base class of the WampMessages
  */
 import java.io.IOException;
-import java.util.EnumMap;
+import java.security.Principal;
+import java.util.Map;
+
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.web.socket.WebSocketSession;
 
 import ch.rasc.wampspring.handler.WampSession;
 
@@ -27,53 +32,113 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public abstract class WampMessage {
-	private final WampMessageType type;
+public abstract class WampMessage implements Message<Object> {
 
-	private EnumMap<WampMessageHeader, Object> headers;
+	private final static Object EMPTY_OBJECT = new Object();
+
+	private final static String WAMP_SESSION_HEADER_NAME = "wamp_session";
+
+	private final MutableMessageHeaders messageHeaders = new MutableMessageHeaders();
 
 	WampMessage(WampMessageType type) {
-		this.type = type;
+		setHeader(WampMessageHeader.WAMP_MESSAGE_TYPE, type);
 	}
 
 	int getTypeId() {
-		return type.getTypeId();
+		return getType().getTypeId();
 	}
 
 	public WampMessageType getType() {
-		return type;
+		return getHeader(WampMessageHeader.WAMP_MESSAGE_TYPE);
 	}
 
-	public void addHeader(WampMessageHeader header, Object value) {
-		if (headers == null) {
-			headers = new EnumMap<>(WampMessageHeader.class);
-		}
-		headers.put(header, value);
+	public void setHeader(WampMessageHeader header, Object value) {
+		messageHeaders.getRawHeaders().put(header.name(), value);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getHeader(WampMessageHeader header) {
-		if (headers == null) {
-			return null;
-		}
-		return (T) headers.get(header);
+		return (T) messageHeaders.get(header.name());
 	}
 
 	/**
 	 * Convenient method to retrieve the WebSocket session id.
 	 */
-	public String getWebSocketSessionId() {
+	public String getSessionId() {
 		return getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
 	}
 
+	public void setSessionId(String webSocketSessionId) {
+		setHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, webSocketSessionId);
+	}
+
+	public String getDestination() {
+		return null;
+	}
+
+	public Principal getPrincipal() {
+		return getHeader(WampMessageHeader.PRINCIPAL);
+	}
+
+	public void setPrincipal(Principal principal) {
+		setHeader(WampMessageHeader.PRINCIPAL, principal);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getSessionAttributes() {
+		return (Map<String, Object>) getHeader(WampMessageHeader.SESSION_ATTRIBUTES);
+	}
+
+	public void setSessionAttributes(Map<String, Object> attributes) {
+		setHeader(WampMessageHeader.SESSION_ATTRIBUTES, attributes);
+	}
+
 	public WampSession getWampSession() {
-		return getHeader(WampMessageHeader.WAMP_SESSION);
+		Map<String, Object> sessionAttributes = getSessionAttributes();
+		return sessionAttributes != null ? (WampSession) sessionAttributes
+				.get(WAMP_SESSION_HEADER_NAME) : null;
+	}
+
+	@Override
+	public Object getPayload() {
+		return EMPTY_OBJECT;
+	}
+
+	@Override
+	public MessageHeaders getHeaders() {
+		return messageHeaders;
+	}
+
+	public static <T extends WampMessage> T fromJson(WebSocketSession session,
+			JsonFactory jsonFactory, String json) throws IOException {
+
+		Map<String, Object> webSocketSessionAttributes = session.getAttributes();
+		WampSession wampSession = (WampSession) webSocketSessionAttributes
+				.get(WAMP_SESSION_HEADER_NAME);
+		if (wampSession == null) {
+			wampSession = new WampSession();
+			webSocketSessionAttributes.put(WAMP_SESSION_HEADER_NAME, wampSession);
+		}
+
+		T newWampMessage = fromJson(jsonFactory, json, wampSession);
+
+		newWampMessage.setSessionId(session.getId());
+		newWampMessage.setPrincipal(session.getPrincipal());
+		newWampMessage.setSessionAttributes(webSocketSessionAttributes);
+
+		return newWampMessage;
 	}
 
 	public abstract String toJson(JsonFactory jsonFactory) throws IOException;
 
+	public static <T extends WampMessage> T fromJson(JsonFactory jsonFactory, String json)
+			throws IOException {
+		return fromJson(jsonFactory, json, null);
+	}
+
 	@SuppressWarnings("unchecked")
-	public static <T> T fromJson(JsonFactory jsonFactory, String json) throws IOException {
+	public static <T extends WampMessage> T fromJson(JsonFactory jsonFactory,
+			String json, WampSession wampSession) throws IOException {
 
 		try (JsonParser jp = jsonFactory.createParser(json)) {
 			if (jp.nextToken() != JsonToken.START_ARRAY) {
@@ -91,23 +156,50 @@ public abstract class WampMessage {
 			case PREFIX:
 				return (T) new PrefixMessage(jp);
 			case CALL:
-				return (T) new CallMessage(jp);
+				return (T) new CallMessage(jp, wampSession);
 			case CALLRESULT:
 				return (T) new CallResultMessage(jp);
 			case CALLERROR:
 				return (T) new CallErrorMessage(jp);
 			case SUBSCRIBE:
-				return (T) new SubscribeMessage(jp);
+				return (T) new SubscribeMessage(jp, wampSession);
 			case UNSUBSCRIBE:
-				return (T) new UnsubscribeMessage(jp);
+				return (T) new UnsubscribeMessage(jp, wampSession);
 			case PUBLISH:
-				return (T) new PublishMessage(jp);
+				return (T) new PublishMessage(jp, wampSession);
 			case EVENT:
-				return (T) new EventMessage(jp);
+				return (T) new EventMessage(jp, wampSession);
 			default:
 				return null;
 			}
 
 		}
 	}
+
+	@SuppressWarnings("serial")
+	private static class MutableMessageHeaders extends MessageHeaders {
+
+		public MutableMessageHeaders() {
+			super(null);
+		}
+
+		@Override
+		public Map<String, Object> getRawHeaders() {
+			return super.getRawHeaders();
+		}
+	}
+
+	protected String replacePrefix(String uri, WampSession wampSession) {
+		if (uri != null && wampSession != null && wampSession.hasPrefixes()) {
+			String[] curie = uri.split(":");
+			if (curie.length == 2) {
+				String prefix = wampSession.getPrefix(curie[0]);
+				if (prefix != null) {
+					return String.format("%s%s", prefix, curie[1]);
+				}
+			}
+		}
+		return uri;
+	}
+
 }

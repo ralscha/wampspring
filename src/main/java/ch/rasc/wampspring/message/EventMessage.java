@@ -17,6 +17,9 @@ package ch.rasc.wampspring.message;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Set;
+
+import ch.rasc.wampspring.handler.WampSession;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -33,35 +36,71 @@ import com.fasterxml.jackson.core.JsonToken;
  *
  * @see <a href="http://wamp.ws/spec/#event_message">WAMP specification</a>
  */
-public class EventMessage extends WampMessage {
-	private final String topicURI;
+public class EventMessage extends PubSubMessage {
 
 	private final Object event;
 
+	private Set<String> excludeSessionIds;
+
+	private Set<String> eligibleSessionIds;
+
+	public EventMessage(EventMessage originEventMessage, String receiverWebSocketSessionId) {
+		super(WampMessageType.EVENT, originEventMessage.getTopicURI());
+		this.event = originEventMessage.getEvent();
+
+		setSessionId(receiverWebSocketSessionId);
+		setPrincipal(originEventMessage.getPrincipal());
+		setSessionAttributes(originEventMessage.getSessionAttributes());
+	}
+
+	public EventMessage(PublishMessage publishMessage, String receiverWebSocketSessionId) {
+		super(WampMessageType.EVENT, publishMessage.getTopicURI());
+		this.event = publishMessage.getEvent();
+
+		setSessionId(receiverWebSocketSessionId);
+		setPrincipal(publishMessage.getPrincipal());
+		setSessionAttributes(publishMessage.getSessionAttributes());
+	}
+
 	public EventMessage(String topicURI, Object event) {
-		super(WampMessageType.EVENT);
-		this.topicURI = topicURI;
+		super(WampMessageType.EVENT, topicURI);
 		this.event = event;
 	}
 
 	public EventMessage(JsonParser jp) throws IOException {
+		this(jp, null);
+	}
+
+	public EventMessage(JsonParser jp, WampSession wampSession) throws IOException {
 		super(WampMessageType.EVENT);
 
 		if (jp.nextToken() != JsonToken.VALUE_STRING) {
 			throw new IOException();
 		}
-		this.topicURI = jp.getValueAsString();
+		setTopicURI(replacePrefix(jp.getValueAsString(), wampSession));
 
 		jp.nextToken();
 		this.event = jp.readValueAs(Object.class);
 	}
 
-	public String getTopicURI() {
-		return topicURI;
-	}
-
 	public Object getEvent() {
 		return event;
+	}
+
+	public Set<String> getExcludeSessionIds() {
+		return excludeSessionIds;
+	}
+
+	public void setExcludeSessionIds(Set<String> excludeSessionIds) {
+		this.excludeSessionIds = excludeSessionIds;
+	}
+
+	public Set<String> getEligibleSessionIds() {
+		return eligibleSessionIds;
+	}
+
+	public void setEligibleSessionIds(Set<String> eligibleSessionIds) {
+		this.eligibleSessionIds = eligibleSessionIds;
 	}
 
 	@Override
@@ -70,7 +109,7 @@ public class EventMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(topicURI);
+			jg.writeString(getTopicURI());
 			jg.writeObject(event);
 			jg.writeEndArray();
 			jg.close();
@@ -81,7 +120,7 @@ public class EventMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "EventMessage [topicURI=" + topicURI + ", event=" + event + "]";
+		return "EventMessage [topicURI=" + getTopicURI() + ", event=" + event + "]";
 	}
 
 }

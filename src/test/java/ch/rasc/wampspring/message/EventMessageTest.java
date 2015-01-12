@@ -91,4 +91,21 @@ public class EventMessageTest extends BaseMessageTest {
 				MapEntry.entry("name", "Kross"),
 				MapEntry.entry("created", "2012-03-29T10:41:09.864Z"));
 	}
+
+	@Test
+	public void copyConstructorTest() {
+		EventMessage eventMessage = new EventMessage("topicURI", 1L);
+		EventMessage copyOfMsg = new EventMessage(eventMessage, "wsId");
+
+		assertThat(copyOfMsg.getDestination()).isEqualTo("topicURI");
+		assertThat(copyOfMsg.getEvent()).isEqualTo(1L);
+		assertThat(copyOfMsg.getTopicURI()).isEqualTo("topicURI");
+
+		PublishMessage publishMessage = new PublishMessage("topicURI", 1L);
+		copyOfMsg = new EventMessage(publishMessage, "wsId");
+
+		assertThat(copyOfMsg.getDestination()).isEqualTo("topicURI");
+		assertThat(copyOfMsg.getEvent()).isEqualTo(1L);
+		assertThat(copyOfMsg.getTopicURI()).isEqualTo("topicURI");
+	}
 }

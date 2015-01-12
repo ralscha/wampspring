@@ -41,17 +41,20 @@ public class CallErrorMessage extends WampMessage {
 
 	private final Object errorDetails;
 
-	public CallErrorMessage(String callID, String errorURI, String errorDesc) {
-		this(callID, errorURI, errorDesc, null);
+	public CallErrorMessage(CallMessage callMessage, String errorURI, String errorDesc) {
+		this(callMessage, errorURI, errorDesc, null);
 	}
 
-	public CallErrorMessage(String callID, String errorURI, String errorDesc,
+	public CallErrorMessage(CallMessage callMessage, String errorURI, String errorDesc,
 			Object errorDetails) {
 		super(WampMessageType.CALLERROR);
-		this.callID = callID;
+		this.callID = callMessage.getCallID();
 		this.errorURI = errorURI;
 		this.errorDesc = errorDesc;
 		this.errorDetails = errorDetails;
+
+		setSessionId(callMessage.getSessionId());
+		setPrincipal(callMessage.getPrincipal());
 	}
 
 	public CallErrorMessage(JsonParser jp) throws IOException {

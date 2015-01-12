@@ -18,17 +18,25 @@ package ch.rasc.wampspring.cra;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import ch.rasc.wampspring.config.EnableWamp;
-import ch.rasc.wampspring.config.WampConfigurerAdapter;
+import ch.rasc.wampspring.config.DefaultWampConfiguration;
+import ch.rasc.wampspring.config.WampEndpointRegistry;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
-import ch.rasc.wampspring.support.AbstractWebSocketIntegrationTests;
+import ch.rasc.wampspring.support.BaseWampTest;
 
-public class MethodEnableTest extends AbstractWebSocketIntegrationTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = MethodEnableTest.Config.class)
+@WebIntegrationTest({ "server.port=0" })
+public class MethodEnableTest extends BaseWampTest {
 
 	@Test
 	public void testWithoutAuthentication() throws Exception {
@@ -57,27 +65,17 @@ public class MethodEnableTest extends AbstractWebSocketIntegrationTests {
 		assertThat(resultMessage.getResult()).isEqualTo(7);
 	}
 
-	@Override
-	protected String wampEndpointPath() {
-		return "/ws";
-	}
-
-	@Override
-	protected Class<?>[] getAnnotatedConfigClasses() {
-		return new Class<?>[] { Config.class };
-	}
-
 	@Configuration
-	@EnableWamp
-	static class Config extends WampConfigurerAdapter {
+	@EnableAutoConfiguration
+	static class Config extends DefaultWampConfiguration {
 		@Bean
 		public AuthenticatedMethodService callService() {
 			return new AuthenticatedMethodService();
 		}
 
 		@Override
-		public String wampEndpointPath() {
-			return "/ws";
+		public void registerWampEndpoints(WampEndpointRegistry registry) {
+			registry.addEndpoint("/wamp");
 		}
 
 		@Override

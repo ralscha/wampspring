@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Ralph Schaer <ralphschaer@gmail.com>
+ * Copyright 2002-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.support;
+package ch.rasc.wampspring.handler;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,8 +28,10 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.messaging.handler.HandlerMethod;
+import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
+import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolverComposite;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.method.HandlerMethod;
 
 import ch.rasc.wampspring.message.WampMessage;
 
@@ -40,18 +43,23 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 /**
  * Invokes the handler method for a given message after resolving its method argument
  * values through registered {@link HandlerMethodArgumentResolver}s.
+ *
  * <p>
- * Use {@link #setMessageMethodArgumentResolvers(HandlerMethodArgumentResolverComposite)}
- * to customize the list of argument resolvers.
+ * Use {@link #setMessageMethodArgumentResolvers(HandlerMethodArgumentResolver)} to
+ * customize the list of argument resolvers.
  * <p>
  * Credit goes to the Spring class
  * {@link org.springframework.messaging.handler.invocation.InvocableHandlerMethod} . This
  * class is just a copy where {@link org.springframework.messaging.Message} is replaced
  * with {@link WampMessage}
+ *
+ * @author Rossen Stoyanchev
+ * @author Juergen Hoeller
+ * @author Ralph Schaer
  */
-public class InvocableHandlerMethod extends HandlerMethod {
+public class InvocableWampHandlerMethod extends HandlerMethod {
 
-	private HandlerMethodArgumentResolverComposite argumentResolvers = new HandlerMethodArgumentResolverComposite();
+	private HandlerMethodArgumentResolver argumentResolvers = new HandlerMethodArgumentResolverComposite();
 
 	private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
@@ -62,19 +70,15 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	/**
 	 * Create an instance from a {@code HandlerMethod}.
 	 */
-	public InvocableHandlerMethod(HandlerMethod handlerMethod, ObjectMapper objectMapper,
-			ConversionService conversionService) {
+	public InvocableWampHandlerMethod(HandlerMethod handlerMethod,
+			ObjectMapper objectMapper, ConversionService conversionService) {
 		super(handlerMethod);
 		this.objectMapper = objectMapper;
 		this.conversionService = conversionService;
 	}
 
-	/**
-	 * Set {@link HandlerMethodArgumentResolver}s to use to use for resolving method
-	 * argument values.
-	 */
 	public void setMessageMethodArgumentResolvers(
-			HandlerMethodArgumentResolverComposite argumentResolvers) {
+			HandlerMethodArgumentResolver argumentResolvers) {
 		this.argumentResolvers = argumentResolvers;
 	}
 
@@ -90,22 +94,17 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
 	/**
 	 * Invoke the method with the given message.
-	 *
 	 * @throws Exception raised if no suitable argument resolver can be found, or the
 	 * method raised an exception
 	 */
-	public final Object invoke(WampMessage message, Object... providedArgs)
-			throws Exception {
+	public Object invoke(WampMessage message, Object... providedArgs) throws Exception {
 		Object[] args = getMethodArgumentValues(message, providedArgs);
 		if (logger.isTraceEnabled()) {
-			logger.trace("Invoking [" + this.getBeanType().getSimpleName() + "."
-					+ getMethod().getName() + "] method with arguments "
-					+ Arrays.asList(args));
+			logger.trace("Resolved arguments: " + Arrays.asList(args));
 		}
-		Object returnValue = invoke(args);
+		Object returnValue = doInvoke(args);
 		if (logger.isTraceEnabled()) {
-			logger.trace("Method [" + getMethod().getName() + "] returned ["
-					+ returnValue + "]");
+			logger.trace("Returned value: " + returnValue);
 		}
 		return returnValue;
 	}
@@ -148,9 +147,9 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			}
 
 			if (args[i] == null) {
-				String msg = getArgumentResolutionErrorMessage(
+				String error = getArgumentResolutionErrorMessage(
 						"No suitable resolver for argument", i);
-				throw new IllegalStateException(msg);
+				throw new IllegalStateException(error);
 			}
 		}
 		return args;
@@ -158,20 +157,21 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
 	private String getArgumentResolutionErrorMessage(String message, int index) {
 		MethodParameter param = getMethodParameters()[index];
-		return getDetailedErrorMessage(message + " [" + index + "] [type="
-				+ param.getParameterType().getName() + "]");
+		message += " [" + index + "] [type=" + param.getParameterType().getName() + "]";
+		return getDetailedErrorMessage(message);
 	}
 
 	/**
 	 * Adds HandlerMethod details such as the controller type and method signature to the
 	 * given error message.
-	 *
 	 * @param message error message to append the HandlerMethod details to
 	 */
-	String getDetailedErrorMessage(String message) {
-		return message + "\n" + "HandlerMethod details: \n" + "Bean ["
-				+ getBeanType().getName() + "]\n" + "Method ["
-				+ getBridgedMethod().toGenericString() + "]\n";
+	protected String getDetailedErrorMessage(String message) {
+		StringBuilder sb = new StringBuilder(message).append("\n");
+		sb.append("HandlerMethod details: \n");
+		sb.append("Bean [").append(getBeanType().getName()).append("]\n");
+		sb.append("Method [").append(getBridgedMethod().toGenericString()).append("]\n");
+		return sb.toString();
 	}
 
 	/**
@@ -218,18 +218,17 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
 	@SuppressWarnings("unchecked")
 	private Object convertListElements(TypeDescriptor td, Object convertedValue) {
-		if (List.class.isAssignableFrom(convertedValue.getClass())) {
-			if (td.isCollection() && td.getElementTypeDescriptor() != null) {
-				Class<?> elementType = td.getElementTypeDescriptor().getType();
+		if (List.class.isAssignableFrom(convertedValue.getClass()) && td.isCollection()
+				&& td.getElementTypeDescriptor() != null) {
+			Class<?> elementType = td.getElementTypeDescriptor().getType();
 
-				Collection<Object> convertedList = new ArrayList<>();
-				for (Object record : (List<Object>) convertedValue) {
-					Object convertedObject = objectMapper.convertValue(record,
-							elementType);
-					convertedList.add(convertedObject);
-				}
-				return convertedList;
+			Collection<Object> convertedList = new ArrayList<>();
+			for (Object record : (List<Object>) convertedValue) {
+				Object convertedObject = objectMapper.convertValue(record, elementType);
+				convertedList.add(convertedObject);
 			}
+			return convertedList;
+
 		}
 		return convertedValue;
 	}
@@ -237,18 +236,19 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	/**
 	 * Invoke the handler method with the given argument values.
 	 */
-	Object invoke(Object... args) throws Exception {
-		ReflectionUtils.makeAccessible(this.getBridgedMethod());
+	protected Object doInvoke(Object... args) throws Exception {
+		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
 			return getBridgedMethod().invoke(getBean(), args);
 		}
-		catch (IllegalArgumentException e) {
-			String msg = getInvocationErrorMessage(e.getMessage(), args);
-			throw new IllegalArgumentException(msg, e);
+		catch (IllegalArgumentException ex) {
+			assertTargetBean(getBridgedMethod(), getBean(), args);
+			throw new IllegalStateException(getInvocationErrorMessage(ex.getMessage(),
+					args), ex);
 		}
-		catch (InvocationTargetException e) {
+		catch (InvocationTargetException ex) {
 			// Unwrap for HandlerExceptionResolvers ...
-			Throwable targetException = e.getTargetException();
+			Throwable targetException = ex.getTargetException();
 			if (targetException instanceof RuntimeException) {
 				throw (RuntimeException) targetException;
 			}
@@ -263,6 +263,27 @@ public class InvocableHandlerMethod extends HandlerMethod {
 						"Failed to invoke controller method", args);
 				throw new IllegalStateException(msg, targetException);
 			}
+		}
+	}
+
+	/**
+	 * Assert that the target bean class is an instance of the class where the given
+	 * method is declared. In some cases the actual controller instance at request-
+	 * processing time may be a JDK dynamic proxy (lazy initialization, prototype beans,
+	 * and others). {@code @Controller}'s that require proxying should prefer class-based
+	 * proxy mechanisms.
+	 */
+	private void assertTargetBean(Method method, Object targetBean, Object[] args) {
+		Class<?> methodDeclaringClass = method.getDeclaringClass();
+		Class<?> targetBeanClass = targetBean.getClass();
+		if (!methodDeclaringClass.isAssignableFrom(targetBeanClass)) {
+			String msg = "The mapped controller method class '"
+					+ methodDeclaringClass.getName()
+					+ "' is not an instance of the actual controller bean instance '"
+					+ targetBeanClass.getName()
+					+ "'. If the controller requires proxying "
+					+ "(e.g. due to @Transactional), please use class-based proxying.";
+			throw new IllegalStateException(getInvocationErrorMessage(msg, args));
 		}
 	}
 

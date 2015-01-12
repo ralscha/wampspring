@@ -18,13 +18,16 @@ package ch.rasc.wampspring;
 import java.util.Collections;
 import java.util.Set;
 
-import ch.rasc.wampspring.handler.PubSubHandler;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.util.Assert;
+
 import ch.rasc.wampspring.message.EventMessage;
 
 /**
- * A messenger that allows the calling code to send {@link EventMessage}s back to the
- * client. This is a spring bean that can be autowired into any other spring bean and
- * allows any part of the application to send messages back to the client
+ * A messenger that allows the calling code to send {@link EventMessage}s to the broker.
+ * The EventMessenger is by default configured as a spring managed bean and can be
+ * autowired into any other spring bean.
  *
  * e.g.
  *
@@ -39,28 +42,44 @@ import ch.rasc.wampspring.message.EventMessage;
  * 	}
  * }
  * </pre>
- * <p>
- * This is very similar to the
- * {@link org.springframework.messaging.simp.SimpMessagingTemplate} class from Spring's
- * STOMP support.
  */
 public class EventMessenger {
 
-	private final PubSubHandler pubSubHandler;
+	private final MessageChannel messageChannel;
 
-	public EventMessenger(PubSubHandler pubSubHandler) {
-		this.pubSubHandler = pubSubHandler;
+	private volatile long sendTimeout = -1;
+
+	public EventMessenger(MessageChannel messageChannel) {
+		Assert.notNull(messageChannel, "'messageChannel' must not be null");
+		this.messageChannel = messageChannel;
+	}
+
+	public void setSendTimeout(long sendTimeout) {
+		this.sendTimeout = sendTimeout;
+	}
+
+	public void send(EventMessage eventMessage) {
+		long timeout = this.sendTimeout;
+		boolean sent = timeout >= 0 ? this.messageChannel.send(eventMessage, timeout)
+				: this.messageChannel.send(eventMessage);
+
+		if (!sent) {
+			throw new MessageDeliveryException(eventMessage,
+					"Failed to send message with destination '"
+							+ eventMessage.getDestination() + "' within timeout: "
+							+ timeout);
+		}
 	}
 
 	/**
 	 * Send a {@link EventMessage} to every client that is currently subscribed to the
-	 * provided topicURI
+	 * given topicURI
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the message
 	 */
 	public void sendToAll(String topicURI, Object event) {
-		pubSubHandler.sendToAll(new EventMessage(topicURI, event));
+		send(new EventMessage(topicURI, event));
 	}
 
 	/**
@@ -69,11 +88,10 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the message
-	 * @param excludeSessionId a session id that will be excluded
+	 * @param excludeSessionId a WebSocket session id that will be excluded
 	 */
 	public void sendToAllExcept(String topicURI, Object event, String excludeSessionId) {
-		pubSubHandler.sendToAllExcept(new EventMessage(topicURI, event),
-				Collections.singleton(excludeSessionId));
+		sendToAllExcept(topicURI, event, Collections.singleton(excludeSessionId));
 	}
 
 	/**
@@ -82,12 +100,13 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the message
-	 * @param excludeSessionIds a set of session ids that will be excluded
+	 * @param excludeSessionIds a set of WebSocket session ids that will be excluded
 	 */
 	public void sendToAllExcept(String topicURI, Object event,
 			Set<String> excludeSessionIds) {
-		pubSubHandler.sendToAllExcept(new EventMessage(topicURI, event),
-				excludeSessionIds);
+		EventMessage eventMessage = new EventMessage(topicURI, event);
+		eventMessage.setExcludeSessionIds(excludeSessionIds);
+		send(eventMessage);
 	}
 
 	/**
@@ -97,9 +116,12 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the message
-	 * @param eligibleSessionIds only the session ids listed here will receive the message
+	 * @param eligibleSessionIds only the WebSocket session ids listed here will receive
+	 * the message
 	 */
 	public void sendTo(String topicURI, Object event, Set<String> eligibleSessionIds) {
-		pubSubHandler.sendTo(new EventMessage(topicURI, event), eligibleSessionIds);
+		EventMessage eventMessage = new EventMessage(topicURI, event);
+		eventMessage.setEligibleSessionIds(eligibleSessionIds);
+		send(eventMessage);
 	}
 }

@@ -16,10 +16,37 @@
 package ch.rasc.wampspring.message;
 
 /**
- * Enumeration of supported headers in a {@link WampMessage}. The method
- * {@link WampMessage#getHeader(WampMessageHeader)} returns the value of the specific
- * header
+ * Base class for all publish/subscribe messages. They all share the same property
+ * topicURI.
+ * 
+ * @see SubscribeMessage
+ * @see UnsubscribeMessage
+ * @see PublishMessage
+ * @see EventMessage
  */
-public enum WampMessageHeader {
-	WAMP_MESSAGE_TYPE, PRINCIPAL, WEBSOCKET_SESSION_ID, SESSION_ATTRIBUTES
+public abstract class PubSubMessage extends WampMessage {
+
+	private String topicURI;
+
+	protected PubSubMessage(WampMessageType type) {
+		super(type);
+	}
+
+	public PubSubMessage(WampMessageType type, String topicURI) {
+		super(type);
+		this.topicURI = topicURI;
+	}
+
+	public String getTopicURI() {
+		return topicURI;
+	}
+
+	protected void setTopicURI(String topicURI) {
+		this.topicURI = topicURI;
+	}
+
+	@Override
+	public String getDestination() {
+		return topicURI;
+	}
 }

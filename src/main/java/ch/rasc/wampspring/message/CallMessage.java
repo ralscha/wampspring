@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import ch.rasc.wampspring.handler.WampSession;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -51,9 +53,14 @@ public class CallMessage extends WampMessage {
 		else {
 			this.arguments = null;
 		}
+
 	}
 
 	public CallMessage(JsonParser jp) throws IOException {
+		this(jp, null);
+	}
+
+	public CallMessage(JsonParser jp, WampSession wampSession) throws IOException {
 		super(WampMessageType.CALL);
 
 		if (jp.nextToken() != JsonToken.VALUE_STRING) {
@@ -64,7 +71,7 @@ public class CallMessage extends WampMessage {
 		if (jp.nextToken() != JsonToken.VALUE_STRING) {
 			throw new IOException();
 		}
-		this.procURI = jp.getValueAsString();
+		this.procURI = replacePrefix(jp.getValueAsString(), wampSession);
 
 		List<Object> args = new ArrayList<>();
 		while (jp.nextToken() != JsonToken.END_ARRAY) {
@@ -89,6 +96,11 @@ public class CallMessage extends WampMessage {
 
 	public List<Object> getArguments() {
 		return arguments;
+	}
+
+	@Override
+	public String getDestination() {
+		return procURI;
 	}
 
 	@Override

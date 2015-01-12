@@ -27,14 +27,15 @@ public class CallErrorMessageTest extends BaseMessageTest {
 
 	@Test
 	public void serializationTest() throws IOException {
-		CallErrorMessage callErrorMessage = new CallErrorMessage("gwbN3EDtFv6JvNV5",
+		CallMessage callMessage = new CallMessage("gwbN3EDtFv6JvNV5", "testProcURI");
+		CallErrorMessage callErrorMessage = new CallErrorMessage(callMessage,
 				"http://autobahn.tavendo.de/error#generic", "math domain error");
 		String json = callErrorMessage.toJson(jsonFactory);
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALLERROR.getTypeId(), "gwbN3EDtFv6JvNV5",
 						"http://autobahn.tavendo.de/error#generic", "math domain error"));
 
-		CallErrorMessage callErrorIntMessage = new CallErrorMessage("gwbN3EDtFv6JvNV5",
+		CallErrorMessage callErrorIntMessage = new CallErrorMessage(callMessage,
 				"http://example.com/error#number_too_big",
 				"1001 too big for me, max is 1000", 1000);
 		json = callErrorIntMessage.toJson(jsonFactory);
@@ -43,7 +44,8 @@ public class CallErrorMessageTest extends BaseMessageTest {
 						"http://example.com/error#number_too_big",
 						"1001 too big for me, max is 1000", 1000));
 
-		CallErrorMessage listCallErrorMessage = new CallErrorMessage("7bVW5pv8r60ZeL6u",
+		callMessage = new CallMessage("7bVW5pv8r60ZeL6u", "testProcURI");
+		CallErrorMessage listCallErrorMessage = new CallErrorMessage(callMessage,
 				"http://example.com/error#invalid_numbers",
 				"one or more numbers are multiples of 3", Arrays.asList(0, 3));
 		json = listCallErrorMessage.toJson(jsonFactory);
@@ -91,5 +93,16 @@ public class CallErrorMessageTest extends BaseMessageTest {
 				"one or more numbers are multiples of 3");
 		assertThat((List) listCallErrorMessage.getErrorDetails()).contains(0, 3);
 
+	}
+
+	@Test
+	public void copyConstructorTest() {
+		CallMessage callMessage = new CallMessage("2", "procURI");
+		CallErrorMessage result = new CallErrorMessage(callMessage, "errorURI",
+				"description");
+		assertThat(result.getCallID()).isEqualTo("2");
+		assertThat(result.getErrorURI()).isEqualTo("errorURI");
+		assertThat(result.getErrorDesc()).isEqualTo("description");
+		assertThat(result.getErrorDetails()).isNull();
 	}
 }

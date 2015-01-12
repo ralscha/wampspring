@@ -24,8 +24,7 @@ public interface AuthenticationHandler {
 
 	@WampCallListener(value = "http://api.wamp.ws/procedure#authreq",
 			authenticated = false)
-	Object handleAuthReq(String authKey, Map<String, Object> extra,
-			CallMessage message);
+	Object handleAuthReq(String authKey, Map<String, Object> extra, CallMessage message);
 
 	@WampCallListener(value = "http://api.wamp.ws/procedure#auth", authenticated = false)
 	Object handleAuth(String clientSignature, CallMessage message);

@@ -16,7 +16,7 @@
 package ch.rasc.wampspring.message;
 
 /**
- * Enumeration of the WAMP message types. PREFIX is not supported
+ * Enumeration of the WAMP message types.
  */
 public enum WampMessageType {
 

@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import ch.rasc.wampspring.config.WampConfigurer;
+import ch.rasc.wampspring.config.DefaultWampConfiguration;
 import ch.rasc.wampspring.message.CallErrorMessage;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
@@ -63,7 +63,7 @@ public @interface WampCallListener {
 	/**
 	 * If true a call to this annotated method has to be authenticated. If false no
 	 * authentication is required. Takes precedence over {@link WampAuthenticated} and the
-	 * global setting {@link WampConfigurer#authenticationRequired()}
+	 * global setting {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
 	boolean[] authenticated() default {};
 

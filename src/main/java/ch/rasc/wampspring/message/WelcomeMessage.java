@@ -68,6 +68,7 @@ public class WelcomeMessage extends WampMessage {
 
 	}
 
+	@Override
 	public String getSessionId() {
 		return sessionId;
 	}

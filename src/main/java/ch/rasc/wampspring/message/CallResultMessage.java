@@ -36,10 +36,13 @@ public class CallResultMessage extends WampMessage {
 
 	private final Object result;
 
-	public CallResultMessage(String callID, Object result) {
+	public CallResultMessage(CallMessage callMessage, Object result) {
 		super(WampMessageType.CALLRESULT);
-		this.callID = callID;
+		this.callID = callMessage.getCallID();
 		this.result = result;
+
+		setSessionId(callMessage.getSessionId());
+		setPrincipal(callMessage.getPrincipal());
 	}
 
 	public CallResultMessage(JsonParser jp) throws IOException {

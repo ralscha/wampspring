@@ -38,10 +38,6 @@ public class PrefixMessage extends WampMessage {
 
 	private final String uri;
 
-	/**
-	 * @param prefix
-	 * @param uri
-	 */
 	public PrefixMessage(String prefix, String uri) {
 		super(WampMessageType.PREFIX);
 		this.prefix = prefix;
@@ -90,11 +86,6 @@ public class PrefixMessage extends WampMessage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

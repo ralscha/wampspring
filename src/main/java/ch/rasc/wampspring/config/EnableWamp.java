@@ -22,10 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Import;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 /**
- * Add this annotation to an {@code @Configuration} class to enable WAMP support:
+ * Add this annotation to a {@code @Configuration} class to enable WAMP support:
  *
  * <pre class="code">
  * &#064;Configuration
@@ -35,53 +34,38 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
  * }
  * </pre>
  * <p>
- * Customize the imported configuration by implementing the {@link WampConfigurer}
- * interface:
+ * Customize the the WAMP configuration by subclassing {@link DefaultWampConfiguration}.
+ * Don't add &#064;EnableWamp
  *
  * <pre class="code">
  * &#064;Configuration
- * &#064;EnableWamp
- * public class MyAppConfig implements WampConfigurer {
+ * public class MyAppConfig extends DefaultWampConfiguration {
  * 
- * 	&#064;Override
- * 	public Executor outboundExecutor() {
+ * 	&#064;Bean
+ * 	public Executor clientInboundChannelExecutor() {
  * 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
- * 		executor.setThreadNamePrefix(&quot;WampOutbound-&quot;);
- * 		executor.initialize();
+ * 		executor.setThreadNamePrefix(&quot;wampClientInboundChannel-&quot;);
+ * 		executor.setCorePoolSize(4);
+ * 		executor.setMaxPoolSize(2000);
+ * 		executor.setKeepAliveSeconds(120);
+ * 		executor.setQueueCapacity(2000);
+ * 		executor.setAllowCoreThreadTimeOut(true);
+ * 
  * 		return executor;
  * 	}
  * 
  * 	&#064;Override
- * 	public String wampEndpointPath() {
- * 		return &quot;/wamp&quot;;
+ * 	public void registerWampEndpoints(WampEndpointRegistry registry) {
+ * 		registry.addEndpoint(&quot;/wamp&quot;).withSockJS();
  * 	}
  * 
  * }
  * </pre>
- *
- * <p>
- * Or by extending the {@link WampConfigurerAdapter} class and overriding only the methods
- * that need to be different.
- *
- * <pre class="code">
- * &#064;Configuration
- * &#064;EnableWamp
- * public class MyAppConfig extends WampConfigurerAdapter {
- * 
- * 	&#064;Override
- * 	public String wampEndpointPath() {
- * 		return &quot;/myOwnWampEndpoint&quot;;
- * 	}
- * 
- * }
- * </pre>
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@EnableWebSocket
-@Import(DelegatingWampConfiguration.class)
+@Import(DefaultWampConfiguration.class)
 public @interface EnableWamp {
 	// nothing here
 }

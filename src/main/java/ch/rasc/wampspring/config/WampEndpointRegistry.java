@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Ralph Schaer <ralphschaer@gmail.com>
+ * Copyright 2002-2015 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.support;
-
-import org.springframework.web.context.WebApplicationContext;
+package ch.rasc.wampspring.config;
 
 /**
- * Contract for a test server to use for WebSocket integration tests.
- *
  * @author Rossen Stoyanchev
+ * @author Ralph Schaer
  */
-public interface WebSocketTestServer {
+public interface WampEndpointRegistry {
 
-	int getPort();
-
-	void deployConfig(WebApplicationContext cxt);
-
-	void undeployConfig();
-
-	void start() throws Exception;
-
-	void stop() throws Exception;
+	/**
+	 * Register a WAMP over WebSocket endpoint at the given mapping path.
+	 */
+	WampWebSocketEndpointRegistration addEndpoint(String... paths);
 
 }

@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.support;
+package ch.rasc.wampspring.handler;
 
-import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+import ch.rasc.wampspring.annotation.WampCallListener;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
+public class CallService {
 
-public abstract class AbstractTestWebSocketHandler extends AbstractWebSocketHandler {
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	@WampCallListener("sum/*")
+	public Integer sum(Integer a, Integer b) {
+		return a + b;
+	}
 
-	protected final JsonFactory jsonFactory = new MappingJsonFactory(objectMapper);
-
-	public abstract void waitForConversationEnd() throws InterruptedException;
 }

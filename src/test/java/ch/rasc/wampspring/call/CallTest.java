@@ -18,18 +18,25 @@ package ch.rasc.wampspring.call;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ch.rasc.wampspring.config.EnableWamp;
-import ch.rasc.wampspring.config.WampConfigurerAdapter;
 import ch.rasc.wampspring.message.CallErrorMessage;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
-import ch.rasc.wampspring.support.AbstractWebSocketIntegrationTests;
+import ch.rasc.wampspring.support.BaseWampTest;
 
-public class CallTest extends AbstractWebSocketIntegrationTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = CallTest.Config.class)
+@WebIntegrationTest({ "server.port=0" })
+public class CallTest extends BaseWampTest {
 
 	@Test
 	public void testCallArguments() throws Exception {
@@ -110,27 +117,16 @@ public class CallTest extends AbstractWebSocketIntegrationTests {
 		assertThat(result.getResult()).isEqualTo("HI/thesecondargument");
 	}
 
-	@Override
-	protected String wampEndpointPath() {
-		return "/ws";
-	}
-
-	@Override
-	protected Class<?>[] getAnnotatedConfigClasses() {
-		return new Class<?>[] { Config.class };
-	}
-
 	@Configuration
+	@EnableAutoConfiguration
 	@EnableWamp
-	static class Config extends WampConfigurerAdapter {
+	static class Config {
+
 		@Bean
 		public CallService callService() {
 			return new CallService();
 		}
 
-		@Override
-		public String wampEndpointPath() {
-			return "/ws";
-		}
 	}
+
 }

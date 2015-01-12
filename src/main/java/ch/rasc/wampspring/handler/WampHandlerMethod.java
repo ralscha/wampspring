@@ -17,7 +17,8 @@ package ch.rasc.wampspring.handler;
 
 import java.lang.reflect.Method;
 
-import org.springframework.web.method.HandlerMethod;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.messaging.handler.HandlerMethod;
 
 public class WampHandlerMethod extends HandlerMethod {
 
@@ -27,9 +28,9 @@ public class WampHandlerMethod extends HandlerMethod {
 
 	private final boolean authenticationRequired;
 
-	public WampHandlerMethod(Object bean, Method method, String[] replyTo,
-			Boolean excludeSender, boolean authenticationRequired) {
-		super(bean, method);
+	public WampHandlerMethod(String beanName, BeanFactory beanFactory, Method method,
+			String[] replyTo, Boolean excludeSender, boolean authenticationRequired) {
+		super(beanName, beanFactory, method);
 		if (replyTo != null) {
 			this.replyTo = replyTo;
 		}
