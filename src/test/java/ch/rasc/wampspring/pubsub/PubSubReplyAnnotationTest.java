@@ -35,7 +35,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import ch.rasc.wampspring.config.DefaultWampConfiguration;
-import ch.rasc.wampspring.config.EnableWamp;
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;

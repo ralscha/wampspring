@@ -549,17 +549,17 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 					.iterator().next();
 			Map<String, String> vars = pathMatcher.extractUriTemplateVariables(
 					matchedPattern, lookupDestination);
-	
+
 			if (!CollectionUtils.isEmpty(vars)) {
-				MessageHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message,
-						MessageHeaderAccessor.class);
+				MessageHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(
+						message, MessageHeaderAccessor.class);
 				Assert.state(accessor != null && accessor.isMutable());
 				accessor.setHeader(
 						DestinationVariableMethodArgumentResolver.DESTINATION_TEMPLATE_VARIABLES_HEADER,
 						vars);
 			}
 		}
-		
+
 		try {
 			WampAttributesContextHolder.setAttributesFromMessage(message);
 			handleMatchInternal(handlerMethod, message);
