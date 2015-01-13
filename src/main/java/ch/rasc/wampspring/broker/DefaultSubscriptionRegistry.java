@@ -85,6 +85,11 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 		return findSubscriptionsInternal(destination);
 	}
 
+	@Override
+	public boolean hasSubscriptions() {
+		return !sessionDestinations.isEmpty();
+	}
+
 	/**
 	 * Specify the maximum number of entries for the resolved destination cache. Default
 	 * is 1024.

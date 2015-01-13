@@ -51,4 +51,10 @@ public interface SubscriptionRegistry {
 	 */
 	Set<String> findSubscriptions(PubSubMessage pubSubMessage);
 
+	/**
+	 * Returns true if there are any subscription stored in the registry
+	 *
+	 * @return true if registry contains at least one subscription
+	 */
+	public boolean hasSubscriptions();
 }

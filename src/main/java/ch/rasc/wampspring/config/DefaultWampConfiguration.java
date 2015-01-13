@@ -131,15 +131,18 @@ public class DefaultWampConfiguration {
 
 	@Bean
 	public MessageHandler brokerMessageHandler() {
-		SubscriptionRegistry registry = new DefaultSubscriptionRegistry(pathMatcher());
-
 		SimpleBrokerMessageHandler messageHandler = new SimpleBrokerMessageHandler(
 				clientInboundChannel(), clientOutboundChannel(), brokerChannel(),
-				registry);
+				subscriptionRegistry());
 
 		messageHandler.setAuthenticationRequiredGlobal(authenticationRequired());
 
 		return messageHandler;
+	}
+
+	@Bean
+	public SubscriptionRegistry subscriptionRegistry() {
+		return new DefaultSubscriptionRegistry(pathMatcher());
 	}
 
 	@Bean
