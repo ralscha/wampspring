@@ -5,3 +5,5 @@
 A [WAMP version 1](http://wamp.ws/spec/wamp1/) server and client implementation based on the Spring Framework 4 WebSocket support.
 
 See the [wiki](https://github.com/ralscha/wampspring/wiki) for more information
+
+Demo applications: https://github.com/ralscha/wampspring-demos
