@@ -18,6 +18,8 @@ package ch.rasc.wampspring.message;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.springframework.web.socket.WebSocketSession;
+
 import ch.rasc.wampspring.handler.WampSession;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -61,10 +63,15 @@ public class UnsubscribeMessage extends PubSubMessage {
 	 *
 	 * @param sessionId the WebSocket session id
 	 **/
-	public static UnsubscribeMessage createCleanupMessage(String sessionId) {
+	public static UnsubscribeMessage createCleanupMessage(WebSocketSession session) {
 		UnsubscribeMessage msg = new UnsubscribeMessage("**");
-		msg.setSessionId(sessionId);
+
+		msg.setSessionId(session.getId());
+		msg.setPrincipal(session.getPrincipal());
+		msg.setWampSession(new WampSession(session));
+
 		msg.cleanup = true;
+
 		return msg;
 	}
 

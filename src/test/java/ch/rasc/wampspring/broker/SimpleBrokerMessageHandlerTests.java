@@ -19,15 +19,19 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import javax.websocket.Session;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.PubSubMessage;
@@ -111,8 +115,13 @@ public class SimpleBrokerMessageHandlerTests {
 
 		this.messageHandler.handleMessage(subscribeMessage(sess2, "/foo"));
 
+		Session nativeSession = Mockito.mock(Session.class);
+		Mockito.when(nativeSession.getId()).thenReturn(sess1);
+		
+		StandardWebSocketSession wsSession = new StandardWebSocketSession(null, null, null, null);
+		wsSession.initializeNativeSession(nativeSession);
 		UnsubscribeMessage cleanupMessage = UnsubscribeMessage
-				.createCleanupMessage(sess1);
+				.createCleanupMessage(wsSession);
 		this.messageHandler.handleMessage(cleanupMessage);
 
 		this.messageHandler.handleMessage(message("/foo", "message1"));

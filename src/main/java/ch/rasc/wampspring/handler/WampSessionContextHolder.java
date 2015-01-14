@@ -23,23 +23,23 @@ import ch.rasc.wampspring.message.WampMessage;
  * @author Rossen Stoyanchev
  * @author Ralph Schaer
  */
-public abstract class WampAttributesContextHolder {
+public abstract class WampSessionContextHolder {
 
-	private static final ThreadLocal<WampAttributes> attributesHolder = new NamedThreadLocal<>(
+	private static final ThreadLocal<WampSession> attributesHolder = new NamedThreadLocal<>(
 			"WAMP session attributes");
 
 	/**
-	 * Reset the WampAttributes for the current thread.
+	 * Reset the WampSession for the current thread.
 	 */
 	public static void resetAttributes() {
 		attributesHolder.remove();
 	}
 
 	/**
-	 * Bind the given WampAttributes to the current thread,
+	 * Bind the given WampSession to the current thread,
 	 * @param attributes the RequestAttributes to expose
 	 */
-	public static void setAttributes(WampAttributes attributes) {
+	public static void setAttributes(WampSession attributes) {
 		if (attributes != null) {
 			attributesHolder.set(attributes);
 		}
@@ -50,32 +50,32 @@ public abstract class WampAttributesContextHolder {
 
 	/**
 	 * Extract the WAMP session attributes from the given message, wrap them in a
-	 * {@link WampAttributes} instance and bind it to the current thread,
+	 * {@link WampSession} instance and bind it to the current thread,
 	 * @param message the message to extract session attributes from
 	 */
 	public static void setAttributesFromMessage(WampMessage message) {
-		setAttributes(WampAttributes.fromMessage(message));
+		setAttributes(message.getWampSession());
 	}
 
 	/**
-	 * Return the WampAttributes currently bound to the thread.
+	 * Return the WampSession currently bound to the thread.
 	 * @return the attributes or {@code null} if not bound
 	 */
-	public static WampAttributes getAttributes() {
+	public static WampSession getAttributes() {
 		return attributesHolder.get();
 	}
 
 	/**
-	 * Return the WampAttributes currently bound to the thread or raise an
+	 * Return the WampSession currently bound to the thread or raise an
 	 * {@link java.lang.IllegalStateException} if none are bound..
 	 * @return the attributes, never {@code null}
 	 * @throws java.lang.IllegalStateException if attributes are not bound
 	 */
-	public static WampAttributes currentAttributes() throws IllegalStateException {
-		WampAttributes attributes = getAttributes();
+	public static WampSession currentAttributes() throws IllegalStateException {
+		WampSession attributes = getAttributes();
 		if (attributes == null) {
 			throw new IllegalStateException(
-					"No thread-bound WampAttributes found. "
+					"No thread-bound WampSession found. "
 							+ "Your code is probably not processing a client message and executing in "
 							+ "message-handling methods invoked by the SimpAnnotationMethodMessageHandler?");
 		}

@@ -36,8 +36,6 @@ public abstract class WampMessage implements Message<Object> {
 
 	private final static Object EMPTY_OBJECT = new Object();
 
-	private final static String WAMP_SESSION_HEADER_NAME = "wamp_session";
-
 	private final MutableMessageHeaders messageHeaders = new MutableMessageHeaders();
 
 	WampMessage(WampMessageType type) {
@@ -80,23 +78,16 @@ public abstract class WampMessage implements Message<Object> {
 		return getHeader(WampMessageHeader.PRINCIPAL);
 	}
 
-	public void setPrincipal(Principal principal) {
+	void setPrincipal(Principal principal) {
 		setHeader(WampMessageHeader.PRINCIPAL, principal);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Map<String, Object> getSessionAttributes() {
-		return (Map<String, Object>) getHeader(WampMessageHeader.SESSION_ATTRIBUTES);
-	}
-
-	public void setSessionAttributes(Map<String, Object> attributes) {
-		setHeader(WampMessageHeader.SESSION_ATTRIBUTES, attributes);
-	}
-
 	public WampSession getWampSession() {
-		Map<String, Object> sessionAttributes = getSessionAttributes();
-		return sessionAttributes != null ? (WampSession) sessionAttributes
-				.get(WAMP_SESSION_HEADER_NAME) : null;
+		return (WampSession) getHeader(WampMessageHeader.WAMP_SESSION);
+	}
+
+	void setWampSession(WampSession wampSession) {
+		setHeader(WampMessageHeader.WAMP_SESSION, wampSession);
 	}
 
 	@Override
@@ -112,19 +103,13 @@ public abstract class WampMessage implements Message<Object> {
 	public static <T extends WampMessage> T fromJson(WebSocketSession session,
 			JsonFactory jsonFactory, String json) throws IOException {
 
-		Map<String, Object> webSocketSessionAttributes = session.getAttributes();
-		WampSession wampSession = (WampSession) webSocketSessionAttributes
-				.get(WAMP_SESSION_HEADER_NAME);
-		if (wampSession == null) {
-			wampSession = new WampSession();
-			webSocketSessionAttributes.put(WAMP_SESSION_HEADER_NAME, wampSession);
-		}
+		WampSession wampSession = new WampSession(session);
 
 		T newWampMessage = fromJson(jsonFactory, json, wampSession);
 
 		newWampMessage.setSessionId(session.getId());
 		newWampMessage.setPrincipal(session.getPrincipal());
-		newWampMessage.setSessionAttributes(webSocketSessionAttributes);
+		newWampMessage.setWampSession(wampSession);
 
 		return newWampMessage;
 	}

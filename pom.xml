@@ -307,13 +307,13 @@
 						<exclude>**/BrokerMessageHandlerTests.java</exclude>
 						<exclude>**/WampMessageTypeMessageCondition.java</exclude>
 						<exclude>**/WampMessageMappingInfo.java</exclude>
-						<exclude>**/WampAttributesContextHolder.java</exclude>
-						<exclude>**/WampAttributes.java</exclude>
+						<exclude>**/WampSessionContextHolder.java</exclude>
 						<exclude>**/DestinationPatternsMessageConditionTests.java</exclude>
 						<exclude>**/WampAnnotationMethodMessageHandler.java</exclude>
 						<exclude>**/InvocableWampHandlerMethod.java</exclude>
 						<exclude>**/WebSocketTransportRegistration.java</exclude>
 						<exclude>**/WebMvcWampEndpointRegistry.java</exclude>
+						<exclude>**/WampSession.java</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>

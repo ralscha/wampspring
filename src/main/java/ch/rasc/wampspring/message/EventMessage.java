@@ -50,7 +50,7 @@ public class EventMessage extends PubSubMessage {
 
 		setSessionId(receiverWebSocketSessionId);
 		setPrincipal(originEventMessage.getPrincipal());
-		setSessionAttributes(originEventMessage.getSessionAttributes());
+		setWampSession(originEventMessage.getWampSession());
 	}
 
 	public EventMessage(PublishMessage publishMessage, String receiverWebSocketSessionId) {
@@ -59,7 +59,7 @@ public class EventMessage extends PubSubMessage {
 
 		setSessionId(receiverWebSocketSessionId);
 		setPrincipal(publishMessage.getPrincipal());
-		setSessionAttributes(publishMessage.getSessionAttributes());
+		setWampSession(publishMessage.getWampSession());
 	}
 
 	public EventMessage(String topicURI, Object event) {

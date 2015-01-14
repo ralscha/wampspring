@@ -96,7 +96,7 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 		}
 
 		try {
-			WampAttributesContextHolder.setAttributesFromMessage(wampMessage);
+			WampSessionContextHolder.setAttributesFromMessage(wampMessage);
 			outputChannel.send(wampMessage);
 		}
 		catch (Throwable ex) {
@@ -121,7 +121,7 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 			}
 		}
 		finally {
-			WampAttributesContextHolder.resetAttributes();
+			WampSessionContextHolder.resetAttributes();
 		}
 	}
 
@@ -207,16 +207,15 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 		 * that this is an improper session end and the client did not unsubscribe his
 		 * subscriptions
 		 */
-		WampMessage message = UnsubscribeMessage.createCleanupMessage(session.getId());
-		WampAttributes wampAttributes = new WampAttributes(session.getId(),
-				session.getAttributes());
+		WampMessage message = UnsubscribeMessage.createCleanupMessage(session);
+
 		try {
-			WampAttributesContextHolder.setAttributes(wampAttributes);
+			WampSessionContextHolder.setAttributesFromMessage(message);
 			outputChannel.send(message);
 		}
 		finally {
-			WampAttributesContextHolder.resetAttributes();
-			wampAttributes.sessionCompleted();
+			WampSessionContextHolder.resetAttributes();
+			message.getWampSession().sessionCompleted();
 		}
 	}
 

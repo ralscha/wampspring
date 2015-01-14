@@ -73,6 +73,7 @@ import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.support.PrincipalMethodArgumentResolver;
+import ch.rasc.wampspring.support.WampSessionMethodArgumentResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -201,6 +202,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 		// Type-based argument resolution
 		resolvers.add(new PrincipalMethodArgumentResolver());
+		resolvers.add(new WampSessionMethodArgumentResolver());
 		resolvers.add(new MessageMethodArgumentResolver());
 
 		resolvers.addAll(getCustomArgumentResolvers());
@@ -561,11 +563,11 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 		}
 
 		try {
-			WampAttributesContextHolder.setAttributesFromMessage(message);
+			WampSessionContextHolder.setAttributesFromMessage(message);
 			handleMatchInternal(handlerMethod, message);
 		}
 		finally {
-			WampAttributesContextHolder.resetAttributes();
+			WampSessionContextHolder.resetAttributes();
 		}
 	}
 
