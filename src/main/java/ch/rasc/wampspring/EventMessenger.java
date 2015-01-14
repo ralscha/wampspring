@@ -110,7 +110,7 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to the clients that are subscribed to the provided
+	 * Send an {@link EventMessage} to the clients that are subscribed to the given
 	 * topicURI and are listed in the eligibleSessionIds set. If no session of the
 	 * provided set is subscribed to the topicURI nothing happens.
 	 *
@@ -123,5 +123,19 @@ public class EventMessenger {
 		EventMessage eventMessage = new EventMessage(topicURI, event);
 		eventMessage.setEligibleSessionIds(eligibleSessionIds);
 		send(eventMessage);
+	}
+
+	/**
+	 * Send an {@link EventMessage} to one client that is subscribed to the given topicURI.
+	 * If the client with the given sessionId is not subscribed to the topicURI nothing
+	 * happens.
+	 *
+	 * @param topicURI the name of the topic
+	 * @param event the message
+	 * @param eligibleSessionIds only the WebSocket session ids listed here will receive
+	 * the message
+	 */
+	public void sendTo(String topicURI, Object event, String eligibleSessionId) {
+		sendTo(topicURI, event, Collections.singleton(eligibleSessionId));
 	}
 }
