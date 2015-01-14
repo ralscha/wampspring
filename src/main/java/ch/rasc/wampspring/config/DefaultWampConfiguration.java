@@ -15,6 +15,8 @@
  */
 package ch.rasc.wampspring.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 import org.springframework.context.annotation.Bean;
@@ -23,6 +25,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.support.ExecutorSubscribableChannel;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -153,11 +156,16 @@ public class DefaultWampConfiguration {
 
 		messageHandler.setAuthenticationRequiredGlobal(authenticationRequired());
 
-		// List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
-		// addArgumentResolvers(argumentResolvers);
-		// messageHandler.setCustomArgumentResolvers(argumentResolvers);
+		 List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
+		 addArgumentResolvers(argumentResolvers);
+		 messageHandler.setCustomArgumentResolvers(argumentResolvers);
 
 		return messageHandler;
+	}
+
+	@SuppressWarnings("unused")
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+		// by default do nothing
 	}
 
 	@Bean
