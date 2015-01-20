@@ -18,8 +18,6 @@ package ch.rasc.wampspring.handler;
 
 import java.io.Serializable;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 import org.springframework.web.socket.WebSocketSession;
