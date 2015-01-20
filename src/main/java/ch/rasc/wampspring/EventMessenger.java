@@ -126,9 +126,9 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send an {@link EventMessage} to one client that is subscribed to the given topicURI.
-	 * If the client with the given sessionId is not subscribed to the topicURI nothing
-	 * happens.
+	 * Send an {@link EventMessage} to one client that is subscribed to the given
+	 * topicURI. If the client with the given sessionId is not subscribed to the topicURI
+	 * nothing happens.
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the message

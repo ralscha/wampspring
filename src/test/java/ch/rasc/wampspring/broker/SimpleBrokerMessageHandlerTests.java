@@ -117,8 +117,9 @@ public class SimpleBrokerMessageHandlerTests {
 
 		Session nativeSession = Mockito.mock(Session.class);
 		Mockito.when(nativeSession.getId()).thenReturn(sess1);
-		
-		StandardWebSocketSession wsSession = new StandardWebSocketSession(null, null, null, null);
+
+		StandardWebSocketSession wsSession = new StandardWebSocketSession(null, null,
+				null, null);
 		wsSession.initializeNativeSession(nativeSession);
 		UnsubscribeMessage cleanupMessage = UnsubscribeMessage
 				.createCleanupMessage(wsSession);
