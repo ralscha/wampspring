@@ -314,6 +314,7 @@
 						<exclude>**/WebSocketTransportRegistration.java</exclude>
 						<exclude>**/WebMvcWampEndpointRegistry.java</exclude>
 						<exclude>**/WampSession.java</exclude>
+						<exclude>**/WampSessionScope.java</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>

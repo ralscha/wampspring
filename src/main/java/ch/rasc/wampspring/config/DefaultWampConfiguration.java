@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
@@ -33,6 +35,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.SockJsServiceRegistration;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import org.springframework.web.socket.messaging.SubProtocolWebSocketHandler;
@@ -50,6 +53,8 @@ import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
 import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
 import ch.rasc.wampspring.cra.NoOpAuthenticationSecretProvider;
 import ch.rasc.wampspring.handler.WampAnnotationMethodMessageHandler;
+import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.handler.WampSessionScope;
 import ch.rasc.wampspring.handler.WampSubProtocolHandler;
 
 import com.fasterxml.jackson.databind.MappingJsonFactory;
@@ -156,9 +161,9 @@ public class DefaultWampConfiguration {
 
 		messageHandler.setAuthenticationRequiredGlobal(authenticationRequired());
 
-		 List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
-		 addArgumentResolvers(argumentResolvers);
-		 messageHandler.setCustomArgumentResolvers(argumentResolvers);
+		List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>();
+		addArgumentResolvers(argumentResolvers);
+		messageHandler.setCustomArgumentResolvers(argumentResolvers);
 
 		return messageHandler;
 	}
@@ -300,6 +305,21 @@ public class DefaultWampConfiguration {
 		scheduler.setPoolSize(Runtime.getRuntime().availableProcessors());
 		scheduler.setRemoveOnCancelPolicy(true);
 		return scheduler;
+	}
+
+	@Bean
+	public static CustomScopeConfigurer webSocketScopeConfigurer(
+			ConfigurableListableBeanFactory beanFactory) {
+
+		beanFactory.registerResolvableDependency(WebSocketSession.class,
+				new WampSessionScope.WebSocketSessionObjectFactory());
+		beanFactory.registerResolvableDependency(WampSession.class,
+				new WampSessionScope.WampSessionObjectFactory());
+		// beanFactory.registerScope("wampsession", new WampSessionScope());
+
+		CustomScopeConfigurer configurer = new CustomScopeConfigurer();
+		configurer.addScope("wampsession", new WampSessionScope());
+		return configurer;
 	}
 
 }

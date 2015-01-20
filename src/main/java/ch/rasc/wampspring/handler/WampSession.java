@@ -32,11 +32,9 @@ public class WampSession {
 
 	private final static String AUTH_KEY = WampSession.class.getName() + ".AUTH_KEY";
 
-	private final static String CHALLENGE = WampSession.class.getName()
-			+ ".CHALLENGE";
+	private final static String CHALLENGE = WampSession.class.getName() + ".CHALLENGE";
 
-	private final static String SIGNATURE = WampSession.class.getName()
-			+ ".SIGNATURE";
+	private final static String SIGNATURE = WampSession.class.getName() + ".SIGNATURE";
 
 	/** Key for the mutex session attribute */
 	public static final String SESSION_MUTEX_NAME = WampSession.class.getName()
@@ -63,7 +61,11 @@ public class WampSession {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getAttribute(String name) {
-		return (T)webSocketSession.getAttributes().get(name);
+		return (T) webSocketSession.getAttributes().get(name);
+	}
+
+	public WebSocketSession getWebSocketSession() {
+		return webSocketSession;
 	}
 
 	/**

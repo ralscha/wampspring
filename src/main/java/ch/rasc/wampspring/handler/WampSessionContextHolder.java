@@ -77,7 +77,7 @@ public abstract class WampSessionContextHolder {
 			throw new IllegalStateException(
 					"No thread-bound WampSession found. "
 							+ "Your code is probably not processing a client message and executing in "
-							+ "message-handling methods invoked by the SimpAnnotationMethodMessageHandler?");
+							+ "message-handling methods invoked by the WampAnnotationMethodMessageHandler?");
 		}
 		return attributes;
 	}
