@@ -203,7 +203,7 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 		}
 
 		/*
-		 * To cleanup we send an internal messages to the handlers. I might be possible
+		 * To cleanup we send an internal messages to the handlers. It might be possible
 		 * that this is an improper session end and the client did not unsubscribe his
 		 * subscriptions
 		 */
