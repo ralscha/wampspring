@@ -105,6 +105,7 @@ public class SimpleBrokerMessageHandlerTests {
 
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testCleanupMessage() {
 
