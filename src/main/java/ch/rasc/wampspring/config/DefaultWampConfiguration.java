@@ -52,6 +52,7 @@ import ch.rasc.wampspring.cra.AuthenticationHandler;
 import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
 import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
 import ch.rasc.wampspring.cra.NoOpAuthenticationSecretProvider;
+import ch.rasc.wampspring.handler.MethodParameterConverter;
 import ch.rasc.wampspring.handler.WampAnnotationMethodMessageHandler;
 import ch.rasc.wampspring.handler.WampSession;
 import ch.rasc.wampspring.handler.WampSessionScope;
@@ -157,7 +158,7 @@ public class DefaultWampConfiguration {
 	public MessageHandler annotationMethodMessageHandler() {
 		WampAnnotationMethodMessageHandler messageHandler = new WampAnnotationMethodMessageHandler(
 				clientInboundChannel(), clientOutboundChannel(), eventMessenger(),
-				objectMapper(), conversionService(), pathMatcher());
+				conversionService(), methodParameterConverter(), pathMatcher());
 
 		messageHandler.setAuthenticationRequiredGlobal(authenticationRequired());
 
@@ -166,6 +167,10 @@ public class DefaultWampConfiguration {
 		messageHandler.setCustomArgumentResolvers(argumentResolvers);
 
 		return messageHandler;
+	}
+
+	protected MethodParameterConverter methodParameterConverter() {
+		return new MethodParameterConverter(objectMapper(), conversionService());
 	}
 
 	@SuppressWarnings("unused")

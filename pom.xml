@@ -315,6 +315,7 @@
 						<exclude>**/WebMvcWampEndpointRegistry.java</exclude>
 						<exclude>**/WampSession.java</exclude>
 						<exclude>**/WampSessionScope.java</exclude>
+						<exclude>**/PayloadArgumentResolver.java</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>

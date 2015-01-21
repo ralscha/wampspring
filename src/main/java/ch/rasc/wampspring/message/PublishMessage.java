@@ -133,6 +133,11 @@ public class PublishMessage extends PubSubMessage {
 		return event;
 	}
 
+	@Override
+	public Object getPayload() {
+		return event;
+	}
+
 	public Boolean getExcludeMe() {
 		return excludeMe;
 	}

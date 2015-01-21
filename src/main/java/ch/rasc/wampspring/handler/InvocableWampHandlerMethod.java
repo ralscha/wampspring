@@ -17,28 +17,18 @@ package ch.rasc.wampspring.handler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.messaging.handler.HandlerMethod;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolverComposite;
 import org.springframework.util.ReflectionUtils;
 
 import ch.rasc.wampspring.message.WampMessage;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 
 /**
  * Invokes the handler method for a given message after resolving its method argument
@@ -63,18 +53,15 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 
 	private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
-	private final ConversionService conversionService;
-
-	private final ObjectMapper objectMapper;
+	private final MethodParameterConverter methodParameterConverter;
 
 	/**
 	 * Create an instance from a {@code HandlerMethod}.
 	 */
 	public InvocableWampHandlerMethod(HandlerMethod handlerMethod,
-			ObjectMapper objectMapper, ConversionService conversionService) {
+			MethodParameterConverter methodParameterConverter) {
 		super(handlerMethod);
-		this.objectMapper = objectMapper;
-		this.conversionService = conversionService;
+		this.methodParameterConverter = methodParameterConverter;
 	}
 
 	public void setMessageMethodArgumentResolvers(
@@ -139,7 +126,8 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 			}
 
 			if (providedArgs != null) {
-				args[i] = resolveProvidedArgument(parameter, providedArgs[argIndex]);
+				args[i] = methodParameterConverter.convert(parameter,
+						providedArgs[argIndex]);
 				if (args[i] != null) {
 					argIndex++;
 					continue;
@@ -172,65 +160,6 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 		sb.append("Bean [").append(getBeanType().getName()).append("]\n");
 		sb.append("Method [").append(getBridgedMethod().toGenericString()).append("]\n");
 		return sb.toString();
-	}
-
-	/**
-	 * Attempt to resolve a method parameter from the list of provided argument values.
-	 */
-	private Object resolveProvidedArgument(MethodParameter parameter, Object argument) {
-		if (argument == null) {
-			return null;
-		}
-
-		Class<?> sourceClass = argument.getClass();
-		Class<?> targetClass = parameter.getParameterType();
-
-		TypeDescriptor td = new TypeDescriptor(parameter);
-
-		if (targetClass.isAssignableFrom(sourceClass)) {
-			return convertListElements(td, argument);
-		}
-
-		if (conversionService.canConvert(sourceClass, targetClass)) {
-			try {
-				return convertListElements(td,
-						conversionService.convert(argument, targetClass));
-			}
-			catch (Exception e) {
-
-				TypeFactory typeFactory = objectMapper.getTypeFactory();
-				if (td.isCollection()) {
-					JavaType type = CollectionType.construct(td.getType(), typeFactory
-							.constructType(td.getElementTypeDescriptor().getType()));
-					return objectMapper.convertValue(argument, type);
-				}
-				else if (td.isArray()) {
-					JavaType type = typeFactory.constructArrayType(td
-							.getElementTypeDescriptor().getType());
-					return objectMapper.convertValue(argument, type);
-				}
-
-				throw e;
-			}
-		}
-		return objectMapper.convertValue(argument, targetClass);
-	}
-
-	@SuppressWarnings("unchecked")
-	private Object convertListElements(TypeDescriptor td, Object convertedValue) {
-		if (List.class.isAssignableFrom(convertedValue.getClass()) && td.isCollection()
-				&& td.getElementTypeDescriptor() != null) {
-			Class<?> elementType = td.getElementTypeDescriptor().getType();
-
-			Collection<Object> convertedList = new ArrayList<>();
-			for (Object record : (List<Object>) convertedValue) {
-				Object convertedObject = objectMapper.convertValue(record, elementType);
-				convertedList.add(convertedObject);
-			}
-			return convertedList;
-
-		}
-		return convertedValue;
 	}
 
 	/**

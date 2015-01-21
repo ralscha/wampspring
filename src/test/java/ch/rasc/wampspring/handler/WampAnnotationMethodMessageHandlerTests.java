@@ -72,9 +72,12 @@ public class WampAnnotationMethodMessageHandlerTests {
 
 		when(clientOutboundChannel.send(any(WampMessage.class))).thenReturn(true);
 
+		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
+		MethodParameterConverter paramConverter = new MethodParameterConverter(
+				new ObjectMapper(), conversionService);
 		messageHandler = new WampAnnotationMethodMessageHandler(clientInboundChannel,
-				clientOutboundChannel, eventMessenger, new ObjectMapper(),
-				new DefaultFormattingConversionService(), new AntPathMatcher());
+				clientOutboundChannel, eventMessenger, conversionService, paramConverter,
+				new AntPathMatcher());
 
 		@SuppressWarnings("resource")
 		StaticApplicationContext applicationContext = new StaticApplicationContext();

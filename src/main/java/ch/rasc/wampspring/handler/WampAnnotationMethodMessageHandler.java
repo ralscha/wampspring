@@ -72,10 +72,9 @@ import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.message.WampMessage;
+import ch.rasc.wampspring.support.PayloadArgumentResolver;
 import ch.rasc.wampspring.support.PrincipalMethodArgumentResolver;
 import ch.rasc.wampspring.support.WampSessionMethodArgumentResolver;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Internal class that is responsible for calling methods that are annotated with
@@ -104,7 +103,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 	private final EventMessenger eventMessenger;
 
-	private final ConversionService conversionService;
+	private final MethodParameterConverter methodParameterConverter;
 
 	private final PathMatcher pathMatcher;
 
@@ -112,7 +111,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private final ObjectMapper objectMapper;
+	private final ConversionService conversionService;
 
 	private final List<HandlerMethodArgumentResolver> customArgumentResolvers = new ArrayList<>(
 			4);
@@ -127,13 +126,13 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 	public WampAnnotationMethodMessageHandler(SubscribableChannel clientInboundChannel,
 			MessageChannel clientOutboundChannel, EventMessenger eventMessenger,
-			ObjectMapper objectMapper, ConversionService conversionService,
-			PathMatcher pathMatcher) {
+			ConversionService conversionService,
+			MethodParameterConverter methodParameterConverter, PathMatcher pathMatcher) {
 		this.clientInboundChannel = clientInboundChannel;
 		this.clientOutboundChannel = clientOutboundChannel;
 		this.eventMessenger = eventMessenger;
-		this.objectMapper = objectMapper;
 		this.conversionService = conversionService;
+		this.methodParameterConverter = methodParameterConverter;
 		this.pathMatcher = pathMatcher;
 	}
 
@@ -207,6 +206,9 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 		resolvers.addAll(getCustomArgumentResolvers());
 
+		resolvers.add(new PayloadArgumentResolver(applicationContext,
+				methodParameterConverter));
+
 		return resolvers;
 	}
 
@@ -262,8 +264,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 			WampHandlerMethod handlerMethod) {
 		try {
 			InvocableWampHandlerMethod invocable = new InvocableWampHandlerMethod(
-					handlerMethod.createWithResolvedBean(), objectMapper,
-					conversionService);
+					handlerMethod.createWithResolvedBean(), methodParameterConverter);
 			invocable.setMessageMethodArgumentResolvers(this.argumentResolvers);
 
 			Object[] arguments = null;
@@ -310,8 +311,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 		try {
 
 			InvocableWampHandlerMethod invocable = new InvocableWampHandlerMethod(
-					wampHandlerMethod.createWithResolvedBean(), objectMapper,
-					conversionService);
+					wampHandlerMethod.createWithResolvedBean(), methodParameterConverter);
 			invocable.setMessageMethodArgumentResolvers(this.argumentResolvers);
 
 			Object returnValue = invocable.invoke(wampMessage, argument);
