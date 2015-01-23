@@ -28,6 +28,7 @@ import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
+import org.springframework.messaging.support.AbstractMessageChannel;
 import org.springframework.messaging.support.ExecutorSubscribableChannel;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -39,6 +40,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.SockJsServiceRegistration;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import org.springframework.web.socket.messaging.SubProtocolWebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.annotation.WampCallListener;
@@ -85,7 +87,15 @@ public class DefaultWampConfiguration {
 	 */
 	@Bean
 	public SubscribableChannel clientInboundChannel() {
-		return new ExecutorSubscribableChannel(clientInboundChannelExecutor());
+		ExecutorSubscribableChannel executorSubscribableChannel = new ExecutorSubscribableChannel(
+				clientInboundChannelExecutor());
+		configureClientInboundChannel(executorSubscribableChannel);
+		return executorSubscribableChannel;
+	}
+
+	protected void configureClientInboundChannel(
+			@SuppressWarnings("unused") AbstractMessageChannel channel) {
+		// by default do nothing
 	}
 
 	@Bean
@@ -248,6 +258,8 @@ public class DefaultWampConfiguration {
 				getTransportRegistration(), messageBrokerSockJsTaskScheduler(),
 				new MappingJsonFactory(objectMapper()));
 
+		registry.setDefaultHandshakeInterceptors(defaultHandshakeInterceptors());
+
 		registerWampEndpoints(registry);
 		// registry.setUserSessionRegistry(new DefaultUserSessionRegistry()());
 
@@ -258,6 +270,11 @@ public class DefaultWampConfiguration {
 	public WebSocketHandler subProtocolWebSocketHandler() {
 		return new SubProtocolWebSocketHandler(clientInboundChannel(),
 				clientOutboundChannel());
+	}
+
+	public HandshakeInterceptor defaultHandshakeInterceptors() {
+		// by default do nothing
+		return null;
 	}
 
 	protected WebSocketHandler decorateWebSocketHandler(WebSocketHandler handler) {
@@ -282,7 +299,7 @@ public class DefaultWampConfiguration {
 	 * WebSocket clients.
 	 */
 	@SuppressWarnings("unused")
-	public void configureWebSocketTransport(WebSocketTransportRegistration registry) {
+	public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
 		// nothing here
 	}
 
@@ -320,7 +337,6 @@ public class DefaultWampConfiguration {
 				new WampSessionScope.WebSocketSessionObjectFactory());
 		beanFactory.registerResolvableDependency(WampSession.class,
 				new WampSessionScope.WampSessionObjectFactory());
-		// beanFactory.registerScope("wampsession", new WampSessionScope());
 
 		CustomScopeConfigurer configurer = new CustomScopeConfigurer();
 		configurer.addScope("wampsession", new WampSessionScope());

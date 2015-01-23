@@ -30,6 +30,7 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.messaging.SubProtocolWebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.util.UrlPathHelper;
 
 import ch.rasc.wampspring.handler.WampSubProtocolHandler;
@@ -52,6 +53,8 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 	private final List<WebMvcWampWebSocketEndpointRegistration> registrations = new ArrayList<>();
 
 	private final TaskScheduler sockJsScheduler;
+
+	private HandshakeInterceptor defaultHandshakeInterceptors;
 
 	private int order = 1;
 
@@ -85,6 +88,11 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 		this.wampSubProtocolHandler.setUserSessionRegistry(userSessionRegistry);
 	}
 
+	public void setDefaultHandshakeInterceptors(
+			HandshakeInterceptor defaultHandshakeInterceptors) {
+		this.defaultHandshakeInterceptors = defaultHandshakeInterceptors;
+	}
+
 	private static SubProtocolWebSocketHandler unwrapSubProtocolWebSocketHandler(
 			WebSocketHandler wsHandler) {
 		WebSocketHandler actual = WebSocketHandlerDecorator.unwrap(wsHandler);
@@ -95,10 +103,11 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 
 	@Override
 	public WampWebSocketEndpointRegistration addEndpoint(String... paths) {
-		this.subProtocolWebSocketHandler.addProtocolHandler(this.wampSubProtocolHandler);
+		subProtocolWebSocketHandler.addProtocolHandler(wampSubProtocolHandler);
 		WebMvcWampWebSocketEndpointRegistration registration = new WebMvcWampWebSocketEndpointRegistration(
 				paths, this.webSocketHandler, this.sockJsScheduler);
-		this.registrations.add(registration);
+		registrations.add(registration);
+		registration.addInterceptors(defaultHandshakeInterceptors);
 		return registration;
 	}
 
