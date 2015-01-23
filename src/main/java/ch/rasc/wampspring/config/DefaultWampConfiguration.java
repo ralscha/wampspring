@@ -77,11 +77,18 @@ public class DefaultWampConfiguration {
 
 	private final List<WampConfigurer> configurers = new ArrayList<>();
 
+	private ObjectMapper objectMapper = null;
+
 	@Autowired(required = false)
 	public void setConfigurers(List<WampConfigurer> configurers) {
 		if (!CollectionUtils.isEmpty(configurers)) {
 			this.configurers.addAll(configurers);
 		}
+	}
+
+	@Autowired(required = false)
+	public void setObjectMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
 	}
 
 	/**
@@ -199,7 +206,7 @@ public class DefaultWampConfiguration {
 	}
 
 	protected MethodParameterConverter methodParameterConverter() {
-		return new MethodParameterConverter(objectMapper(), conversionService());
+		return new MethodParameterConverter(lookupObjectMapper(), conversionService());
 	}
 
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
@@ -218,17 +225,33 @@ public class DefaultWampConfiguration {
 	 * Returns an instance of a {@link PathMatcher}. Used by the messageHandlers for
 	 * matching the topicURI to a destination
 	 */
-	public PathMatcher pathMatcher() {
+	protected PathMatcher pathMatcher() {
 		return new AntPathMatcher();
 	}
 
 	/**
 	 * Returns a Jackson's {@link ObjectMapper} instance. This mapper is used for
-	 * serializing and deserializing WAMP messages.
+	 * serializing and deserializing WAMP messages. When this method returns null the
+	 * library tries to find an {@link ObjectMapper} bean in the current spring context.
+	 * If no bean exists the library creates a new instance.
 	 */
+	protected ObjectMapper objectMapper() {
+		return null;
+	}
 
-	public ObjectMapper objectMapper() {
-		return new ObjectMapper();
+	private ObjectMapper lookupObjectMapper() {
+		ObjectMapper om = objectMapper();
+
+		if (om != null) {
+			return om;
+		}
+
+		if (this.objectMapper != null) {
+			return this.objectMapper;
+		}
+
+		this.objectMapper = new ObjectMapper();
+		return this.objectMapper;
 	}
 
 	/**
@@ -274,9 +297,10 @@ public class DefaultWampConfiguration {
 	public HandlerMapping wampWebSocketHandlerMapping() {
 		WebSocketHandler handler = subProtocolWebSocketHandler();
 		handler = decorateWebSocketHandler(handler);
+
 		WebMvcWampEndpointRegistry registry = new WebMvcWampEndpointRegistry(handler,
 				getTransportRegistration(), messageBrokerSockJsTaskScheduler(),
-				new MappingJsonFactory(objectMapper()));
+				new MappingJsonFactory(lookupObjectMapper()));
 
 		List<HandshakeInterceptor> handshakeInterceptors = new ArrayList<>();
 		addHandshakeInterceptors(handshakeInterceptors);
