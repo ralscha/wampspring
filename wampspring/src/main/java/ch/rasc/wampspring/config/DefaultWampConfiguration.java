@@ -55,7 +55,6 @@ import ch.rasc.wampspring.broker.SubscriptionRegistry;
 import ch.rasc.wampspring.cra.AuthenticationHandler;
 import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
 import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
-import ch.rasc.wampspring.cra.NoOpAuthenticationSecretProvider;
 import ch.rasc.wampspring.handler.MethodParameterConverter;
 import ch.rasc.wampspring.handler.WampAnnotationMethodMessageHandler;
 import ch.rasc.wampspring.handler.WampSession;
@@ -263,22 +262,23 @@ public class DefaultWampConfiguration {
 
 	/**
 	 * Configures an implementation of the secret provider interface
-	 * {@link AuthenticationSecretProvider} for authentication. If not configured the
-	 * library creates and uses an instance of the class
-	 * {@link NoOpAuthenticationSecretProvider}.
+	 * {@link AuthenticationSecretProvider} for authentication.
 	 */
 	public AuthenticationSecretProvider authenticationSecretProvider() {
-		return new NoOpAuthenticationSecretProvider();
+		return null;
 	}
 
 	/**
-	 * Configures an implementation of the {@link AuthenticationHandler} interface. If not
-	 * configured the library creates and uses an instance of the class
-	 * {@link DefaultAuthenticationHandler}.
+	 * Configures an implementation of the {@link AuthenticationHandler} interface. When
+	 * {@link #authenticationSecretProvider()} returns null this method returns null and
+	 * creates no {@link AuthenticationHandler}
 	 */
 	@Bean
 	public AuthenticationHandler authenticationHandler() {
-		return new DefaultAuthenticationHandler(authenticationSecretProvider());
+		if (authenticationSecretProvider() != null) {
+			return new DefaultAuthenticationHandler(authenticationSecretProvider());
+		}
+		return null;
 	}
 
 	/**
