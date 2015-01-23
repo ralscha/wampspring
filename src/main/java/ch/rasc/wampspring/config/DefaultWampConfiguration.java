@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,7 @@ import org.springframework.messaging.support.ExecutorSubscribableChannel;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.socket.WebSocketHandler;
@@ -73,12 +75,28 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Configuration
 public class DefaultWampConfiguration {
 
+	private final List<WampConfigurer> configurers = new ArrayList<>();
+
+	@Autowired(required = false)
+	public void setConfigurers(List<WampConfigurer> configurers) {
+		if (!CollectionUtils.isEmpty(configurers)) {
+			this.configurers.addAll(configurers);
+		}
+	}
+
 	/**
 	 * Register WAMP endpoints mapping each to a specific URL and (optionally) enabling
 	 * and configuring SockJS fallback options.
 	 */
-	public void registerWampEndpoints(WampEndpointRegistry registry) {
-		registry.addEndpoint("/wamp");
+	protected void registerWampEndpoints(WampEndpointRegistry registry) {
+		if (this.configurers.isEmpty()) {
+			registry.addEndpoint("/wamp");
+		}
+		else {
+			for (WampConfigurer wc : this.configurers) {
+				wc.registerWampEndpoints(registry);
+			}
+		}
 	}
 
 	/**
@@ -93,9 +111,10 @@ public class DefaultWampConfiguration {
 		return executorSubscribableChannel;
 	}
 
-	protected void configureClientInboundChannel(
-			@SuppressWarnings("unused") AbstractMessageChannel channel) {
-		// by default do nothing
+	protected void configureClientInboundChannel(AbstractMessageChannel channel) {
+		for (WampConfigurer wc : this.configurers) {
+			wc.configureClientInboundChannel(channel);
+		}
 	}
 
 	@Bean
@@ -183,9 +202,10 @@ public class DefaultWampConfiguration {
 		return new MethodParameterConverter(objectMapper(), conversionService());
 	}
 
-	@SuppressWarnings("unused")
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		// by default do nothing
+		for (WampConfigurer wc : this.configurers) {
+			wc.addArgumentResolvers(argumentResolvers);
+		}
 	}
 
 	@Bean
@@ -258,7 +278,9 @@ public class DefaultWampConfiguration {
 				getTransportRegistration(), messageBrokerSockJsTaskScheduler(),
 				new MappingJsonFactory(objectMapper()));
 
-		registry.setDefaultHandshakeInterceptors(defaultHandshakeInterceptors());
+		List<HandshakeInterceptor> handshakeInterceptors = new ArrayList<>();
+		addHandshakeInterceptors(handshakeInterceptors);
+		registry.addHandshakeInterceptors(handshakeInterceptors);
 
 		registerWampEndpoints(registry);
 		// registry.setUserSessionRegistry(new DefaultUserSessionRegistry()());
@@ -272,9 +294,11 @@ public class DefaultWampConfiguration {
 				clientOutboundChannel());
 	}
 
-	public HandshakeInterceptor defaultHandshakeInterceptors() {
-		// by default do nothing
-		return null;
+	protected void addHandshakeInterceptors(
+			List<HandshakeInterceptor> handshakeInterceptors) {
+		for (WampConfigurer wc : this.configurers) {
+			wc.addHandshakeInterceptors(handshakeInterceptors);
+		}
 	}
 
 	protected WebSocketHandler decorateWebSocketHandler(WebSocketHandler handler) {
@@ -298,9 +322,10 @@ public class DefaultWampConfiguration {
 	 * Configure options related to the processing of messages received from and sent to
 	 * WebSocket clients.
 	 */
-	@SuppressWarnings("unused")
 	public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
-		// nothing here
+		for (WampConfigurer wc : this.configurers) {
+			wc.configureWebSocketTransport(registration);
+		}
 	}
 
 	/**

@@ -54,7 +54,7 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 
 	private final TaskScheduler sockJsScheduler;
 
-	private HandshakeInterceptor defaultHandshakeInterceptors;
+	private List<HandshakeInterceptor> handshakeInterceptors;
 
 	private int order = 1;
 
@@ -88,9 +88,8 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 		this.wampSubProtocolHandler.setUserSessionRegistry(userSessionRegistry);
 	}
 
-	public void setDefaultHandshakeInterceptors(
-			HandshakeInterceptor defaultHandshakeInterceptors) {
-		this.defaultHandshakeInterceptors = defaultHandshakeInterceptors;
+	public void addHandshakeInterceptors(List<HandshakeInterceptor> interceptors) {
+		this.handshakeInterceptors = interceptors;
 	}
 
 	private static SubProtocolWebSocketHandler unwrapSubProtocolWebSocketHandler(
@@ -108,8 +107,11 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 				paths, this.webSocketHandler, this.sockJsScheduler);
 		this.registrations.add(registration);
 
-		if (this.defaultHandshakeInterceptors != null) {
-			registration.addInterceptors(this.defaultHandshakeInterceptors);
+		if (this.handshakeInterceptors != null && this.handshakeInterceptors.size() > 0) {
+			registration
+					.addInterceptors(this.handshakeInterceptors
+							.toArray(new HandshakeInterceptor[this.handshakeInterceptors
+									.size()]));
 		}
 
 		return registration;
