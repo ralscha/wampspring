@@ -107,7 +107,11 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 		WebMvcWampWebSocketEndpointRegistration registration = new WebMvcWampWebSocketEndpointRegistration(
 				paths, this.webSocketHandler, this.sockJsScheduler);
 		registrations.add(registration);
-		registration.addInterceptors(defaultHandshakeInterceptors);
+
+		if (defaultHandshakeInterceptors != null) {
+			registration.addInterceptors(defaultHandshakeInterceptors);
+		}
+
 		return registration;
 	}
 
