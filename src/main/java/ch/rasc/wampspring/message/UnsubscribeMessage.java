@@ -76,7 +76,7 @@ public class UnsubscribeMessage extends PubSubMessage {
 	}
 
 	public boolean isCleanup() {
-		return cleanup;
+		return this.cleanup;
 	}
 
 	@Override

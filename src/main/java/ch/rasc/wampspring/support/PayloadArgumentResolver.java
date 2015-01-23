@@ -70,7 +70,8 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 		this.methodParameterConverter = methodParameterConverter;
 
 		if (applicationContext.containsBean(MVC_VALIDATOR_NAME)) {
-			validator = applicationContext.getBean(MVC_VALIDATOR_NAME, Validator.class);
+			this.validator = applicationContext.getBean(MVC_VALIDATOR_NAME,
+					Validator.class);
 		}
 		else if (ClassUtils.isPresent("javax.validation.Validator", getClass()
 				.getClassLoader())) {
@@ -84,10 +85,10 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 				throw new BeanInitializationException(
 						"Could not find default validator class", ex);
 			}
-			validator = (Validator) BeanUtils.instantiate(clazz);
+			this.validator = (Validator) BeanUtils.instantiate(clazz);
 		}
 		else {
-			validator = new Validator() {
+			this.validator = new Validator() {
 				@Override
 				public boolean supports(Class<?> clazz) {
 					return false;
@@ -138,7 +139,7 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 			return payload;
 		}
 
-		payload = methodParameterConverter.convert(param, message.getPayload());
+		payload = this.methodParameterConverter.convert(param, message.getPayload());
 		if (payload == null) {
 			throw new MessageConversionException(message,
 					"No converter found to convert to " + targetClass + ", message="

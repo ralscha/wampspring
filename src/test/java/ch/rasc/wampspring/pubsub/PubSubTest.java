@@ -54,15 +54,15 @@ public class PubSubTest extends BaseWampTest {
 	public void testSimplePublishEvent() throws InterruptedException, ExecutionException,
 			IOException {
 
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
+		ResultWebSocketHandler result = new ResultWebSocketHandler(this.jsonFactory);
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("topicURI");
-			webSocketSession
-					.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("topicURI", "a message");
-			webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("topicURI");
@@ -71,10 +71,10 @@ public class PubSubTest extends BaseWampTest {
 			result.reset();
 			UnsubscribeMessage unsubscribeMsg = new UnsubscribeMessage("topicURI");
 			webSocketSession.sendMessage(new TextMessage(unsubscribeMsg
-					.toJson(jsonFactory)));
+					.toJson(this.jsonFactory)));
 
 			pm = new PublishMessage("topicURI", "a second message");
-			webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
 			event = (EventMessage) result.getWampMessage();
 			assertThat(event).isNull();
@@ -85,18 +85,18 @@ public class PubSubTest extends BaseWampTest {
 	@Test
 	public void testDtoPublishEvent() throws InterruptedException, ExecutionException,
 			IOException {
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
+		ResultWebSocketHandler result = new ResultWebSocketHandler(this.jsonFactory);
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage(
 					"pubSubService.dto.result");
-			webSocketSession
-					.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
 			TestDto testDto = new TestDto();
 			testDto.setName("Hello PubSub");
 			PublishMessage pm = new PublishMessage("pubSubService.dto", testDto);
-			webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("pubSubService.dto.result");
@@ -109,12 +109,12 @@ public class PubSubTest extends BaseWampTest {
 	public void testEventMessenger() throws InterruptedException, ExecutionException,
 			IOException {
 
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
+		ResultWebSocketHandler result = new ResultWebSocketHandler(this.jsonFactory);
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("secondTopic");
-			webSocketSession
-					.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("secondTopic");
@@ -127,15 +127,15 @@ public class PubSubTest extends BaseWampTest {
 	public void testPublishToMethod() throws InterruptedException, ExecutionException,
 			IOException {
 
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
+		ResultWebSocketHandler result = new ResultWebSocketHandler(this.jsonFactory);
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("resultTopic");
-			webSocketSession
-					.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("sumTopic", Arrays.asList(1, 2, 3, 4));
-			webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("resultTopic");
@@ -146,14 +146,14 @@ public class PubSubTest extends BaseWampTest {
 	private void testExcludeEligible(Boolean excludeMe, List<Integer> exclude,
 			List<Integer> eligible, List<Integer> expectedReceiver)
 			throws InterruptedException, ExecutionException, IOException {
-		ResultWebSocketHandler result1 = new ResultWebSocketHandler(jsonFactory);
-		ResultWebSocketHandler result2 = new ResultWebSocketHandler(jsonFactory);
+		ResultWebSocketHandler result1 = new ResultWebSocketHandler(this.jsonFactory);
+		ResultWebSocketHandler result2 = new ResultWebSocketHandler(this.jsonFactory);
 
 		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
 				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("anotherTopic");
-			String json = subscribeMsg.toJson(jsonFactory);
+			String json = subscribeMsg.toJson(this.jsonFactory);
 			webSocketSession1.sendMessage(new TextMessage(json));
 			webSocketSession2.sendMessage(new TextMessage(json));
 
@@ -190,7 +190,7 @@ public class PubSubTest extends BaseWampTest {
 			else {
 				pm = new PublishMessage("anotherTopic", "the test message");
 			}
-			webSocketSession1.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
 			EventMessage event1 = (EventMessage) result1.getWampMessage();
 			if (expectedReceiver.contains(1)) {

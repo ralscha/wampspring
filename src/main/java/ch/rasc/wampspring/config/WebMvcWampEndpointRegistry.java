@@ -103,13 +103,13 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 
 	@Override
 	public WampWebSocketEndpointRegistration addEndpoint(String... paths) {
-		subProtocolWebSocketHandler.addProtocolHandler(wampSubProtocolHandler);
+		this.subProtocolWebSocketHandler.addProtocolHandler(this.wampSubProtocolHandler);
 		WebMvcWampWebSocketEndpointRegistration registration = new WebMvcWampWebSocketEndpointRegistration(
 				paths, this.webSocketHandler, this.sockJsScheduler);
-		registrations.add(registration);
+		this.registrations.add(registration);
 
-		if (defaultHandshakeInterceptors != null) {
-			registration.addInterceptors(defaultHandshakeInterceptors);
+		if (this.defaultHandshakeInterceptors != null) {
+			registration.addInterceptors(this.defaultHandshakeInterceptors);
 		}
 
 		return registration;

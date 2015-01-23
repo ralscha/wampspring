@@ -94,26 +94,26 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 	@Override
 	public void start() {
 		synchronized (this.lifecycleMonitor) {
-			if (logger.isInfoEnabled()) {
-				logger.info("Starting...");
+			if (this.logger.isInfoEnabled()) {
+				this.logger.info("Starting...");
 			}
 			this.clientInboundChannel.subscribe(this);
 			this.brokerChannel.subscribe(this);
 			this.running = true;
-			logger.info("Started.");
+			this.logger.info("Started.");
 		}
 	}
 
 	@Override
 	public void stop() {
 		synchronized (this.lifecycleMonitor) {
-			if (logger.isInfoEnabled()) {
-				logger.info("Stopping...");
+			if (this.logger.isInfoEnabled()) {
+				this.logger.info("Stopping...");
 			}
 			this.clientInboundChannel.unsubscribe(this);
 			this.brokerChannel.unsubscribe(this);
 			this.running = false;
-			logger.info("Stopped.");
+			this.logger.info("Stopped.");
 		}
 	}
 
@@ -135,8 +135,8 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 	@Override
 	public void handleMessage(Message<?> message) {
 		if (!this.running) {
-			if (logger.isTraceEnabled()) {
-				logger.trace(this + " not running yet. Ignoring " + message);
+			if (this.logger.isTraceEnabled()) {
+				this.logger.trace(this + " not running yet. Ignoring " + message);
 			}
 			return;
 		}
@@ -145,7 +145,7 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 		WampSession wampSession = wampMessage.getWampSession();
 
 		if (wampSession != null && !wampSession.isAuthenticated()
-				&& authenticationRequiredGlobal) {
+				&& this.authenticationRequiredGlobal) {
 			throw new SecurityException("Not authenticated");
 		}
 
@@ -179,8 +179,8 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 				.findSubscriptions(eventMessage);
 
 		if (sessionIds.size() > 0) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Broadcasting to " + sessionIds.size() + " sessions.");
+			if (this.logger.isDebugEnabled()) {
+				this.logger.debug("Broadcasting to " + sessionIds.size() + " sessions.");
 			}
 
 			Set<String> eligibleSessionIds = eventMessage.getEligibleSessionIds();
@@ -203,8 +203,8 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 			}
 		}
 		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No subscriptions found for " + eventMessage);
+			if (this.logger.isDebugEnabled()) {
+				this.logger.debug("No subscriptions found for " + eventMessage);
 			}
 		}
 	}
@@ -214,8 +214,8 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 				.findSubscriptions(publishMessage);
 
 		if (subscribedSessionIds.size() > 0) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Broadcasting to " + subscribedSessionIds.size()
+			if (this.logger.isDebugEnabled()) {
+				this.logger.debug("Broadcasting to " + subscribedSessionIds.size()
 						+ " sessions.");
 			}
 
@@ -226,8 +226,8 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 			}
 		}
 		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No subscriptions found for " + publishMessage);
+			if (this.logger.isDebugEnabled()) {
+				this.logger.debug("No subscriptions found for " + publishMessage);
 			}
 		}
 	}
@@ -247,10 +247,10 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 
 	protected void sendEventMessage(EventMessage eventMessage) {
 		try {
-			clientOutboundChannel.send(eventMessage);
+			this.clientOutboundChannel.send(eventMessage);
 		}
 		catch (Throwable ex) {
-			logger.error("Failed to send " + eventMessage, ex);
+			this.logger.error("Failed to send " + eventMessage, ex);
 		}
 	}
 

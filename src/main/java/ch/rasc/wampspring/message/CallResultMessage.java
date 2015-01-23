@@ -58,11 +58,11 @@ public class CallResultMessage extends WampMessage {
 	}
 
 	public String getCallID() {
-		return callID;
+		return this.callID;
 	}
 
 	public Object getResult() {
-		return result;
+		return this.result;
 	}
 
 	@Override
@@ -71,8 +71,8 @@ public class CallResultMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(callID);
-			jg.writeObject(result);
+			jg.writeString(this.callID);
+			jg.writeObject(this.result);
 			jg.writeEndArray();
 			jg.close();
 			return sw.toString();
@@ -81,7 +81,8 @@ public class CallResultMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "CallResultMessage [callID=" + callID + ", result=" + result + "]";
+		return "CallResultMessage [callID=" + this.callID + ", result=" + this.result
+				+ "]";
 	}
 
 }

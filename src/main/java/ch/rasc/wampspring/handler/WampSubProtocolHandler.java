@@ -84,7 +84,7 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 		Assert.isInstanceOf(TextMessage.class, webSocketMessage);
 		WampMessage wampMessage = null;
 		try {
-			wampMessage = WampMessage.fromJson(session, jsonFactory,
+			wampMessage = WampMessage.fromJson(session, this.jsonFactory,
 					((TextMessage) webSocketMessage).getPayload());
 		}
 		catch (Throwable ex) {
@@ -110,7 +110,7 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 						(CallMessage) wampMessage, "", ex.toString());
 
 				try {
-					String json = callErrorMessage.toJson(jsonFactory);
+					String json = callErrorMessage.toJson(this.jsonFactory);
 					session.sendMessage(new TextMessage(json));
 				}
 				catch (Throwable t) {
@@ -137,7 +137,7 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 
 		boolean closeWebSocketSession = false;
 		try {
-			String json = ((WampMessage) message).toJson(jsonFactory);
+			String json = ((WampMessage) message).toJson(this.jsonFactory);
 			session.sendMessage(new TextMessage(json));
 		}
 		catch (SessionLimitExceededException ex) {
@@ -177,7 +177,7 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 		WelcomeMessage welcomeMessage = new WelcomeMessage(session.getId(),
 				SERVER_IDENTIFIER);
 		try {
-			session.sendMessage(new TextMessage(welcomeMessage.toJson(jsonFactory)));
+			session.sendMessage(new TextMessage(welcomeMessage.toJson(this.jsonFactory)));
 
 			Principal principal = session.getPrincipal();
 			if (principal != null && this.userSessionRegistry != null) {

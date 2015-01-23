@@ -87,20 +87,20 @@ public class CallMessage extends WampMessage {
 	}
 
 	public String getCallID() {
-		return callID;
+		return this.callID;
 	}
 
 	public String getProcURI() {
-		return procURI;
+		return this.procURI;
 	}
 
 	public List<Object> getArguments() {
-		return arguments;
+		return this.arguments;
 	}
 
 	@Override
 	public String getDestination() {
-		return procURI;
+		return this.procURI;
 	}
 
 	@Override
@@ -109,10 +109,10 @@ public class CallMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(callID);
-			jg.writeString(procURI);
-			if (arguments != null) {
-				for (Object argument : arguments) {
+			jg.writeString(this.callID);
+			jg.writeString(this.procURI);
+			if (this.arguments != null) {
+				for (Object argument : this.arguments) {
 					jg.writeObject(argument);
 				}
 			}
@@ -125,8 +125,8 @@ public class CallMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "CallMessage [callID=" + callID + ", procURI=" + procURI + ", arguments="
-				+ arguments + "]";
+		return "CallMessage [callID=" + this.callID + ", procURI=" + this.procURI
+				+ ", arguments=" + this.arguments + "]";
 	}
 
 }

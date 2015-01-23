@@ -28,14 +28,14 @@ public class TestPrincipal implements Principal {
 
 	@Override
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (name == null ? 0 : name.hashCode());
+		result = prime * result + (this.name == null ? 0 : this.name.hashCode());
 		return result;
 	}
 
@@ -51,12 +51,12 @@ public class TestPrincipal implements Principal {
 			return false;
 		}
 		TestPrincipal other = (TestPrincipal) obj;
-		if (name == null) {
+		if (this.name == null) {
 			if (other.name != null) {
 				return false;
 			}
 		}
-		else if (!name.equals(other.name)) {
+		else if (!this.name.equals(other.name)) {
 			return false;
 		}
 		return true;

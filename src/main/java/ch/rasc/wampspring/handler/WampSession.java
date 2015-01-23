@@ -61,11 +61,11 @@ public class WampSession {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getAttribute(String name) {
-		return (T) webSocketSession.getAttributes().get(name);
+		return (T) this.webSocketSession.getAttributes().get(name);
 	}
 
 	public WebSocketSession getWebSocketSession() {
-		return webSocketSession;
+		return this.webSocketSession;
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class WampSession {
 	 * @param value the value for the attribute
 	 */
 	public void setAttribute(String name, Object value) {
-		webSocketSession.getAttributes().put(name, value);
+		this.webSocketSession.getAttributes().put(name, value);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class WampSession {
 	 * @param name the name of the attribute
 	 */
 	public void removeAttribute(String name) {
-		webSocketSession.getAttributes().remove(name);
+		this.webSocketSession.getAttributes().remove(name);
 		removeDestructionCallback(name);
 	}
 
@@ -96,7 +96,7 @@ public class WampSession {
 	 * @return the attribute names as String array, never {@code null}
 	 */
 	public String[] getAttributeNames() {
-		return StringUtils.toStringArray(webSocketSession.getAttributes().keySet());
+		return StringUtils.toStringArray(this.webSocketSession.getAttributes().keySet());
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class WampSession {
 
 	private void removeDestructionCallback(String name) {
 		synchronized (getSessionMutex()) {
-			webSocketSession.getAttributes().remove(
+			this.webSocketSession.getAttributes().remove(
 					DESTRUCTION_CALLBACK_NAME_PREFIX + name);
 		}
 	}
@@ -127,7 +127,7 @@ public class WampSession {
 	 * @return the session id as String (never {@code null})
 	 */
 	public String getSessionId() {
-		return webSocketSession.getId();
+		return this.webSocketSession.getId();
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class WampSession {
 	public Object getSessionMutex() {
 		Object mutex = getAttribute(SESSION_MUTEX_NAME);
 		if (mutex == null) {
-			mutex = webSocketSession.getAttributes();
+			mutex = this.webSocketSession.getAttributes();
 		}
 		return mutex;
 	}
@@ -162,7 +162,7 @@ public class WampSession {
 	}
 
 	private void executeDestructionCallbacks() {
-		for (Map.Entry<String, Object> entry : webSocketSession.getAttributes()
+		for (Map.Entry<String, Object> entry : this.webSocketSession.getAttributes()
 				.entrySet()) {
 			if (entry.getKey().startsWith(DESTRUCTION_CALLBACK_NAME_PREFIX)) {
 				try {

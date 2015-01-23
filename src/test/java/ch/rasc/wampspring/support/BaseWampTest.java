@@ -48,12 +48,12 @@ public class BaseWampTest {
 
 	protected WampMessage sendWampMessage(WampMessage msg) throws IOException,
 			InterruptedException, ExecutionException {
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
+		ResultWebSocketHandler result = new ResultWebSocketHandler(this.jsonFactory);
 
 		WebSocketClient webSocketClient = new StandardWebSocketClient();
 		try (WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				wampEndpointUrl()).get()) {
-			webSocketSession.sendMessage(new TextMessage(msg.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(msg.toJson(this.jsonFactory)));
 			WampMessage response = result.getWampMessage();
 			return response;
 		}
@@ -66,11 +66,11 @@ public class BaseWampTest {
 	}
 
 	protected String wampEndpointUrl() {
-		return "ws://localhost:" + port + "/wamp";
+		return "ws://localhost:" + this.port + "/wamp";
 	}
 
 	protected WampMessage sendAuthenticatedMessage(WampMessage msg) throws Exception {
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
+		ResultWebSocketHandler result = new ResultWebSocketHandler(this.jsonFactory);
 
 		WebSocketClient webSocketClient = new StandardWebSocketClient();
 		try (WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
@@ -78,7 +78,7 @@ public class BaseWampTest {
 
 			authenticate(result, webSocketSession);
 
-			webSocketSession.sendMessage(new TextMessage(msg.toJson(jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(msg.toJson(this.jsonFactory)));
 			WampMessage response = result.getWampMessage();
 			return response;
 		}
@@ -90,7 +90,7 @@ public class BaseWampTest {
 		CallMessage authReqCallMessage = new CallMessage("1",
 				"http://api.wamp.ws/procedure#authreq", "a", Collections.emptyMap());
 		webSocketSession.sendMessage(new TextMessage(authReqCallMessage
-				.toJson(jsonFactory)));
+				.toJson(this.jsonFactory)));
 		WampMessage response = result.getWampMessage();
 
 		assertThat(response).isInstanceOf(CallResultMessage.class);
@@ -106,8 +106,8 @@ public class BaseWampTest {
 
 		CallMessage authCallMessage = new CallMessage("2",
 				"http://api.wamp.ws/procedure#auth", signature);
-		webSocketSession
-				.sendMessage(new TextMessage(authCallMessage.toJson(jsonFactory)));
+		webSocketSession.sendMessage(new TextMessage(authCallMessage
+				.toJson(this.jsonFactory)));
 		response = result.getWampMessage();
 
 		assertThat(response).isInstanceOf(CallResultMessage.class);

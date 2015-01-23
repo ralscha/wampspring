@@ -45,36 +45,37 @@ public class ResultWebSocketHandler extends AbstractWebSocketHandler {
 	}
 
 	public void reset() {
-		resultDeferred = new DeferredObject<>();
+		this.resultDeferred = new DeferredObject<>();
 	}
 
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message)
 			throws Exception {
 		try {
-			WampMessage wampMessage = WampMessage.fromJson(jsonFactory,
+			WampMessage wampMessage = WampMessage.fromJson(this.jsonFactory,
 					message.getPayload());
 			if (wampMessage instanceof WelcomeMessage) {
-				welcomeReceived = true;
-				welcomeDeferred.resolve(((WelcomeMessage) wampMessage).getSessionId());
+				this.welcomeReceived = true;
+				this.welcomeDeferred.resolve(((WelcomeMessage) wampMessage)
+						.getSessionId());
 			}
 			else {
-				if (welcomeReceived) {
-					resultDeferred.resolve(wampMessage);
+				if (this.welcomeReceived) {
+					this.resultDeferred.resolve(wampMessage);
 				}
 				else {
-					resultDeferred.reject(wampMessage);
+					this.resultDeferred.reject(wampMessage);
 				}
 			}
 
 		}
 		catch (Exception e) {
-			resultDeferred.reject(e);
+			this.resultDeferred.reject(e);
 		}
 	}
 
 	Promise<WampMessage, Object, Void> getPromise() {
-		return resultDeferred.promise();
+		return this.resultDeferred.promise();
 	}
 
 	public WampMessage getWampMessage() throws InterruptedException {
@@ -93,7 +94,7 @@ public class ResultWebSocketHandler extends AbstractWebSocketHandler {
 	}
 
 	public String getSessionId() throws InterruptedException {
-		Promise<String, Void, Void> promise = welcomeDeferred.promise();
+		Promise<String, Void, Void> promise = this.welcomeDeferred.promise();
 
 		final String[] objectWrapper = new String[1];
 		promise.done(new DoneCallback<String>() {

@@ -62,14 +62,14 @@ public class PrefixMessage extends WampMessage {
 	 * @return the prefix
 	 */
 	public String getPrefix() {
-		return prefix;
+		return this.prefix;
 	}
 
 	/**
 	 * @return the uri
 	 */
 	public String getUri() {
-		return uri;
+		return this.uri;
 	}
 
 	@Override
@@ -78,8 +78,8 @@ public class PrefixMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(prefix);
-			jg.writeString(uri);
+			jg.writeString(this.prefix);
+			jg.writeString(this.uri);
 			jg.writeEndArray();
 			jg.close();
 			return sw.toString();
@@ -90,14 +90,14 @@ public class PrefixMessage extends WampMessage {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PrefixMessage [");
-		if (prefix != null) {
+		if (this.prefix != null) {
 			builder.append("prefix=");
-			builder.append(prefix);
+			builder.append(this.prefix);
 			builder.append(", ");
 		}
-		if (uri != null) {
+		if (this.uri != null) {
 			builder.append("uri=");
-			builder.append(uri);
+			builder.append(this.uri);
 		}
 		builder.append("]");
 		return builder.toString();

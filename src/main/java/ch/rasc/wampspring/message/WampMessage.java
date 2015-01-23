@@ -51,12 +51,12 @@ public abstract class WampMessage implements Message<Object> {
 	}
 
 	public void setHeader(WampMessageHeader header, Object value) {
-		messageHeaders.getRawHeaders().put(header.name(), value);
+		this.messageHeaders.getRawHeaders().put(header.name(), value);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getHeader(WampMessageHeader header) {
-		return (T) messageHeaders.get(header.name());
+		return (T) this.messageHeaders.get(header.name());
 	}
 
 	/**
@@ -97,7 +97,7 @@ public abstract class WampMessage implements Message<Object> {
 
 	@Override
 	public MessageHeaders getHeaders() {
-		return messageHeaders;
+		return this.messageHeaders;
 	}
 
 	public static <T extends WampMessage> T fromJson(WebSocketSession session,

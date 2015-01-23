@@ -59,7 +59,7 @@ public class WampMessageTypeMessageCondition extends
 
 	@Override
 	protected Collection<?> getContent() {
-		return Arrays.asList(messageType);
+		return Arrays.asList(this.messageType);
 	}
 
 	@Override

@@ -87,7 +87,7 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 
 	@Override
 	public boolean hasSubscriptions() {
-		return !sessionDestinations.isEmpty();
+		return !this.sessionDestinations.isEmpty();
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 
 	protected void removeSessionDestination(String sessionId, String destination) {
 
-		Set<String> destinations = sessionDestinations.get(sessionId);
+		Set<String> destinations = this.sessionDestinations.get(sessionId);
 		if (destinations != null) {
 			String removedDestination = null;
 			String removedSessionId = null;
@@ -108,7 +108,7 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 				if (destinations.remove(destination)) {
 					removedDestination = destination;
 					if (destinations.isEmpty()) {
-						sessionDestinations.remove(sessionId);
+						this.sessionDestinations.remove(sessionId);
 						removedSessionId = sessionId;
 					}
 				}
@@ -126,7 +126,7 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 
 	@Override
 	public void unregisterSession(String sessionId) {
-		Set<String> destinations = sessionDestinations.remove(sessionId);
+		Set<String> destinations = this.sessionDestinations.remove(sessionId);
 		if (destinations != null) {
 			this.destinationCache.updateAfterRemovedSession(sessionId);
 		}
@@ -139,7 +139,7 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 				destinations = this.sessionDestinations.get(sessionId);
 				if (destinations == null) {
 					destinations = new HashSet<>(4);
-					sessionDestinations.put(sessionId, destinations);
+					this.sessionDestinations.put(sessionId, destinations);
 				}
 			}
 		}
@@ -187,7 +187,7 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 				DEFAULT_CACHE_LIMIT, 0.75f, true) {
 			@Override
 			protected boolean removeEldestEntry(Map.Entry<String, Set<String>> eldest) {
-				return size() > cacheLimit;
+				return size() > DefaultSubscriptionRegistry.this.cacheLimit;
 			}
 		};
 
@@ -206,7 +206,8 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 			synchronized (this.updateCache) {
 				for (Map.Entry<String, Set<String>> entry : this.updateCache.entrySet()) {
 					String cachedDestination = entry.getKey();
-					if (pathMatcher.match(destination, cachedDestination)) {
+					if (DefaultSubscriptionRegistry.this.pathMatcher.match(destination,
+							cachedDestination)) {
 						Set<String> sessionIds = entry.getValue();
 						sessionIds.add(sessionId);
 						this.accessCache

@@ -130,24 +130,24 @@ public class PublishMessage extends PubSubMessage {
 	}
 
 	public Object getEvent() {
-		return event;
+		return this.event;
 	}
 
 	@Override
 	public Object getPayload() {
-		return event;
+		return this.event;
 	}
 
 	public Boolean getExcludeMe() {
-		return excludeMe;
+		return this.excludeMe;
 	}
 
 	public Set<String> getExclude() {
-		return exclude;
+		return this.exclude;
 	}
 
 	public Set<String> getEligible() {
-		return eligible;
+		return this.eligible;
 	}
 
 	@Override
@@ -158,14 +158,14 @@ public class PublishMessage extends PubSubMessage {
 			jg.writeNumber(getTypeId());
 			jg.writeString(getTopicURI());
 
-			jg.writeObject(event);
-			if (excludeMe != null && excludeMe) {
+			jg.writeObject(this.event);
+			if (this.excludeMe != null && this.excludeMe) {
 				jg.writeBoolean(true);
 			}
-			else if (exclude != null) {
-				jg.writeObject(exclude);
-				if (eligible != null) {
-					jg.writeObject(eligible);
+			else if (this.exclude != null) {
+				jg.writeObject(this.exclude);
+				if (this.eligible != null) {
+					jg.writeObject(this.eligible);
 				}
 			}
 
@@ -177,9 +177,9 @@ public class PublishMessage extends PubSubMessage {
 
 	@Override
 	public String toString() {
-		return "PublishMessage [topicURI=" + getTopicURI() + ", event=" + event
-				+ ", excludeMe=" + excludeMe + ", exclude=" + exclude + ", eligible="
-				+ eligible + "]";
+		return "PublishMessage [topicURI=" + getTopicURI() + ", event=" + this.event
+				+ ", excludeMe=" + this.excludeMe + ", exclude=" + this.exclude
+				+ ", eligible=" + this.eligible + "]";
 	}
 
 }

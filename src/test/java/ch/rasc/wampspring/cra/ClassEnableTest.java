@@ -67,7 +67,7 @@ public class ClassEnableTest extends BaseWampTest {
 
 	@Override
 	protected String wampEndpointUrl() {
-		return "ws://localhost:" + port + "/ws";
+		return "ws://localhost:" + this.port + "/ws";
 	}
 
 	@Configuration

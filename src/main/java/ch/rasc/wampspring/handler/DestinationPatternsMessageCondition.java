@@ -140,7 +140,7 @@ public class DestinationPatternsMessageCondition extends
 		}
 
 		List<String> matches = new ArrayList<>();
-		for (String pattern : patterns) {
+		for (String pattern : this.patterns) {
 			if (pattern.equals(destination)
 					|| this.pathMatcher.match(pattern, destination)
 					|| "**".equals(destination)) {
@@ -175,7 +175,7 @@ public class DestinationPatternsMessageCondition extends
 		Comparator<String> patternComparator = this.pathMatcher
 				.getPatternComparator(destination);
 
-		Iterator<String> iterator = patterns.iterator();
+		Iterator<String> iterator = this.patterns.iterator();
 		Iterator<String> iteratorOther = other.patterns.iterator();
 		while (iterator.hasNext() && iteratorOther.hasNext()) {
 			int result = patternComparator.compare(iterator.next(), iteratorOther.next());

@@ -35,7 +35,7 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 	private final AuthenticationSecretProvider authenticationSecretProvider;
 
 	public DefaultAuthenticationHandler(AuthenticationSecretProvider provider) {
-		authenticationSecretProvider = provider;
+		this.authenticationSecretProvider = provider;
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 			throw new IllegalStateException("Already authenticated");
 		}
 
-		if (authenticationSecretProvider.getSecret(authKey) == null) {
+		if (this.authenticationSecretProvider.getSecret(authKey) == null) {
 			throw new IllegalStateException("Secret key does not exist");
 		}
 
@@ -74,7 +74,7 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 
 		final String correctSignature;
 		try {
-			final String secret = authenticationSecretProvider.getSecret(wampSession
+			final String secret = this.authenticationSecretProvider.getSecret(wampSession
 					.getAuthKey());
 			if (!StringUtils.hasText(secret)) {
 				throw new IllegalStateException("Secret does not exist");

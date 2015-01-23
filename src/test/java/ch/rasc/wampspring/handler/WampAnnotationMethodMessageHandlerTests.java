@@ -70,35 +70,36 @@ public class WampAnnotationMethodMessageHandlerTests {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 
-		when(clientOutboundChannel.send(any(WampMessage.class))).thenReturn(true);
+		when(this.clientOutboundChannel.send(any(WampMessage.class))).thenReturn(true);
 
 		DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService();
 		MethodParameterConverter paramConverter = new MethodParameterConverter(
 				new ObjectMapper(), conversionService);
-		messageHandler = new WampAnnotationMethodMessageHandler(clientInboundChannel,
-				clientOutboundChannel, eventMessenger, conversionService, paramConverter,
+		this.messageHandler = new WampAnnotationMethodMessageHandler(
+				this.clientInboundChannel, this.clientOutboundChannel,
+				this.eventMessenger, conversionService, paramConverter,
 				new AntPathMatcher());
 
 		@SuppressWarnings("resource")
 		StaticApplicationContext applicationContext = new StaticApplicationContext();
 		applicationContext.registerPrototype("callService", CallService.class);
 		// applicationContext.refresh();
-		messageHandler.setApplicationContext(applicationContext);
-		messageHandler.afterPropertiesSet();
+		this.messageHandler.setApplicationContext(applicationContext);
+		this.messageHandler.afterPropertiesSet();
 
-		messageHandler.start();
+		this.messageHandler.start();
 	}
 
 	@Test
 	public void testCall() {
 		CallMessage callMessage = new CallMessage("12", "sum/one", 3, 4);
-		messageHandler.handleMessage(callMessage);
+		this.messageHandler.handleMessage(callMessage);
 
 		callMessage = new CallMessage("13", "sum/two", 2, 1);
-		messageHandler.handleMessage(callMessage);
+		this.messageHandler.handleMessage(callMessage);
 
-		verify(clientOutboundChannel, times(2)).send(messageCaptor.capture());
-		List<WampMessage> results = messageCaptor.getAllValues();
+		verify(this.clientOutboundChannel, times(2)).send(this.messageCaptor.capture());
+		List<WampMessage> results = this.messageCaptor.getAllValues();
 
 		assertThat(results).hasSize(2);
 		assertThat(results.get(0)).isInstanceOf(CallResultMessage.class);

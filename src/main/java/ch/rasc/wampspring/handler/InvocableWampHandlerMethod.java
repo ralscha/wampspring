@@ -86,12 +86,12 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 	 */
 	public Object invoke(WampMessage message, Object... providedArgs) throws Exception {
 		Object[] args = getMethodArgumentValues(message, providedArgs);
-		if (logger.isTraceEnabled()) {
-			logger.trace("Resolved arguments: " + Arrays.asList(args));
+		if (this.logger.isTraceEnabled()) {
+			this.logger.trace("Resolved arguments: " + Arrays.asList(args));
 		}
 		Object returnValue = doInvoke(args);
-		if (logger.isTraceEnabled()) {
-			logger.trace("Returned value: " + returnValue);
+		if (this.logger.isTraceEnabled()) {
+			this.logger.trace("Returned value: " + returnValue);
 		}
 		return returnValue;
 	}
@@ -107,7 +107,7 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 		int argIndex = 0;
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];
-			parameter.initParameterNameDiscovery(parameterNameDiscoverer);
+			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
 			GenericTypeResolver.resolveParameterType(parameter, getBean().getClass());
 
 			if (this.argumentResolvers.supportsParameter(parameter)) {
@@ -116,8 +116,8 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 					continue;
 				}
 				catch (Exception ex) {
-					if (logger.isTraceEnabled()) {
-						logger.trace(
+					if (this.logger.isTraceEnabled()) {
+						this.logger.trace(
 								getArgumentResolutionErrorMessage(
 										"Error resolving argument", i), ex);
 					}
@@ -126,7 +126,7 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 			}
 
 			if (providedArgs != null) {
-				args[i] = methodParameterConverter.convert(parameter,
+				args[i] = this.methodParameterConverter.convert(parameter,
 						providedArgs[argIndex]);
 				if (args[i] != null) {
 					argIndex++;

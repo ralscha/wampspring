@@ -25,6 +25,6 @@ public class EventSenderService {
 	private EventMessenger eventMessenger;
 
 	public void sendEvent(String topicURI, String message) {
-		eventMessenger.sendToAll(topicURI, message);
+		this.eventMessenger.sendToAll(topicURI, message);
 	}
 }

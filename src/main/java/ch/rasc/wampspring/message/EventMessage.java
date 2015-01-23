@@ -84,11 +84,11 @@ public class EventMessage extends PubSubMessage {
 	}
 
 	public Object getEvent() {
-		return event;
+		return this.event;
 	}
 
 	public Set<String> getExcludeSessionIds() {
-		return excludeSessionIds;
+		return this.excludeSessionIds;
 	}
 
 	public void setExcludeSessionIds(Set<String> excludeSessionIds) {
@@ -96,7 +96,7 @@ public class EventMessage extends PubSubMessage {
 	}
 
 	public Set<String> getEligibleSessionIds() {
-		return eligibleSessionIds;
+		return this.eligibleSessionIds;
 	}
 
 	public void setEligibleSessionIds(Set<String> eligibleSessionIds) {
@@ -110,7 +110,7 @@ public class EventMessage extends PubSubMessage {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
 			jg.writeString(getTopicURI());
-			jg.writeObject(event);
+			jg.writeObject(this.event);
 			jg.writeEndArray();
 			jg.close();
 
@@ -120,7 +120,7 @@ public class EventMessage extends PubSubMessage {
 
 	@Override
 	public String toString() {
-		return "EventMessage [topicURI=" + getTopicURI() + ", event=" + event + "]";
+		return "EventMessage [topicURI=" + getTopicURI() + ", event=" + this.event + "]";
 	}
 
 }

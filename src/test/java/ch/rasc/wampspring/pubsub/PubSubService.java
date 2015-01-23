@@ -34,7 +34,7 @@ public class PubSubService {
 
 	@WampSubscribeListener("secondTopic")
 	public void subscribe() {
-		eventMessenger.sendToAll("secondTopic", "a simple message");
+		this.eventMessenger.sendToAll("secondTopic", "a simple message");
 	}
 
 	@WampPublishListener("sumTopic")
@@ -43,14 +43,14 @@ public class PubSubService {
 		for (Integer number : numbers) {
 			total += number;
 		}
-		eventMessenger.sendToAll("resultTopic", total);
+		this.eventMessenger.sendToAll("resultTopic", total);
 	}
 
 	@WampPublishListener
 	public void dto(TestDto testDto) {
 		assertThat(testDto.getName()).isEqualTo("Hello PubSub");
-		eventMessenger.sendToAll("pubSubService.dto.result",
-				"Server says: " + testDto.getName());
+		this.eventMessenger.sendToAll("pubSubService.dto.result", "Server says: "
+				+ testDto.getName());
 	}
 
 	@WampPublishListener(replyTo = "replyTo1")

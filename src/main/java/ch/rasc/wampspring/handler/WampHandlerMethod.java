@@ -43,15 +43,15 @@ public class WampHandlerMethod extends HandlerMethod {
 	}
 
 	public String[] getReplyTo() {
-		return replyTo;
+		return this.replyTo;
 	}
 
 	public Boolean isExcludeSender() {
-		return excludeSender;
+		return this.excludeSender;
 	}
 
 	public boolean isAuthenticationRequired() {
-		return authenticationRequired;
+		return this.authenticationRequired;
 	}
 
 }

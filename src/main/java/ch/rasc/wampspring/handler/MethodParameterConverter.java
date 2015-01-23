@@ -54,29 +54,29 @@ public class MethodParameterConverter {
 			return convertListElements(td, argument);
 		}
 
-		if (conversionService.canConvert(sourceClass, targetClass)) {
+		if (this.conversionService.canConvert(sourceClass, targetClass)) {
 			try {
 				return convertListElements(td,
-						conversionService.convert(argument, targetClass));
+						this.conversionService.convert(argument, targetClass));
 			}
 			catch (Exception e) {
 
-				TypeFactory typeFactory = objectMapper.getTypeFactory();
+				TypeFactory typeFactory = this.objectMapper.getTypeFactory();
 				if (td.isCollection()) {
 					JavaType type = CollectionType.construct(td.getType(), typeFactory
 							.constructType(td.getElementTypeDescriptor().getType()));
-					return objectMapper.convertValue(argument, type);
+					return this.objectMapper.convertValue(argument, type);
 				}
 				else if (td.isArray()) {
 					JavaType type = typeFactory.constructArrayType(td
 							.getElementTypeDescriptor().getType());
-					return objectMapper.convertValue(argument, type);
+					return this.objectMapper.convertValue(argument, type);
 				}
 
 				throw e;
 			}
 		}
-		return objectMapper.convertValue(argument, targetClass);
+		return this.objectMapper.convertValue(argument, targetClass);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -87,7 +87,8 @@ public class MethodParameterConverter {
 
 			Collection<Object> convertedList = new ArrayList<>();
 			for (Object record : (List<Object>) convertedValue) {
-				Object convertedObject = objectMapper.convertValue(record, elementType);
+				Object convertedObject = this.objectMapper.convertValue(record,
+						elementType);
 				convertedList.add(convertedObject);
 			}
 			return convertedList;

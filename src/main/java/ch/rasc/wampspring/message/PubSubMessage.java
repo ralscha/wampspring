@@ -38,7 +38,7 @@ public abstract class PubSubMessage extends WampMessage {
 	}
 
 	public String getTopicURI() {
-		return topicURI;
+		return this.topicURI;
 	}
 
 	protected void setTopicURI(String topicURI) {
@@ -47,6 +47,6 @@ public abstract class PubSubMessage extends WampMessage {
 
 	@Override
 	public String getDestination() {
-		return topicURI;
+		return this.topicURI;
 	}
 }

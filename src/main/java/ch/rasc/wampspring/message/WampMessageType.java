@@ -54,7 +54,7 @@ public enum WampMessageType {
 	}
 
 	public int getTypeId() {
-		return typeId;
+		return this.typeId;
 	}
 
 	public static WampMessageType fromTypeId(int typeId) {

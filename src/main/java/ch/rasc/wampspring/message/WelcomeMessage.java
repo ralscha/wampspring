@@ -70,15 +70,15 @@ public class WelcomeMessage extends WampMessage {
 
 	@Override
 	public String getSessionId() {
-		return sessionId;
+		return this.sessionId;
 	}
 
 	public int getProtocolVersion() {
-		return protocolVersion;
+		return this.protocolVersion;
 	}
 
 	public String getServerIdent() {
-		return serverIdent;
+		return this.serverIdent;
 	}
 
 	@Override
@@ -87,9 +87,9 @@ public class WelcomeMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(sessionId);
-			jg.writeNumber(protocolVersion);
-			jg.writeString(serverIdent);
+			jg.writeString(this.sessionId);
+			jg.writeNumber(this.protocolVersion);
+			jg.writeString(this.serverIdent);
 			jg.writeEndArray();
 			jg.close();
 			return sw.toString();
@@ -98,8 +98,8 @@ public class WelcomeMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "WelcomeMessage [sessionId=" + sessionId + ", protocolVersion="
-				+ protocolVersion + ", serverIdent=" + serverIdent + "]";
+		return "WelcomeMessage [sessionId=" + this.sessionId + ", protocolVersion="
+				+ this.protocolVersion + ", serverIdent=" + this.serverIdent + "]";
 	}
 
 }
