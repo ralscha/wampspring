@@ -145,8 +145,9 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 
 	private String getArgumentResolutionErrorMessage(String message, int index) {
 		MethodParameter param = getMethodParameters()[index];
-		message += " [" + index + "] [type=" + param.getParameterType().getName() + "]";
-		return getDetailedErrorMessage(message);
+		String msg = message + " [" + index + "] [type="
+				+ param.getParameterType().getName() + "]";
+		return getDetailedErrorMessage(msg);
 	}
 
 	/**
