@@ -16,7 +16,6 @@
 package ch.rasc.wampspring.handler;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.simp.user.UserSessionRegistry;
 import org.springframework.util.Assert;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -57,16 +55,10 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 
 	private static final String SERVER_IDENTIFIER = "wampspring/1.0";
 
-	private UserSessionRegistry userSessionRegistry;
-
 	private final JsonFactory jsonFactory;
 
 	public WampSubProtocolHandler(JsonFactory jsonFactory) {
 		this.jsonFactory = jsonFactory;
-	}
-
-	public void setUserSessionRegistry(UserSessionRegistry registry) {
-		this.userSessionRegistry = registry;
 	}
 
 	@Override
@@ -178,12 +170,6 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 				SERVER_IDENTIFIER);
 		try {
 			session.sendMessage(new TextMessage(welcomeMessage.toJson(this.jsonFactory)));
-
-			Principal principal = session.getPrincipal();
-			if (principal != null && this.userSessionRegistry != null) {
-				this.userSessionRegistry.registerSessionId(principal.getName(),
-						session.getId());
-			}
 		}
 		catch (IOException e) {
 			logger.error(
@@ -195,17 +181,10 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 	@Override
 	public void afterSessionEnded(WebSocketSession session, CloseStatus closeStatus,
 			MessageChannel outputChannel) {
-
-		Principal principal = session.getPrincipal();
-		if (principal != null && this.userSessionRegistry != null) {
-			String userName = principal.getName();
-			this.userSessionRegistry.unregisterSessionId(userName, session.getId());
-		}
-
 		/*
 		 * To cleanup we send an internal messages to the handlers. It might be possible
-		 * that this is an improper session end and the client did not unsubscribe his
-		 * subscriptions
+		 * that this is an unexpected session end and the client did not unsubscribe his
+		 * subscriptions.
 		 */
 		WampMessage message = UnsubscribeMessage.createCleanupMessage(session);
 
