@@ -62,8 +62,7 @@ public class WampMessageSecurityMetadataSourceRegistry {
 	}
 
 	/**
-	 * Maps any {@link Message} that has a null destination
-	 * header 
+	 * Maps any {@link Message} that has a null destination header
 	 *
 	 * @return the Expression to associate
 	 */
@@ -454,13 +453,15 @@ public class WampMessageSecurityMetadataSourceRegistry {
 
 		@Override
 		public MessageMatcher<?> build() {
-			if (type == null) {
-				return new WampDestinationMessageMatcher(pattern, pathMatcher);
+			if (this.type == null) {
+				return new WampDestinationMessageMatcher(this.pattern,
+						WampMessageSecurityMetadataSourceRegistry.this.pathMatcher);
 			}
-			else if (WampDestinationMessageMatcher.isTypeWithDestination(type)) {
-				return new WampDestinationMessageMatcher(pattern, type, pathMatcher);
+			else if (WampDestinationMessageMatcher.isTypeWithDestination(this.type)) {
+				return new WampDestinationMessageMatcher(this.pattern, this.type,
+						WampMessageSecurityMetadataSourceRegistry.this.pathMatcher);
 			}
-			throw new IllegalStateException(type
+			throw new IllegalStateException(this.type
 					+ " is not supported since it does not have a destination");
 		}
 	}
