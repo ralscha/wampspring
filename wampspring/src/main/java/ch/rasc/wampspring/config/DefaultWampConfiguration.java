@@ -22,6 +22,7 @@ import java.util.concurrent.Executor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
@@ -190,7 +191,14 @@ public class DefaultWampConfiguration {
 	}
 
 	@Bean
-	public MessageHandler annotationMethodMessageHandler() {
+	public MessageHandler annotationMethodMessageHandler(
+			ConfigurableApplicationContext configurableApplicationContext) {
+
+		if (authenticationHandler() != null) {
+			configurableApplicationContext.getBeanFactory().registerSingleton(
+					"authenticationHandler", authenticationHandler());
+		}
+
 		WampAnnotationMethodMessageHandler messageHandler = new WampAnnotationMethodMessageHandler(
 				clientInboundChannel(), clientOutboundChannel(), eventMessenger(),
 				conversionService(), methodParameterConverter(), pathMatcher());
@@ -273,7 +281,6 @@ public class DefaultWampConfiguration {
 	 * {@link #authenticationSecretProvider()} returns null this method returns null and
 	 * creates no {@link AuthenticationHandler}
 	 */
-	@Bean
 	public AuthenticationHandler authenticationHandler() {
 		if (authenticationSecretProvider() != null) {
 			return new DefaultAuthenticationHandler(authenticationSecretProvider());
