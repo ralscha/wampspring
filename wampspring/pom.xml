@@ -15,7 +15,7 @@
 
 	<inceptionYear>2014</inceptionYear>
 
-	<name>WAMP v1 implementation for Spring 4</name>
+	<name>WAMP v1 Implementation for Spring 4</name>
 	<description>Implementation of WAMP v1 based on the Spring 4 websocket support</description>
 	<url>https://github.com/ralscha/wampspring/</url>
 
@@ -135,6 +135,8 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+					<testSource>1.8</testSource>
+					<testTarget>1.8</testTarget>					
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
@@ -305,6 +307,8 @@
 						<exclude>**/WampSession.java</exclude>
 						<exclude>**/WampSessionScope.java</exclude>
 						<exclude>**/PayloadArgumentResolver.java</exclude>
+						<exclude>**/AbstractUserWampConfigurer.java</exclude>
+						<exclude>**/UserSessionWebSocketHandlerDecoratorFactory.java</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>
