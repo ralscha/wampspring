@@ -100,7 +100,8 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the message
-	 * @param excludeSessionIds a set of WebSocket session ids that will be excluded
+	 * @param excludeSessionIds a set of WebSocket session ids that will be excluded. If
+	 * null or empty no client will be excluded.
 	 */
 	public void sendToAllExcept(String topicURI, Object event,
 			Set<String> excludeSessionIds) {
@@ -117,7 +118,7 @@ public class EventMessenger {
 	 * @param topicURI the name of the topic
 	 * @param event the message
 	 * @param eligibleSessionIds only the WebSocket session ids listed here will receive
-	 * the message
+	 * the message. If null or empty nobody receives the message.
 	 */
 	public void sendTo(String topicURI, Object event, Set<String> eligibleSessionIds) {
 		EventMessage eventMessage = new EventMessage(topicURI, event);
