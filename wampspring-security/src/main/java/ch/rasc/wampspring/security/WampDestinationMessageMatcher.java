@@ -36,7 +36,19 @@ import ch.rasc.wampspring.message.WampMessageType;
  * @author Ralph Schaer
  */
 public final class WampDestinationMessageMatcher implements MessageMatcher<Object> {
+	public static final MessageMatcher<Object> NULL_DESTINATION_MATCHER = new MessageMatcher<Object>() {
+		@Override
+		public boolean matches(Message<? extends Object> message) {
+			if (message instanceof WampMessage) {
+				String destination = ((WampMessage) message).getDestination();
+				return destination == null;
+			}
+			return false;
+		}
+	};
+
 	private final PathMatcher matcher;
+
 	/**
 	 * The {@link MessageMatcher} that determines if the type matches. If the type was
 	 * null, this matcher will match every Message.
@@ -75,22 +87,19 @@ public final class WampDestinationMessageMatcher implements MessageMatcher<Objec
 	 * @param pattern the pattern to use
 	 */
 	public WampDestinationMessageMatcher(String pattern) {
-		this(pattern, null);
+		this(pattern, new AntPathMatcher());
 	}
 
 	/**
 	 * <p>
-	 * Creates a new instance with the specified pattern and a {@link AntPathMatcher}
-	 * created from the default constructor.
+	 * Creates a new instance with the specified pattern and {@link PathMatcher}.
 	 * </p>
 	 *
 	 * @param pattern the pattern to use
-	 * @param type the {@link WampMessageType} to match on or null if any
-	 * {@link WampMessageType} should be matched.
 	 * @param pathMatcher the {@link PathMatcher} to use.
 	 */
-	public WampDestinationMessageMatcher(String pattern, WampMessageType type) {
-		this(pattern, null, new AntPathMatcher());
+	public WampDestinationMessageMatcher(String pattern, PathMatcher pathMatcher) {
+		this(pattern, null, pathMatcher);
 	}
 
 	/**
@@ -108,6 +117,12 @@ public final class WampDestinationMessageMatcher implements MessageMatcher<Objec
 			PathMatcher pathMatcher) {
 		Assert.notNull(pattern, "pattern cannot be null");
 		Assert.notNull(pathMatcher, "pathMatcher cannot be null");
+
+		if (!isTypeWithDestination(type)) {
+			throw new IllegalArgumentException("WampMessageType " + type
+					+ " does not contain a destination and so cannot be matched on.");
+		}
+
 		this.matcher = pathMatcher;
 		this.messageTypeMatcher = type == null ? ANY_MESSAGE
 				: new WampMessageTypeMatcher(type);
@@ -126,5 +141,21 @@ public final class WampDestinationMessageMatcher implements MessageMatcher<Objec
 		}
 
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return "WampDestinationMessageMatcher [matcher=" + this.matcher
+				+ ", messageTypeMatcher=" + this.messageTypeMatcher + ", pattern="
+				+ this.pattern + "]";
+	}
+
+	public static boolean isTypeWithDestination(WampMessageType type) {
+		if (type == null) {
+			return true;
+		}
+		return type == WampMessageType.CALL || type == WampMessageType.PUBLISH
+				|| type == WampMessageType.SUBSCRIBE
+				|| type == WampMessageType.UNSUBSCRIBE;
 	}
 }

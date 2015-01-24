@@ -45,11 +45,14 @@ import ch.rasc.wampspring.message.WampMessageHeader;
  * 
  * 	&#064;Override
  * 	protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
- * 		messages.antMatchers(&quot;/user/queue/errors&quot;).permitAll().antMatchers(&quot;/admin/**&quot;)
+ * 		messages.wampDestPublishMatchers(&quot;/user/queue/errors&quot;).permitAll().wampDestSubscribeMatchers(&quot;/admin/**&quot;)
  * 				.hasRole(&quot;ADMIN&quot;).anyMessage().authenticated();
  * 	}
  * }
  * </pre>
+ *
+ * @author Rob Winch
+ * @author Ralph Schaer
  */
 public abstract class AbstractSecurityWampConfigurer extends WampConfigurerAdapter {
 

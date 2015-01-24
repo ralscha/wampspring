@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.springframework.messaging.Message;
 import org.springframework.security.config.annotation.web.configurers.RememberMeConfigurer;
+import org.springframework.security.config.annotation.web.messaging.MessageSecurityMetadataSourceRegistry;
 import org.springframework.security.messaging.access.expression.ExpressionBasedMessageSecurityMetadataSourceFactory;
 import org.springframework.security.messaging.access.intercept.MessageSecurityMetadataSource;
 import org.springframework.security.messaging.util.matcher.MessageMatcher;
@@ -36,8 +37,8 @@ import ch.rasc.wampspring.message.WampMessageType;
  * Allows mapping security constraints using {@link MessageMatcher} to the security
  * expressions.
  *
- * @since 4.0
  * @author Rob Winch
+ * @author Ralph Schaer
  */
 public class WampMessageSecurityMetadataSourceRegistry {
 	private static final String permitAll = "permitAll";
@@ -61,12 +62,22 @@ public class WampMessageSecurityMetadataSourceRegistry {
 	}
 
 	/**
+	 * Maps any {@link Message} that has a null destination
+	 * header 
+	 *
+	 * @return the Expression to associate
+	 */
+	public Constraint nullDestMatcher() {
+		return matchers(WampDestinationMessageMatcher.NULL_DESTINATION_MATCHER);
+	}
+
+	/**
 	 * Maps a {@link List} of {@link WampDestinationMessageMatcher} instances.
 	 *
 	 * @param typesToMatch the {@link WampMessageType} instance to match on
 	 * @return the {@link Constraint} associated to the matchers.
 	 */
-	public Constraint typeMatchers(WampMessageType... typesToMatch) {
+	public Constraint wampTypeMatchers(WampMessageType... typesToMatch) {
 		MessageMatcher<?>[] typeMatchers = new MessageMatcher<?>[typesToMatch.length];
 		for (int i = 0; i < typesToMatch.length; i++) {
 			WampMessageType typeToMatch = typesToMatch[i];
@@ -81,13 +92,78 @@ public class WampMessageSecurityMetadataSourceRegistry {
 	 * then the Matcher returns false.
 	 *
 	 * @param patterns the patterns to create {@link WampDestinationMessageMatcher} from.
-	 * Uses {@link WampMessageSecurityMetadataSourceRegistry#pathMatcher(PathMatcher)} .
+	 * Uses {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 * .
 	 *
 	 * @return the {@link Constraint} that is associated to the {@link MessageMatcher}
-	 * @see {@link WampMessageSecurityMetadataSourceRegistry#pathMatcher(PathMatcher)}
+	 * @see {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
 	 */
-	public Constraint antMatchers(String... patterns) {
-		return antMatchers(null, patterns);
+	public Constraint wampDestMatchers(String... patterns) {
+		return wampDestMatchers(null, patterns);
+	}
+
+	/**
+	 * Maps a {@link List} of {@link WampDestinationMessageMatcher} instances that match
+	 * on {@code WampMessageType.CALL}. If no destination is found on the Message, then
+	 * the Matcher returns false.
+	 *
+	 * @param patterns the patterns to create {@link WampDestinationMessageMatcher} from.
+	 * Uses {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 * .
+	 *
+	 * @return the {@link Constraint} that is associated to the {@link MessageMatcher}
+	 * @see {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 */
+	public Constraint wampDestCallMatchers(String... patterns) {
+		return wampDestMatchers(WampMessageType.CALL, patterns);
+	}
+
+	/**
+	 * Maps a {@link List} of {@link WampDestinationMessageMatcher} instances that match
+	 * on {@code WampMessageType.PUBLISH}. If no destination is found on the Message, then
+	 * the Matcher returns false.
+	 *
+	 * @param patterns the patterns to create {@link WampDestinationMessageMatcher} from.
+	 * Uses {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 * .
+	 *
+	 * @return the {@link Constraint} that is associated to the {@link MessageMatcher}
+	 * @see {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 */
+	public Constraint wampDestPublishMatchers(String... patterns) {
+		return wampDestMatchers(WampMessageType.PUBLISH, patterns);
+	}
+
+	/**
+	 * Maps a {@link List} of {@link WampDestinationMessageMatcher} instances that match
+	 * on {@code WampMessageType.SUBSCRIBE}. If no destination is found on the Message,
+	 * then the Matcher returns false.
+	 *
+	 * @param patterns the patterns to create {@link WampDestinationMessageMatcher} from.
+	 * Uses {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 * .
+	 *
+	 * @return the {@link Constraint} that is associated to the {@link MessageMatcher}
+	 * @see {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 */
+	public Constraint wampDestSubscribeMatchers(String... patterns) {
+		return wampDestMatchers(WampMessageType.SUBSCRIBE, patterns);
+	}
+
+	/**
+	 * Maps a {@link List} of {@link WampDestinationMessageMatcher} instances that match
+	 * on {@code WampMessageType.UNSUBSCRIBE}. If no destination is found on the Message,
+	 * then the Matcher returns false.
+	 *
+	 * @param patterns the patterns to create {@link WampDestinationMessageMatcher} from.
+	 * Uses {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 * .
+	 *
+	 * @return the {@link Constraint} that is associated to the {@link MessageMatcher}
+	 * @see {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 */
+	public Constraint wampDestUnsubscribeMatchers(String... patterns) {
+		return wampDestMatchers(WampMessageType.UNSUBSCRIBE, patterns);
 	}
 
 	/**
@@ -97,12 +173,13 @@ public class WampMessageSecurityMetadataSourceRegistry {
 	 * @param type the {@link WampMessageType} to match on. If null, the
 	 * {@link WampMessageType} is not considered for matching.
 	 * @param patterns the patterns to create {@link WampDestinationMessageMatcher} from.
-	 * Uses {@link WampMessageSecurityMetadataSourceRegistry#pathMatcher(PathMatcher)}.
+	 * Uses {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
+	 * .
 	 *
 	 * @return the {@link Constraint} that is associated to the {@link MessageMatcher}
-	 * @see {@link WampMessageSecurityMetadataSourceRegistry#pathMatcher(PathMatcher)}
+	 * @see {@link MessageSecurityMetadataSourceRegistry#wampDestPathMatcher(PathMatcher)}
 	 */
-	public Constraint antMatchers(WampMessageType type, String... patterns) {
+	private Constraint wampDestMatchers(WampMessageType type, String... patterns) {
 		List<MatcherBuilder> matchers = new ArrayList<>(patterns.length);
 		for (String pattern : patterns) {
 			matchers.add(new PathMatcherMessageMatcherBuilder(pattern, type));
@@ -112,14 +189,15 @@ public class WampMessageSecurityMetadataSourceRegistry {
 
 	/**
 	 * The {@link PathMatcher} to be used with the
-	 * {@link WampMessageSecurityMetadataSourceRegistry#antMatchers(String...)}. The
+	 * {@link MessageSecurityMetadataSourceRegistry#wampDestMatchers(String...)}. The
 	 * default is to use the default constructor of {@link AntPathMatcher}.
 	 *
-	 * @param matcher the {@link PathMatcher} to use. Cannot be null.
-	 * @return the {@link WampMessageSecurityMetadataSourceRegistry} for further
+	 * @param pathMatcher the {@link PathMatcher} to use. Cannot be null.
+	 * @return the {@link MessageSecurityMetadataSourceRegistry} for further
 	 * customization.
 	 */
-	public WampMessageSecurityMetadataSourceRegistry pathMatcher(PathMatcher matcher) {
+	public WampMessageSecurityMetadataSourceRegistry wampDestPathMatcher(
+			PathMatcher matcher) {
 		Assert.notNull(matcher, "pathMatcher cannot be null");
 		this.pathMatcher = matcher;
 		return this;
@@ -376,8 +454,14 @@ public class WampMessageSecurityMetadataSourceRegistry {
 
 		@Override
 		public MessageMatcher<?> build() {
-			return new WampDestinationMessageMatcher(this.pattern, this.type,
-					WampMessageSecurityMetadataSourceRegistry.this.pathMatcher);
+			if (type == null) {
+				return new WampDestinationMessageMatcher(pattern, pathMatcher);
+			}
+			else if (WampDestinationMessageMatcher.isTypeWithDestination(type)) {
+				return new WampDestinationMessageMatcher(pattern, type, pathMatcher);
+			}
+			throw new IllegalStateException(type
+					+ " is not supported since it does not have a destination");
 		}
 	}
 

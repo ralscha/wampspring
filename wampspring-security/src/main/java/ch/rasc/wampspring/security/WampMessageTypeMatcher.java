@@ -18,6 +18,7 @@ package ch.rasc.wampspring.security;
 import org.springframework.messaging.Message;
 import org.springframework.security.messaging.util.matcher.MessageMatcher;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.message.WampMessageType;
@@ -51,4 +52,28 @@ public class WampMessageTypeMatcher implements MessageMatcher<Object> {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof WampMessageTypeMatcher)) {
+			return false;
+		}
+		WampMessageTypeMatcher otherMatcher = (WampMessageTypeMatcher) other;
+		return ObjectUtils.nullSafeEquals(this.typeToMatch, otherMatcher.typeToMatch);
+
+	}
+
+	@Override
+	public int hashCode() {
+		return ObjectUtils.nullSafeHashCode(this.typeToMatch);
+	}
+
+	@Override
+	public String toString() {
+		return "WampMessageTypeMatcher [typeToMatch=" + this.typeToMatch + "]";
+	}
+
 }
