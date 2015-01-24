@@ -41,12 +41,13 @@ import ch.rasc.wampspring.message.WampMessageHeader;
  *
  * <pre>
  * &#064;Configuration
- * public class WampSecurityConfigurer extends AbstractSecurityWampConfigurer {
+ * public class SecurityWampConfigurer extends AbstractUserWampConfigurer {
  * 
  * 	&#064;Override
  * 	protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
- * 		messages.wampDestPublishMatchers(&quot;/user/queue/errors&quot;).permitAll().wampDestSubscribeMatchers(&quot;/admin/**&quot;)
- * 				.hasRole(&quot;ADMIN&quot;).anyMessage().authenticated();
+ * 		messages.wampDestPublishMatchers(&quot;/user/queue/errors&quot;).permitAll()
+ * 				.wampDestSubscribeMatchers(&quot;/admin/**&quot;).hasRole(&quot;ADMIN&quot;).anyMessage()
+ * 				.authenticated();
  * 	}
  * }
  * </pre>
