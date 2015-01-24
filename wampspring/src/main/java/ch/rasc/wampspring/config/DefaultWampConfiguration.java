@@ -79,6 +79,12 @@ public class DefaultWampConfiguration {
 
 	private ObjectMapper objectMapper = null;
 
+	protected ObjectMapper internalObjectMapper = null;
+
+	protected PathMatcher internalPathMatcher = null;
+
+	protected ConversionService internalConversionService = null;
+
 	@Autowired(required = false)
 	public void setConfigurers(List<WampConfigurer> configurers) {
 		if (!CollectionUtils.isEmpty(configurers)) {
@@ -107,7 +113,7 @@ public class DefaultWampConfiguration {
 	}
 
 	/**
-	 * Channel for inbound messages between {@link WampSubProtocolHandler} and
+	 * Channel for inbound messages between {@link WampSubProtocolHandler},
 	 * {@link #brokerMessageHandler()} and {@link #annotationMethodMessageHandler()}
 	 */
 	@Bean
@@ -194,9 +200,10 @@ public class DefaultWampConfiguration {
 	public MessageHandler annotationMethodMessageHandler(
 			ConfigurableApplicationContext configurableApplicationContext) {
 
-		if (authenticationHandler() != null) {
+		AuthenticationHandler authenticationHandler = authenticationHandler();
+		if (authenticationHandler != null) {
 			configurableApplicationContext.getBeanFactory().registerSingleton(
-					"authenticationHandler", authenticationHandler());
+					"authenticationHandler", authenticationHandler);
 		}
 
 		WampAnnotationMethodMessageHandler messageHandler = new WampAnnotationMethodMessageHandler(
@@ -224,8 +231,7 @@ public class DefaultWampConfiguration {
 
 	@Bean
 	public EventMessenger eventMessenger() {
-		EventMessenger eventMessenger = new EventMessenger(brokerChannel());
-		return eventMessenger;
+		return new EventMessenger(brokerChannel());
 	}
 
 	/**
@@ -233,39 +239,46 @@ public class DefaultWampConfiguration {
 	 * matching the topicURI to a destination
 	 */
 	protected PathMatcher pathMatcher() {
-		return new AntPathMatcher();
+		if (this.internalPathMatcher == null) {
+			this.internalPathMatcher = new AntPathMatcher();
+		}
+		return this.internalPathMatcher;
 	}
 
 	/**
 	 * Returns a Jackson's {@link ObjectMapper} instance. This mapper is used for
 	 * serializing and deserializing WAMP messages. When this method returns null the
 	 * library tries to find an {@link ObjectMapper} bean in the current spring context.
-	 * If no bean exists the library creates a new instance.
+	 * If no bean exists the library creates a new instance of {@link ObjectMapper}.
 	 */
 	protected ObjectMapper objectMapper() {
 		return null;
 	}
 
 	private ObjectMapper lookupObjectMapper() {
-		ObjectMapper om = objectMapper();
-
-		if (om != null) {
-			return om;
+		if (this.internalObjectMapper == null) {
+			this.internalObjectMapper = objectMapper();
 		}
 
-		if (this.objectMapper != null) {
-			return this.objectMapper;
+		if (this.internalObjectMapper == null) {
+			this.internalObjectMapper = this.objectMapper;
 		}
 
-		this.objectMapper = new ObjectMapper();
-		return this.objectMapper;
+		if (this.internalObjectMapper == null) {
+			this.internalObjectMapper = new ObjectMapper();
+		}
+
+		return this.internalObjectMapper;
 	}
 
 	/**
 	 * Returns a ConversionService that is used for argument conversion
 	 */
 	public ConversionService conversionService() {
-		return new DefaultFormattingConversionService();
+		if (this.internalConversionService == null) {
+			this.internalConversionService = new DefaultFormattingConversionService();
+		}
+		return this.internalConversionService;
 	}
 
 	/**
@@ -314,7 +327,6 @@ public class DefaultWampConfiguration {
 		registry.addHandshakeInterceptors(handshakeInterceptors);
 
 		registerWampEndpoints(registry);
-		// registry.setUserSessionRegistry(new DefaultUserSessionRegistry()());
 
 		return registry.getHandlerMapping();
 	}
@@ -379,7 +391,7 @@ public class DefaultWampConfiguration {
 	@Bean
 	public ThreadPoolTaskScheduler messageBrokerSockJsTaskScheduler() {
 		ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-		scheduler.setThreadNamePrefix("MessageBrokerSockJS-");
+		scheduler.setThreadNamePrefix("WampSockJS-");
 		scheduler.setPoolSize(Runtime.getRuntime().availableProcessors());
 		scheduler.setRemoveOnCancelPolicy(true);
 		return scheduler;
