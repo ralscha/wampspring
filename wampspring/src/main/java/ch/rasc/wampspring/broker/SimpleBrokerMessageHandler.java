@@ -142,22 +142,17 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 		}
 
 		WampMessage wampMessage = (WampMessage) message;
-		WampSession wampSession = wampMessage.getWampSession();
-
-		if (wampSession != null && !wampSession.isAuthenticated()
-				&& this.authenticationRequiredGlobal) {
-			throw new SecurityException("Not authenticated");
-		}
-
 		WampMessageType messageType = wampMessage.getType();
 
 		if (messageType == WampMessageType.EVENT) {
 			sendMessageToSubscribers((EventMessage) wampMessage);
 		}
 		else if (messageType == WampMessageType.PUBLISH) {
+			checkAuthentication(wampMessage);
 			sendMessageToSubscribers((PublishMessage) wampMessage);
 		}
 		else if (messageType == WampMessageType.SUBSCRIBE) {
+			checkAuthentication(wampMessage);
 			this.subscriptionRegistry
 					.registerSubscription((SubscribeMessage) wampMessage);
 		}
@@ -168,10 +163,19 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 						.getSessionId());
 			}
 			else {
+				checkAuthentication(wampMessage);
 				this.subscriptionRegistry.unregisterSubscription(unsubscribeMessage);
 			}
 		}
 
+	}
+
+	private void checkAuthentication(WampMessage wampMessage) {
+		WampSession wampSession = wampMessage.getWampSession();
+		if (wampSession != null && !wampSession.isAuthenticated()
+				&& this.authenticationRequiredGlobal) {
+			throw new SecurityException("Not authenticated");
+		}
 	}
 
 	protected void sendMessageToSubscribers(EventMessage eventMessage) {
