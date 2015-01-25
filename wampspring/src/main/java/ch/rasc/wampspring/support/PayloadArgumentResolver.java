@@ -121,7 +121,7 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 		}
 
 		Object payload = message.getPayload();
-		if (payload == null) {
+		if (isEmptyPayload(payload)) {
 			if (ann == null || ann.required()) {
 				String paramName = getParameterName(param);
 				BindingResult bindingResult = new BeanPropertyBindingResult(payload,
@@ -148,6 +148,25 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 
 		validate(message, param, payload);
 		return payload;
+	}
+
+	/**
+	 * Specify if the given {@code payload} is empty.
+	 * @param payload the payload to check (can be {@code null})
+	 */
+	protected boolean isEmptyPayload(Object payload) {
+		if (payload == null) {
+			return true;
+		}
+		else if (payload instanceof byte[]) {
+			return ((byte[]) payload).length == 0;
+		}
+		else if (payload instanceof String) {
+			return !StringUtils.hasText((String) payload);
+		}
+		else {
+			return false;
+		}
 	}
 
 	private static String getParameterName(MethodParameter param) {
