@@ -36,7 +36,13 @@ public class WampSessionMethodArgumentResolver implements HandlerMethodArgumentR
 	@Override
 	public Object resolveArgument(MethodParameter parameter, Message<?> message)
 			throws Exception {
-		return ((WampMessage) message).getWampSession();
+		WampSession wampSession = ((WampMessage) message).getWampSession();
+
+		if (wampSession == null) {
+			throw new MissingWampSessionException(message);
+		}
+
+		return wampSession;
 	}
 
 }

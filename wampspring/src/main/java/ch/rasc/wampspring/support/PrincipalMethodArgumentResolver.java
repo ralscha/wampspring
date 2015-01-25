@@ -20,7 +20,6 @@ import java.security.Principal;
 import org.springframework.core.MethodParameter;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
-import org.springframework.messaging.simp.annotation.support.MissingSessionUserException;
 
 import ch.rasc.wampspring.message.WampMessage;
 
@@ -43,9 +42,11 @@ public class PrincipalMethodArgumentResolver implements HandlerMethodArgumentRes
 	public Object resolveArgument(MethodParameter parameter, Message<?> message)
 			throws Exception {
 		Principal user = ((WampMessage) message).getPrincipal();
+
 		if (user == null) {
-			throw new MissingSessionUserException(message);
+			throw new MissingPrincipalException(message);
 		}
+
 		return user;
 	}
 
