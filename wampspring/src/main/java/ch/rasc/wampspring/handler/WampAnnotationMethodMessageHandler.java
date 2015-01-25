@@ -214,12 +214,6 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 	private void handleMatchInternal(WampHandlerMethod handlerMethod, WampMessage message) {
 
-		WampSession wampSession = message.getWampSession();
-		if (wampSession != null && !wampSession.isAuthenticated()
-				&& handlerMethod.isAuthenticationRequired()) {
-			throw new SecurityException("Not authenticated");
-		}
-
 		if (this.logger.isDebugEnabled()) {
 			this.logger.debug("Invoking " + handlerMethod.getShortLogMessage());
 		}
@@ -230,23 +224,34 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 			break;
 		case PUBLISH:
 			PublishMessage publishMessage = (PublishMessage) message;
-			handlePubSubMessage(publishMessage, publishMessage.getEvent(),
-					publishMessage.getTopicURI(), handlerMethod);
+			handlePubSubMessage(publishMessage, publishMessage.getEvent(), handlerMethod);
 			break;
 		case SUBSCRIBE:
 			SubscribeMessage subscribeMessage = (SubscribeMessage) message;
-			handlePubSubMessage(subscribeMessage, null, subscribeMessage.getTopicURI(),
-					handlerMethod);
+			handlePubSubMessage(subscribeMessage, null, handlerMethod);
 			break;
 		case UNSUBSCRIBE:
 			UnsubscribeMessage unsubscribeMessage = (UnsubscribeMessage) message;
-			handlePubSubMessage(unsubscribeMessage, null,
-					unsubscribeMessage.getTopicURI(), handlerMethod);
+			handlePubSubMessage(unsubscribeMessage, null, handlerMethod);
 			break;
 		default:
 			break;
 		}
 
+	}
+
+	private static void checkAuthentication(WampHandlerMethod handlerMethod,
+			WampMessage message) {
+		WampSession wampSession = message.getWampSession();
+		if (wampSession != null && !wampSession.isAuthenticated()
+				&& handlerMethod.isAuthenticationRequired()) {
+
+			if (!(message instanceof UnsubscribeMessage && ((UnsubscribeMessage) message)
+					.isCleanup())) {
+				throw new SecurityException("Not authenticated");
+			}
+
+		}
 	}
 
 	@Override
@@ -263,6 +268,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	private void handleCallMessage(CallMessage callMessage,
 			WampHandlerMethod handlerMethod) {
 		try {
+			checkAuthentication(handlerMethod, callMessage);
+
 			InvocableWampHandlerMethod invocable = new InvocableWampHandlerMethod(
 					handlerMethod.createWithResolvedBean(), this.methodParameterConverter);
 			invocable.setMessageMethodArgumentResolvers(this.argumentResolvers);
@@ -304,11 +311,10 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	}
 
 	private void handlePubSubMessage(WampMessage wampMessage, Object argument,
-			String destination, WampHandlerMethod wampHandlerMethod) {
-
-		Assert.notNull(destination, "destination is required");
+			WampHandlerMethod wampHandlerMethod) {
 
 		try {
+			checkAuthentication(wampHandlerMethod, wampMessage);
 
 			InvocableWampHandlerMethod invocable = new InvocableWampHandlerMethod(
 					wampHandlerMethod.createWithResolvedBean(),
