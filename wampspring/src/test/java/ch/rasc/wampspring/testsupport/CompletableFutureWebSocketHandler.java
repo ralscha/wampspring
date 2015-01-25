@@ -16,6 +16,8 @@
 package ch.rasc.wampspring.testsupport;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -33,19 +35,33 @@ import com.fasterxml.jackson.core.JsonFactory;
 public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler {
 
 	private final CompletableFuture<WelcomeMessage> welcomeMessageFuture;
-	private CompletableFuture<WampMessage> messageFuture;
+	private CompletableFuture<List<WampMessage>> messageFuture;
 
 	private final JsonFactory jsonFactory;
 
+	private int noOfResults;
+
+	private List<WampMessage> receivedMessages;
+
 	public CompletableFutureWebSocketHandler(JsonFactory jsonFactory) {
+		this(1, jsonFactory);
+	}
+
+	public CompletableFutureWebSocketHandler(int expectedNoOfResults, JsonFactory jsonFactory) {
 		this.jsonFactory = jsonFactory;
 
 		this.welcomeMessageFuture = new CompletableFuture<>();
-		this.reset();
+		this.reset(expectedNoOfResults);
 	}
 
 	public void reset() {
+		reset(1);
+	}
+
+	public void reset(int expectedNoOfResults) {
+		this.noOfResults = expectedNoOfResults;
 		this.messageFuture = new CompletableFuture<>();
+		this.receivedMessages = new ArrayList<>();
 	}
 
 	@Override
@@ -60,7 +76,11 @@ public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler 
 				this.welcomeMessageFuture.complete((WelcomeMessage) wampMessage);
 			}
 			else {
-				this.messageFuture.complete(wampMessage);
+				this.receivedMessages.add(wampMessage);
+				if (this.receivedMessages.size() == this.noOfResults) {
+					this.messageFuture.complete(this.receivedMessages);
+				}
+
 			}
 
 		}
@@ -72,6 +92,12 @@ public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler 
 
 	public WampMessage getWampMessage() throws InterruptedException, ExecutionException,
 			TimeoutException {
+		List<WampMessage> results = this.messageFuture.get(2, TimeUnit.SECONDS);
+		return results.get(0);
+	}
+
+	public List<WampMessage> getWampMessages() throws InterruptedException,
+			ExecutionException, TimeoutException {
 		return this.messageFuture.get(2, TimeUnit.SECONDS);
 	}
 
