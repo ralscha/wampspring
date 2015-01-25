@@ -1,0 +1,4 @@
+Add senderOnly attribute to WampUnsubscribeListener, WampSubscribeListener and WampPublishListener
+If true only the sender of these messages will receive an EventMessage with the return value of the method as payload.
+
+Rebuild unit tests
