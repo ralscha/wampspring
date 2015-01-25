@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.WebIntegrationTest;
@@ -45,6 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest({ "server.port=0", "spring.main.show_banner=false" })
+@Ignore
 public class BaseWampTest {
 
 	protected final JsonFactory jsonFactory = new MappingJsonFactory(new ObjectMapper());
