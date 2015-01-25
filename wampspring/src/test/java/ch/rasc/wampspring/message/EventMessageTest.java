@@ -30,13 +30,15 @@ public class EventMessageTest extends BaseMessageTest {
 	public void serializationTest() throws IOException {
 		EventMessage eventMessage = new EventMessage("http://example.com/simple",
 				"Hello, I am a simple event.");
-		String json = eventMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(eventMessage, WampMessageType.EVENT);
+		String json = eventMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.EVENT.getTypeId(),
 						"http://example.com/simple", "Hello, I am a simple event."));
 
 		eventMessage = new EventMessage("http://example.com/simple", null);
-		json = eventMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(eventMessage, WampMessageType.EVENT);
+		json = eventMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.EVENT.getTypeId(),
 						"http://example.com/simple", null));
@@ -50,7 +52,8 @@ public class EventMessageTest extends BaseMessageTest {
 
 		EventMessage mapEventMessage = new EventMessage(
 				"http://example.com/event#myevent2", eventObject);
-		json = mapEventMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(mapEventMessage, WampMessageType.EVENT);
+		json = mapEventMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.EVENT.getTypeId(),
 						"http://example.com/event#myevent2", eventObject));
@@ -61,15 +64,19 @@ public class EventMessageTest extends BaseMessageTest {
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(8, "http://example.com/simple",
 				"Hello, I am a simple event.");
-		EventMessage eventMessage = WampMessage.fromJson(jsonFactory, json);
+		EventMessage eventMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(eventMessage, WampMessageType.EVENT);
 		assertThat(eventMessage.getType()).isEqualTo(WampMessageType.EVENT);
 		assertThat(eventMessage.getTopicURI()).isEqualTo("http://example.com/simple");
+		assertThat(eventMessage.getDestination()).isEqualTo("http://example.com/simple");
 		assertThat(eventMessage.getEvent()).isEqualTo("Hello, I am a simple event.");
 
 		json = toJsonArray(8, "http://example.com/simple", null);
-		eventMessage = WampMessage.fromJson(jsonFactory, json);
+		eventMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(eventMessage, WampMessageType.EVENT);
 		assertThat(eventMessage.getType()).isEqualTo(WampMessageType.EVENT);
 		assertThat(eventMessage.getTopicURI()).isEqualTo("http://example.com/simple");
+		assertThat(eventMessage.getDestination()).isEqualTo("http://example.com/simple");
 		assertThat(eventMessage.getEvent()).isNull();
 
 		Map<String, Object> eventObject = new HashMap<>();
@@ -81,9 +88,12 @@ public class EventMessageTest extends BaseMessageTest {
 
 		json = toJsonArray(8, "http://example.com/event#myevent2", eventObject);
 
-		EventMessage mapEventMessage = WampMessage.fromJson(jsonFactory, json);
+		EventMessage mapEventMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(mapEventMessage, WampMessageType.EVENT);
 		assertThat(mapEventMessage.getType()).isEqualTo(WampMessageType.EVENT);
 		assertThat(mapEventMessage.getTopicURI()).isEqualTo(
+				"http://example.com/event#myevent2");
+		assertThat(mapEventMessage.getDestination()).isEqualTo(
 				"http://example.com/event#myevent2");
 		assertThat((Map) mapEventMessage.getEvent()).hasSize(5).contains(
 				MapEntry.entry("rand", 0.09187032734575862),
@@ -96,16 +106,20 @@ public class EventMessageTest extends BaseMessageTest {
 	public void copyConstructorTest() {
 		EventMessage eventMessage = new EventMessage("topicURI", 1L);
 		EventMessage copyOfMsg = new EventMessage(eventMessage, "wsId");
+		assertWampMessageTypeHeader(copyOfMsg, WampMessageType.EVENT);
 
 		assertThat(copyOfMsg.getDestination()).isEqualTo("topicURI");
 		assertThat(copyOfMsg.getEvent()).isEqualTo(1L);
 		assertThat(copyOfMsg.getTopicURI()).isEqualTo("topicURI");
+		assertThat(copyOfMsg.getDestination()).isEqualTo("topicURI");
 
 		PublishMessage publishMessage = new PublishMessage("topicURI", 1L);
 		copyOfMsg = new EventMessage(publishMessage, "wsId");
+		assertWampMessageTypeHeader(copyOfMsg, WampMessageType.EVENT);
 
 		assertThat(copyOfMsg.getDestination()).isEqualTo("topicURI");
 		assertThat(copyOfMsg.getEvent()).isEqualTo(1L);
 		assertThat(copyOfMsg.getTopicURI()).isEqualTo("topicURI");
+		assertThat(copyOfMsg.getDestination()).isEqualTo("topicURI");
 	}
 }

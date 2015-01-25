@@ -15,6 +15,8 @@
  */
 package ch.rasc.wampspring.message;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +26,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BaseMessageTest {
 
-	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	static final JsonFactory jsonFactory = new MappingJsonFactory(objectMapper);
+	private final JsonFactory jsonFactory = new MappingJsonFactory(this.objectMapper);
+
+	public ObjectMapper getObjectMapper() {
+		return this.objectMapper;
+	}
+
+	public JsonFactory getJsonFactory() {
+		return this.jsonFactory;
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	static String toJsonArray(Object... arguments) {
@@ -99,8 +109,9 @@ public class BaseMessageTest {
 		return sb.toString();
 	}
 
-	BaseMessageTest() {
-		super();
+	protected void assertWampMessageTypeHeader(WampMessage msg, WampMessageType welcome) {
+		assertThat((WampMessageType) msg.getHeader(WampMessageHeader.WAMP_MESSAGE_TYPE))
+				.isEqualTo(welcome);
 	}
 
 }

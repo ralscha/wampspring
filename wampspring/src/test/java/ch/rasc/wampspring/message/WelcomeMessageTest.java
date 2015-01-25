@@ -29,7 +29,8 @@ public class WelcomeMessageTest extends BaseMessageTest {
 		String serverIdent = "someServer";
 		WelcomeMessage welcomeMessage = new WelcomeMessage(sessionId, serverIdent);
 
-		String json = welcomeMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(welcomeMessage, WampMessageType.WELCOME);
+		String json = welcomeMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.WELCOME.getTypeId(), sessionId,
 						WelcomeMessage.PROTOCOL_VERSION, serverIdent));
@@ -39,12 +40,13 @@ public class WelcomeMessageTest extends BaseMessageTest {
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(0, "v59mbCGDXZ7WTyxB", 1, "Autobahn/0.5.1");
 
-		WelcomeMessage wm = WampMessage.fromJson(jsonFactory, json);
+		WelcomeMessage welcomeMessage = WampMessage.fromJson(getJsonFactory(), json);
 
-		assertThat(wm.getType()).isEqualTo(WampMessageType.WELCOME);
-		assertThat(wm.getSessionId()).isEqualTo("v59mbCGDXZ7WTyxB");
-		assertThat(wm.getServerIdent()).isEqualTo("Autobahn/0.5.1");
-		assertThat(wm.getProtocolVersion()).isEqualTo(1);
+		assertWampMessageTypeHeader(welcomeMessage, WampMessageType.WELCOME);
+		assertThat(welcomeMessage.getType()).isEqualTo(WampMessageType.WELCOME);
+		assertThat(welcomeMessage.getSessionId()).isEqualTo("v59mbCGDXZ7WTyxB");
+		assertThat(welcomeMessage.getServerIdent()).isEqualTo("Autobahn/0.5.1");
+		assertThat(welcomeMessage.getProtocolVersion()).isEqualTo(1);
 
 	}
 }

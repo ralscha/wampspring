@@ -31,13 +31,15 @@ public class CallResultMessageTest extends BaseMessageTest {
 		CallMessage callMessage = new CallMessage("CcDnuI2bl2oLGBzO", "testProcURI");
 		CallResultMessage callResultMessage = new CallResultMessage(callMessage,
 				"Hello, I am a simple event.");
-		String json = callResultMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
+		String json = callResultMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
 						"Hello, I am a simple event."));
 
 		callResultMessage = new CallResultMessage(callMessage, null);
-		json = callResultMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
+		json = callResultMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
 						null));
@@ -50,7 +52,8 @@ public class CallResultMessageTest extends BaseMessageTest {
 
 		CallResultMessage mapCallResultMessage = new CallResultMessage(callMessage,
 				eventObject);
-		json = mapCallResultMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
+		json = mapCallResultMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
 						eventObject));
@@ -60,13 +63,16 @@ public class CallResultMessageTest extends BaseMessageTest {
 	@Test
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(3, "CcDnuI2bl2oLGBzO", null);
-		CallResultMessage callResultMessage = WampMessage.fromJson(jsonFactory, json);
+		CallResultMessage callResultMessage = WampMessage
+				.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
 		assertThat(callResultMessage.getType()).isEqualTo(WampMessageType.CALLRESULT);
 		assertThat(callResultMessage.getCallID()).isEqualTo("CcDnuI2bl2oLGBzO");
 		assertThat(callResultMessage.getResult()).isNull();
 
 		json = toJsonArray(3, "otZom9UsJhrnzvLa", "Awesome result ..");
-		callResultMessage = WampMessage.fromJson(jsonFactory, json);
+		callResultMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
 		assertThat(callResultMessage.getType()).isEqualTo(WampMessageType.CALLRESULT);
 		assertThat(callResultMessage.getCallID()).isEqualTo("otZom9UsJhrnzvLa");
 		assertThat(callResultMessage.getResult()).isEqualTo("Awesome result ..");
@@ -79,7 +85,9 @@ public class CallResultMessageTest extends BaseMessageTest {
 
 		json = toJsonArray(3, "CcDnuI2bl2oLGBzO", eventObject);
 
-		CallResultMessage mapCallResultMessage = WampMessage.fromJson(jsonFactory, json);
+		CallResultMessage mapCallResultMessage = WampMessage.fromJson(getJsonFactory(),
+				json);
+		assertWampMessageTypeHeader(mapCallResultMessage, WampMessageType.CALLRESULT);
 		assertThat(mapCallResultMessage.getType()).isEqualTo(WampMessageType.CALLRESULT);
 		assertThat(mapCallResultMessage.getCallID()).isEqualTo("CcDnuI2bl2oLGBzO");
 		assertThat((Map) mapCallResultMessage.getResult()).hasSize(4).contains(
@@ -94,5 +102,8 @@ public class CallResultMessageTest extends BaseMessageTest {
 		CallResultMessage result = new CallResultMessage(callMessage, "response");
 		assertThat(result.getCallID()).isEqualTo("1");
 		assertThat(result.getResult()).isEqualTo("response");
+
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
+		assertWampMessageTypeHeader(result, WampMessageType.CALLRESULT);
 	}
 }

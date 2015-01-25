@@ -28,7 +28,8 @@ public class UnsubscribeMessageTest extends BaseMessageTest {
 		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 				"http://example.com/simple");
 
-		String json = unsubscribeMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(unsubscribeMessage, WampMessageType.UNSUBSCRIBE);
+		String json = unsubscribeMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.UNSUBSCRIBE.getTypeId(),
 						"http://example.com/simple"));
@@ -38,11 +39,14 @@ public class UnsubscribeMessageTest extends BaseMessageTest {
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(6, "http://example.com/simple");
 
-		UnsubscribeMessage unsubscribeMessage = WampMessage.fromJson(jsonFactory, json);
+		UnsubscribeMessage unsubscribeMessage = WampMessage.fromJson(getJsonFactory(),
+				json);
 
+		assertWampMessageTypeHeader(unsubscribeMessage, WampMessageType.UNSUBSCRIBE);
 		assertThat(unsubscribeMessage.getType()).isEqualTo(WampMessageType.UNSUBSCRIBE);
 		assertThat(unsubscribeMessage.getTopicURI()).isEqualTo(
 				"http://example.com/simple");
-
+		assertThat(unsubscribeMessage.getDestination()).isEqualTo(
+				"http://example.com/simple");
 	}
 }

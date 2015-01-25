@@ -28,8 +28,9 @@ public class PrefixMessageTest extends BaseMessageTest {
 		String prefix = "news:read";
 		String uri = "http://example.com/simple/news#";
 		PrefixMessage prefixMessage = new PrefixMessage(prefix, uri);
+		assertWampMessageTypeHeader(prefixMessage, WampMessageType.PREFIX);
 
-		String json = prefixMessage.toJson(jsonFactory);
+		String json = prefixMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.PREFIX.getTypeId(), prefix, uri));
 	}
@@ -38,11 +39,12 @@ public class PrefixMessageTest extends BaseMessageTest {
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(1, "news:read", "http://example.com/simple/news#");
 
-		PrefixMessage wm = WampMessage.fromJson(jsonFactory, json);
+		PrefixMessage prefixMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(prefixMessage, WampMessageType.PREFIX);
 
-		assertThat(wm.getType()).isEqualTo(WampMessageType.PREFIX);
-		assertThat(wm.getPrefix()).isEqualTo("news:read");
-		assertThat(wm.getUri()).isEqualTo("http://example.com/simple/news#");
+		assertThat(prefixMessage.getType()).isEqualTo(WampMessageType.PREFIX);
+		assertThat(prefixMessage.getPrefix()).isEqualTo("news:read");
+		assertThat(prefixMessage.getUri()).isEqualTo("http://example.com/simple/news#");
 
 	}
 }

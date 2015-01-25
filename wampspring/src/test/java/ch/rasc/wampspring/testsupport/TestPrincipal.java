@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring.testsupport;
 
 import java.security.Principal;
 
-//todo not used right now
 public class TestPrincipal implements Principal {
 
 	private final String name;

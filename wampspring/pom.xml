@@ -83,6 +83,8 @@
 			<version>2.5.0</version>
 		</dependency>
 
+        <!-- TEST DEPENDENCIES -->
+
 		<dependency>
 			<groupId>org.easytesting</groupId>
 			<artifactId>fest-assert-core</artifactId>
@@ -107,13 +109,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jdeferred</groupId>
-			<artifactId>jdeferred-core</artifactId>
-			<version>1.2.3</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -309,6 +304,7 @@
 						<exclude>**/PayloadArgumentResolver.java</exclude>
 						<exclude>**/AbstractUserWampConfigurer.java</exclude>
 						<exclude>**/UserSessionWebSocketHandlerDecoratorFactory.java</exclude>
+						<exclude>**/PayloadArgumentResolverTests.java</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>
