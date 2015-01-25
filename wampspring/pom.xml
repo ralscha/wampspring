@@ -305,6 +305,7 @@
 						<exclude>**/AbstractUserWampConfigurer.java</exclude>
 						<exclude>**/UserSessionWebSocketHandlerDecoratorFactory.java</exclude>
 						<exclude>**/PayloadArgumentResolverTests.java</exclude>
+						<exclude>**/WampSessionScopeTests.java</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>

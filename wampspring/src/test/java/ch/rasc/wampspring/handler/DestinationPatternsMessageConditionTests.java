@@ -31,7 +31,6 @@ import ch.rasc.wampspring.message.CallMessage;
  * Unit tests for {@link DestinationPatternsMessageCondition}.
  *
  * @author Rossen Stoyanchev
- * @author Ralph Schaer
  */
 public class DestinationPatternsMessageConditionTests {
 
