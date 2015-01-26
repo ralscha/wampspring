@@ -18,10 +18,12 @@ package ch.rasc.wampspring.handler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.lang.UsesJava8;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +44,10 @@ public class MethodParameterConverter {
 
 	public Object convert(MethodParameter parameter, Object argument) {
 		if (argument == null) {
+			if (parameter.getParameterType().getName().equals("java.util.Optional")) {
+				return OptionalUnwrapper.empty();
+			}
+
 			return null;
 		}
 
@@ -97,4 +103,10 @@ public class MethodParameterConverter {
 		return convertedValue;
 	}
 
+	@UsesJava8
+	private static class OptionalUnwrapper {
+		public static Object empty() {
+			return Optional.empty();
+		}
+	}
 }
