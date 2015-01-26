@@ -49,8 +49,6 @@ import org.springframework.messaging.handler.annotation.support.HeadersMethodArg
 import org.springframework.messaging.handler.annotation.support.MessageMethodArgumentResolver;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolverComposite;
-import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -549,7 +547,6 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 		}
 	}
 
-	@SuppressWarnings("null")
 	private void handleMatch(WampMessageMappingInfo mapping,
 			WampHandlerMethod handlerMethod, String lookupDestination, WampMessage message) {
 
@@ -560,12 +557,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 					matchedPattern, lookupDestination);
 
 			if (!CollectionUtils.isEmpty(vars)) {
-				MessageHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(
-						message, MessageHeaderAccessor.class);
-				Assert.state(accessor != null && accessor.isMutable());
-				accessor.setHeader(
-						DestinationVariableMethodArgumentResolver.DESTINATION_TEMPLATE_VARIABLES_HEADER,
-						vars);
+				message.setDestinationTemplateVariables(vars);
 			}
 		}
 

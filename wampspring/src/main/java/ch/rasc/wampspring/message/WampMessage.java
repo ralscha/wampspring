@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.handler.annotation.support.DestinationVariableMethodArgumentResolver;
 import org.springframework.web.socket.WebSocketSession;
 
 import ch.rasc.wampspring.handler.WampSession;
@@ -57,6 +58,13 @@ public abstract class WampMessage implements Message<Object> {
 	@SuppressWarnings("unchecked")
 	public <T> T getHeader(WampMessageHeader header) {
 		return (T) this.messageHeaders.get(header.name());
+	}
+
+	public void setDestinationTemplateVariables(Map<String, String> vars) {
+		this.messageHeaders
+				.getRawHeaders()
+				.put(DestinationVariableMethodArgumentResolver.DESTINATION_TEMPLATE_VARIABLES_HEADER,
+						vars);
 	}
 
 	/**
