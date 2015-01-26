@@ -281,6 +281,28 @@ public class PubSubTest extends BaseWampTest {
 				Collections.<Integer> emptyList());
 	}
 
+	@Test
+	public void testPayload() throws InterruptedException, ExecutionException,
+			IOException, TimeoutException {
+		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
+
+			SubscribeMessage subscribeMsg = new SubscribeMessage("payloadMethodResult");
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
+
+			PublishMessage pm = new PublishMessage("payloadMethod", "payload");
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+
+			EventMessage event = (EventMessage) result.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("payloadMethodResult");
+			assertThat(event.getEvent())
+					.isEqualTo("payloadMethod method called: payload");
+
+		}
+	}
+
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableWamp

@@ -20,6 +20,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Payload;
 
 import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.annotation.WampPublishListener;
@@ -117,5 +118,10 @@ public class PubSubService {
 			"replyTo4_2", "replyTo4_3" })
 	public String incomingUnsubscribe4() {
 		return "returnUnsub4";
+	}
+
+	@WampPublishListener(value = "payloadMethod", replyTo = "payloadMethodResult")
+	public String payloadMethod(@Payload String event) {
+		return "payloadMethod method called: " + event;
 	}
 }
