@@ -56,5 +56,5 @@ public interface SubscriptionRegistry {
 	 *
 	 * @return true if registry contains at least one subscription
 	 */
-	public boolean hasSubscriptions();
+	boolean hasSubscriptions();
 }
