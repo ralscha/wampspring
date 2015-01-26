@@ -47,7 +47,8 @@ public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler 
 		this(1, jsonFactory);
 	}
 
-	public CompletableFutureWebSocketHandler(int expectedNoOfResults, JsonFactory jsonFactory) {
+	public CompletableFutureWebSocketHandler(int expectedNoOfResults,
+			JsonFactory jsonFactory) {
 		this.jsonFactory = jsonFactory;
 
 		this.welcomeMessageFuture = new CompletableFuture<>();

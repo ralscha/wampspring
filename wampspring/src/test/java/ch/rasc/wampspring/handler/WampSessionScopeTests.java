@@ -87,7 +87,7 @@ public class WampSessionScopeTests {
 
 		Object removed = this.scope.remove("name");
 		assertThat(removed).isEqualTo("value");
-		assertThat((String)this.wampSession.getAttribute("name")).isNull();
+		assertThat((String) this.wampSession.getAttribute("name")).isNull();
 
 		removed = this.scope.remove("name");
 		assertThat(removed).isNull();
