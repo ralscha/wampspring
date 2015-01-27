@@ -50,10 +50,10 @@ import ch.rasc.wampspring.message.EventMessage;
  * }
  * </pre>
  *
- * When this method returns a non null value and the attribute {@link #replyTo()} specifies
- * one or more destinations the return value is wrapped in an {@link EventMessage} and
- * sent to the broker which sends by default an EVENT message to every subscribers of the listed
- * {@link #replyTo()} destinations.
+ * When this method returns a non null value and the attribute {@link #replyTo()}
+ * specifies one or more destinations the return value is wrapped in an
+ * {@link EventMessage} and sent to the broker which sends by default an EVENT message to
+ * every subscribers of the listed {@link #replyTo()} destinations.
  * <ul>
  * <li>
  * When the {@link #excludeSender()} attribute is true the sender of the PUBLISH message

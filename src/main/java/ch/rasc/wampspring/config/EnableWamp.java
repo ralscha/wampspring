@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Import;
  * <p>
  * Another way to enable WAMP is by creating a &#064;Configuration class that extends
  * {@link AbstractWampConfigurer}.
- * 
+ *
  * <pre class="code">
  * &#064;Configuration
  * &#064;EnableAutoConfiguration
@@ -48,7 +48,7 @@ import org.springframework.context.annotation.Import;
  * 	}
  * }
  * </pre>
- * 
+ *
  * <p>
  * The third way to enable WAMP support is by creating a &#064;Configuration class that
  * extends {@link DefaultWampConfiguration}. Don't add the &#064;EnableWamp annotation in

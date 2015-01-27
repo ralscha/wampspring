@@ -24,19 +24,26 @@ public class WampHandlerMethod extends HandlerMethod {
 
 	private final String[] replyTo;
 
+	private final Boolean broadcast;
+
 	private final Boolean excludeSender;
 
 	private final boolean authenticationRequired;
 
 	public WampHandlerMethod(String beanName, BeanFactory beanFactory, Method method,
-			String[] replyTo, Boolean excludeSender, boolean authenticationRequired) {
+			String[] replyTo, Boolean broadcast, Boolean excludeSender,
+			boolean authenticationRequired) {
 		super(beanName, beanFactory, method);
+
 		if (replyTo != null) {
 			this.replyTo = replyTo;
 		}
 		else {
 			this.replyTo = new String[0];
 		}
+
+		this.broadcast = broadcast;
+
 		this.excludeSender = excludeSender;
 
 		this.authenticationRequired = authenticationRequired;
@@ -46,8 +53,12 @@ public class WampHandlerMethod extends HandlerMethod {
 		return this.replyTo;
 	}
 
-	public Boolean isExcludeSender() {
-		return this.excludeSender;
+	public boolean isBroadcast() {
+		return this.broadcast != null && this.broadcast.booleanValue();
+	}
+
+	public boolean isExcludeSender() {
+		return this.excludeSender != null && this.excludeSender.booleanValue();
 	}
 
 	public boolean isAuthenticationRequired() {

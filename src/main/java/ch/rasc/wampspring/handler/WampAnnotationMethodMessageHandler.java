@@ -323,14 +323,21 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 				for (String replyToTopicURI : wampHandlerMethod.getReplyTo()) {
 					if (StringUtils.hasText(replyToTopicURI)) {
-						if (wampHandlerMethod.isExcludeSender() != null
-								&& wampHandlerMethod.isExcludeSender()) {
-
-							this.eventMessenger.sendToAllExcept(replyToTopicURI,
-									returnValue, wampMessage.getSessionId());
+						if (wampHandlerMethod.isBroadcast()) {
+							if (wampHandlerMethod.isExcludeSender()) {
+								this.eventMessenger.sendToAllExcept(replyToTopicURI,
+										returnValue, wampMessage.getSessionId());
+							}
+							else {
+								this.eventMessenger.sendToAll(replyToTopicURI,
+										returnValue);
+							}
 						}
 						else {
-							this.eventMessenger.sendToAll(replyToTopicURI, returnValue);
+							if (!wampHandlerMethod.isExcludeSender()) {
+								this.eventMessenger.sendTo(replyToTopicURI, returnValue,
+										wampMessage.getSessionId());
+							}
 						}
 					}
 				}
@@ -359,6 +366,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 			String[] replyTo = (String[]) AnnotationUtils.getValue(annotation, "replyTo");
 			Boolean excludeSender = (Boolean) AnnotationUtils.getValue(annotation,
 					"excludeSender");
+			Boolean broadcast = (Boolean) AnnotationUtils.getValue(annotation,
+					"broadcast");
 
 			boolean authenticationRequiredClass = AnnotationUtils.findAnnotation(
 					userType, WampAuthenticated.class) != null;
@@ -375,7 +384,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 			}
 
 			WampHandlerMethod newHandlerMethod = new WampHandlerMethod(beanName,
-					this.applicationContext, method, replyTo, excludeSender,
+					this.applicationContext, method, replyTo, broadcast, excludeSender,
 					authenticationRequired);
 
 			String[] destinations = (String[]) AnnotationUtils.getValue(annotation);

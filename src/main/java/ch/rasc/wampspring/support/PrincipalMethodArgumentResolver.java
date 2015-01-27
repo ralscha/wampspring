@@ -25,7 +25,7 @@ import ch.rasc.wampspring.message.WampMessage;
 
 /**
  * Argument resolver that handles parameters of type {@link Principal}
- * 
+ *
  * @author Rossen Stoyanchev
  * @author Ralph Schaer
  */

@@ -42,7 +42,7 @@ import ch.rasc.wampspring.config.DefaultWampConfiguration;
  * 	public void doSomething(CallMessage message) { }
  * 
  * 	&#064;WampCallListener('callMe')
- * 	public void callMe(String argument) { } 
+ * 	public void callMe(String argument) { }
  * }
  * </pre>
  *
