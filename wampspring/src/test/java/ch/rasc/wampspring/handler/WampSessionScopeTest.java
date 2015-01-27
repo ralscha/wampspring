@@ -34,7 +34,7 @@ import org.springframework.web.socket.WebSocketSession;
  * @author Rossen Stoyanchev
  * @author Ralph Schaer
  */
-public class WampSessionScopeTests {
+public class WampSessionScopeTest {
 
 	private WampSessionScope scope;
 

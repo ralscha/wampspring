@@ -290,12 +290,12 @@
 						<exclude>**/WampEndpointRegistry.java</exclude>
 						<exclude>**/DefaultSubscriptionRegistry.java</exclude>
 						<exclude>**/WampSubProtocolHandler.java</exclude>
-						<exclude>**/BrokerMessageHandlerTests.java</exclude>
 						<exclude>**/WampMessageTypeMessageCondition.java</exclude>
 						<exclude>**/WampMessageMappingInfo.java</exclude>
 						<exclude>**/WampSessionContextHolder.java</exclude>
-						<exclude>**/DestinationPatternsMessageConditionTests.java</exclude>
+						<exclude>**/DestinationPatternsMessageConditionTest.java</exclude>
 						<exclude>**/WampAnnotationMethodMessageHandler.java</exclude>
+						<exclude>**/WampAnnotationMethodMessageHandlerTest.java</exclude>
 						<exclude>**/InvocableWampHandlerMethod.java</exclude>
 						<exclude>**/WebSocketTransportRegistration.java</exclude>
 						<exclude>**/WebMvcWampEndpointRegistry.java</exclude>
@@ -304,8 +304,8 @@
 						<exclude>**/PayloadArgumentResolver.java</exclude>
 						<exclude>**/AbstractUserWampConfigurer.java</exclude>
 						<exclude>**/UserSessionWebSocketHandlerDecoratorFactory.java</exclude>
-						<exclude>**/PayloadArgumentResolverTests.java</exclude>
-						<exclude>**/WampSessionScopeTests.java</exclude>
+						<exclude>**/PayloadArgumentResolverTest.java</exclude>
+						<exclude>**/WampSessionScopeTest.java</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>
