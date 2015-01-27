@@ -19,7 +19,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -601,20 +600,6 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 		@Override
 		public String toString() {
 			return this.mapping.toString();
-		}
-	}
-
-	static class MatchComparator implements Comparator<Match> {
-
-		private final Comparator<WampMessageMappingInfo> comparator;
-
-		public MatchComparator(Comparator<WampMessageMappingInfo> comparator) {
-			this.comparator = comparator;
-		}
-
-		@Override
-		public int compare(Match match1, Match match2) {
-			return this.comparator.compare(match1.mapping, match2.mapping);
 		}
 	}
 
