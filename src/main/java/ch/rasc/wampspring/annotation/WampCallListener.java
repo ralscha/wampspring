@@ -22,33 +22,33 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import ch.rasc.wampspring.config.DefaultWampConfiguration;
-import ch.rasc.wampspring.message.CallErrorMessage;
-import ch.rasc.wampspring.message.CallMessage;
-import ch.rasc.wampspring.message.CallResultMessage;
 
 /**
- * Annotation that denotes a method that is called when the server receives a
- * {@link CallMessage} and the procURI matches one of the listed values of the annotation.
+ * Annotation that denotes a method that is called when the server receives a CALL message
+ * and the procURI matches one of the listed values of the annotation ({@link #value()}).
  *
- * If no procURI is provided the method is accessible by the procURI 'beanName.methodName'
- *
- * In the following example the method can be called by sending a CallMessage with the
- * procURI 'myService.doSomething'
+ * If no topicURI is provided the method listens for the topicURI 'beanName.methodName'
+ * <p>
+ * The method <code>doSomething</code> in the following example listens for CALL messages
+ * that are sent to the procURI 'myService.doSomething'.<br>
+ * The method <code>callMe</code> is called by the library when a CALL message with the
+ * procURI 'callMe' arrives.
  *
  * <pre class="code">
  * &#064;Service
  * public class MyService {
  * 
  * 	&#064;WampCallListener
- * 	public void doSomething(CallMessage message) {
+ * 	public void doSomething(CallMessage message) { }
  * 
- * 	}
+ * 	&#064;WampCallListener('callMe')
+ * 	public void callMe(String argument) { } 
  * }
  * </pre>
  *
- * The return value of such annotated method (if any) will be sent back to the calling
- * client with a {@link CallResultMessage} or {@link CallErrorMessage}.
- *
+ * A non null return value of this method will be sent back in a CALLRESULT message to the
+ * client which sent the CALL message. If this method throws an exception it will be
+ * wrapped in a CALLERROR message and sent back to the client.
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -56,14 +56,17 @@ import ch.rasc.wampspring.message.CallResultMessage;
 public @interface WampCallListener {
 
 	/**
-	 * ProcURI for the call.
+	 * One or more procURI(s) the method should listen on. If empty the default value
+	 * 'beanName.methodName' is used.
 	 */
 	String[] value() default {};
 
 	/**
-	 * If true a call to this annotated method has to be authenticated. If false no
-	 * authentication is required. Takes precedence over {@link WampAuthenticated} and the
-	 * global setting {@link DefaultWampConfiguration#authenticationRequired()}
+	 * If true a call to this method has to be authenticated. If false no authentication
+	 * is required.
+	 * <p>
+	 * Takes precedence over {@link WampAuthenticated} and the global setting
+	 * {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
 	boolean[] authenticated() default {};
 

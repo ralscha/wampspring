@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import ch.rasc.wampspring.config.DefaultWampConfiguration;
 
 /**
- * Class level annotation.
+ * Class annotation.
  * <p>
  * If present all WAMP calls to methods in this class that are annotated with
  * {@link WampCallListener}, {@link WampPublishListener}, {@link WampSubscribeListener} or

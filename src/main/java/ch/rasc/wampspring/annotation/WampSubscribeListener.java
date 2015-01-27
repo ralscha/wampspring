@@ -23,34 +23,48 @@ import java.lang.annotation.Target;
 
 import ch.rasc.wampspring.config.DefaultWampConfiguration;
 import ch.rasc.wampspring.message.EventMessage;
-import ch.rasc.wampspring.message.SubscribeMessage;
 
 /**
- * Annotation that denotes a method that is called when the server receives a
- * {@link SubscribeMessage} and the topicURI matches one of the listed values of the
- * annotation.
+ * Annotation that denotes a method that is called when the server receives a SUBSCRIBE
+ * message and the topicURI matches one of the listed values of the annotation (
+ * {@link #value()}).
  *
- * If no topicURI is provided the method is accessible by the topicURI
- * 'beanName.methodName'
- *
- * In the following example the method can be called by sending a SubscribeMessage with
- * the topicURI 'myService.doSomething'
+ * If no topicURI is provided the method listens for the topicURI 'beanName.methodName'
+ * <p>
+ * The method <code>feed</code> in the following example listens for SUBSCRIBE messages
+ * that are sent to the topicURI 'myService.feed'. <br>
+ * The method <code>subscribeNews</code> is called by the library when a SUBSCRIBE message
+ * with the topicURI '/topic/news' arrives.
  *
  * <pre class="code">
  * &#064;Service
  * public class MyService {
  * 
  * 	&#064;WampSubscribeListener
- * 	public void doSomething(SubscribeMessage message) {
+ * 	public void feed() {
+ * 	}
  * 
+ * 	&#064;WampSubscribeListener(&quot;/topic/news&quot;)
+ * 	public void subscribeNews(SubscribeMessage message) {
  * 	}
  * }
  * </pre>
  *
- * If the attribute replyTo has a value the return value of the method (if any) will be
- * wrapped into an {@link EventMessage} and sent to the listed topicURI(s). Additionally
- * if the excludeSender attribute is true the sender of the {@link SubscribeMessage} does
- * not receive an {@link EventMessage}.
+ * When this method returns a non null value and the attribute {@link #replyTo()}
+ * specifies one or more destinations the return value is wrapped in an
+ * {@link EventMessage} and sent to the broker which sends by default an EVENT message to
+ * every subscriber of the listed {@link #replyTo()} destinations.
+ * <ul>
+ * <li>
+ * When the {@link #excludeSender()} attribute is true the sender of the SUBSCRIBE message
+ * will not receive the EVENT message.</li>
+ * <li>
+ * When the {@link #broadcast()} attribute is false only the sender of the SUBSCRIBE
+ * message will receive the EVENT message.</li>
+ * <li>
+ * When {@link #excludeSender()} is true and {@link #broadcast()} is false no one will
+ * receive an EVENT message.</li>
+ * </ul>
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -58,25 +72,49 @@ import ch.rasc.wampspring.message.SubscribeMessage;
 public @interface WampSubscribeListener {
 
 	/**
-	 * TopicURI(s) for the subscription.
+	 * One or more topicURI(s)/destination(s) the method should listen on. If empty the
+	 * default value 'beanName.methodName' is used.
 	 */
 	String[] value() default {};
 
 	/**
-	 * Send the return value with an {@link EventMessage} to the listed TopicURI(s)
+	 * If not empty the return value of this method (wrapped in an {@link EventMessage})
+	 * is sent to all subscribers of the listed topicURI(s)/destination(s). This attribute
+	 * is ignored when the method does not have a return value or the return value is
+	 * <code>null</code>.
 	 */
 	String[] replyTo() default {};
 
 	/**
-	 * Exclude the sender of the {@link SubscribeMessage} from the replyTo receivers. This
-	 * attribute will be ignored if no {@link EventMessage} is created.
+	 * Exclude the sender of the SUBSCRIBE message from the replyTo receivers.
+	 * <p>
+	 * This attribute will be ignored when no {@link EventMessage} is created.
+	 * @see #replyTo()
 	 */
 	boolean excludeSender() default false;
 
 	/**
-	 * If true a call to this annotated method has to be authenticated. If false no
-	 * authentication is required. Takes precedence over {@link WampAuthenticated} and the
-	 * global setting {@link DefaultWampConfiguration#authenticationRequired()}
+	 * By default when the method has a return value and this value is not
+	 * <code>null</code> and the attribute {@link #replyTo()} is not empty an EventMessage
+	 * is created and sent to all subscribers of the listed topicURI(s)/destination(s).
+	 * <p>
+	 * If this attribute is set to false only the sender of the SUBSCRIBE message will
+	 * receive the EVENT message.
+	 * <p>
+	 * If this attribute is false and {@link #excludeSender()} is true no EVENT message
+	 * will be created. A non null return value will be ignored.
+	 * <p>
+	 * @see #replyTo()
+	 * @see #excludeSender()
+	 */
+	boolean broadcast() default true;
+
+	/**
+	 * If true a call to this method has to be authenticated. If false no authentication
+	 * is required.
+	 * <p>
+	 * Takes precedence over {@link WampAuthenticated} and the global setting
+	 * {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
 	boolean[] authenticated() default {};
 }
