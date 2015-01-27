@@ -69,30 +69,41 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 
 	@Test
 	public void testPublish2() throws InterruptedException, ExecutionException,
-			IOException {
-		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+			IOException, TimeoutException {
+
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
-		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo2");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(new TextMessage(subscribeMsg
 					.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("pubSubService.incomingPublish2",
 					"testPublish2");
-			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
-			EventMessage event = null;
+			EventMessage event = (EventMessage) result2.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("replyTo2");
+			assertThat(event.getEvent()).isEqualTo("return2:testPublish2");
+
+			event = null;
 			try {
-				event = (EventMessage) result.getWampMessage();
+				event = (EventMessage) result1.getWampMessage();
 				Assert.fail("call has to timeout");
 			}
 			catch (Exception e) {
 				assertThat(e).isInstanceOf(TimeoutException.class);
 			}
 			assertThat(event).isNull();
-
 		}
+
 	}
 
 	@Test
@@ -144,6 +155,81 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 	}
 
 	@Test
+	public void testPublish5() throws InterruptedException, ExecutionException,
+			IOException, TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			webSocketSession1.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo5").toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo5").toJson(this.jsonFactory)));
+
+			PublishMessage pm = new PublishMessage("incomingPublish5", "testPublish5");
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+
+			EventMessage event1 = (EventMessage) result1.getWampMessage();
+			assertThat(event1.getTopicURI()).isEqualTo("replyTo5");
+			assertThat(event1.getEvent()).isEqualTo("return5:testPublish5");
+
+			EventMessage event = null;
+			try {
+				event = (EventMessage) result2.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
+		}
+	}
+
+	@Test
+	public void testPublish6() throws InterruptedException, ExecutionException,
+			IOException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			webSocketSession1.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo6").toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo6").toJson(this.jsonFactory)));
+
+			PublishMessage pm = new PublishMessage("incomingPublish6", "testPublish6");
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+
+			EventMessage event = null;
+			try {
+				event = (EventMessage) result1.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
+
+			try {
+				event = (EventMessage) result2.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
+		}
+	}
+
+	@Test
 	public void testSubscribe1() throws InterruptedException, ExecutionException,
 			IOException, TimeoutException {
 		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
@@ -167,38 +253,38 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 
 	@Test
 	public void testSubscribe2() throws InterruptedException, ExecutionException,
-			IOException {
-		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+			IOException, TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
-		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo2");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
 					.toJson(this.jsonFactory)));
-
-			try {
-				result.getWampMessage();
-				Assert.fail("call has to timeout");
-			}
-			catch (Exception e) {
-				assertThat(e).isInstanceOf(TimeoutException.class);
-			}
-			result.reset();
+			webSocketSession2.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
 			subscribeMsg = new SubscribeMessage("pubSubService.incomingSubscribe2");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
 					.toJson(this.jsonFactory)));
 
-			EventMessage event = null;
+			EventMessage event = (EventMessage) result2.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("replyTo2");
+			assertThat(event.getEvent()).isEqualTo("returnSub2");
+
+			event = null;
 			try {
-				event = (EventMessage) result.getWampMessage();
+				event = (EventMessage) result1.getWampMessage();
 				Assert.fail("call has to timeout");
 			}
 			catch (Exception e) {
 				assertThat(e).isInstanceOf(TimeoutException.class);
 			}
 			assertThat(event).isNull();
-
 		}
 	}
 
@@ -249,7 +335,83 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 				assertThat(eventMessage.getTopicURI()).isEqualTo("replyTo4_" + (i + 1));
 				assertThat(eventMessage.getEvent()).isEqualTo("returnSub4");
 			}
+		}
+	}
 
+	@Test
+	public void testSubscribe5() throws InterruptedException, ExecutionException,
+			IOException, TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			webSocketSession1.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo5").toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo5").toJson(this.jsonFactory)));
+
+			SubscribeMessage subscribeMsg = new SubscribeMessage("incomingSub5");
+			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
+
+			EventMessage event1 = (EventMessage) result1.getWampMessage();
+			assertThat(event1.getTopicURI()).isEqualTo("replyTo5");
+			assertThat(event1.getEvent()).isEqualTo("returnSub5");
+
+			EventMessage event = null;
+			try {
+				event = (EventMessage) result2.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
+		}
+	}
+
+	@Test
+	public void testSubscribe6() throws InterruptedException, ExecutionException,
+			IOException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			webSocketSession1.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo6").toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo6").toJson(this.jsonFactory)));
+
+			SubscribeMessage subscribeMsg = new SubscribeMessage("incomingSub6");
+			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
+
+			EventMessage event = null;
+			try {
+				event = (EventMessage) result1.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
+
+			try {
+				event = (EventMessage) result2.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
 		}
 	}
 
@@ -278,31 +440,42 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 
 	@Test
 	public void testUnsubscribe2() throws InterruptedException, ExecutionException,
-			IOException {
-		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+			IOException, TimeoutException {
+
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
-		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo2");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(new TextMessage(subscribeMsg
 					.toJson(this.jsonFactory)));
 
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 					"pubSubService.incomingUnsubscribe2");
-			webSocketSession.sendMessage(new TextMessage(unsubscribeMessage
+			webSocketSession1.sendMessage(new TextMessage(unsubscribeMessage
 					.toJson(this.jsonFactory)));
 
-			EventMessage event = null;
+			EventMessage event = (EventMessage) result2.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("replyTo2");
+			assertThat(event.getEvent()).isEqualTo("returnUnsub2");
+
+			event = null;
 			try {
-				event = (EventMessage) result.getWampMessage();
+				event = (EventMessage) result1.getWampMessage();
 				Assert.fail("call has to timeout");
 			}
 			catch (Exception e) {
 				assertThat(e).isInstanceOf(TimeoutException.class);
 			}
 			assertThat(event).isNull();
-
 		}
+
 	}
 
 	@Test
@@ -355,6 +528,85 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 				assertThat(eventMessage.getEvent()).isEqualTo("returnUnsub4");
 			}
 
+		}
+	}
+
+	@Test
+	public void testUnsubscribe5() throws InterruptedException, ExecutionException,
+			IOException, TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			webSocketSession1.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo5").toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo5").toJson(this.jsonFactory)));
+
+			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
+					"incomingUnsub5");
+			webSocketSession1.sendMessage(new TextMessage(unsubscribeMessage
+					.toJson(this.jsonFactory)));
+
+			EventMessage event1 = (EventMessage) result1.getWampMessage();
+			assertThat(event1.getTopicURI()).isEqualTo("replyTo5");
+			assertThat(event1.getEvent()).isEqualTo("returnUnsub5");
+
+			EventMessage event = null;
+			try {
+				event = (EventMessage) result2.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
+		}
+	}
+
+	@Test
+	public void testUnsubscribe6() throws InterruptedException, ExecutionException,
+			IOException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			webSocketSession1.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo6").toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo6").toJson(this.jsonFactory)));
+
+			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
+					"incomingUnsub6");
+			webSocketSession1.sendMessage(new TextMessage(unsubscribeMessage
+					.toJson(this.jsonFactory)));
+
+			EventMessage event = null;
+			try {
+				event = (EventMessage) result1.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
+
+			try {
+				event = (EventMessage) result2.getWampMessage();
+				Assert.fail("call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+			assertThat(event).isNull();
 		}
 	}
 

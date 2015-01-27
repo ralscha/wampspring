@@ -79,6 +79,18 @@ public class PubSubService {
 		return "return4:" + incoming;
 	}
 
+	@WampPublishListener(value = "incomingPublish5", replyTo = "replyTo5",
+			broadcast = false)
+	public String incomingPublish5(String incoming) {
+		return "return5:" + incoming;
+	}
+
+	@WampPublishListener(value = "incomingPublish6", replyTo = "replyTo6",
+			broadcast = false, excludeSender = true)
+	public String incomingPublish6(String incoming) {
+		return "return6:" + incoming;
+	}
+
 	@WampSubscribeListener(replyTo = "replyTo1")
 	public String incomingSubscribe1() {
 		return "returnSub1";
@@ -101,6 +113,18 @@ public class PubSubService {
 		return "returnSub4";
 	}
 
+	@WampSubscribeListener(value = "incomingSub5", replyTo = "replyTo5",
+			broadcast = false)
+	public String incomingSubscribe5() {
+		return "returnSub5";
+	}
+
+	@WampSubscribeListener(value = "incomingSub6", replyTo = "replyTo6",
+			broadcast = false, excludeSender = true)
+	public String incomingSubscribe6() {
+		return "returnSub6";
+	}
+
 	@WampUnsubscribeListener(replyTo = "replyTo1")
 	public String incomingUnsubscribe1() {
 		return "returnUnsub1";
@@ -121,6 +145,18 @@ public class PubSubService {
 			"replyTo4_2", "replyTo4_3" })
 	public String incomingUnsubscribe4() {
 		return "returnUnsub4";
+	}
+
+	@WampUnsubscribeListener(value = "incomingUnsub5", replyTo = "replyTo5",
+			broadcast = false)
+	public String incomingUnsubscribe5() {
+		return "returnUnsub5";
+	}
+
+	@WampUnsubscribeListener(value = "incomingUnsub6", replyTo = "replyTo6",
+			broadcast = false, excludeSender = true)
+	public String incomingUnsubscribe6() {
+		return "returnUnsub6";
 	}
 
 	@WampPublishListener(value = "payloadMethod", replyTo = "payloadMethodResult")
