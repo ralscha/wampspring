@@ -123,7 +123,7 @@ public class PublishMessageTest extends BaseMessageTest {
 		assertThat(publishMessage.getDestination())
 				.isEqualTo("http://example.com/simple");
 		assertThat(publishMessage.getEvent()).isNull();
-		assertThat(publishMessage.getPayload()).isNull();
+		assertThat(publishMessage.getPayload()).isEqualTo(WampMessage.EMPTY_OBJECT);
 		assertThat(publishMessage.getExcludeMe()).isNull();
 		assertThat(publishMessage.getExclude()).isNull();
 		assertThat(publishMessage.getEligible()).isNull();

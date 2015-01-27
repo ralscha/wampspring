@@ -354,8 +354,7 @@ public class PubSubTest extends BaseWampTest {
 			webSocketSession1.sendMessage(new TextMessage(json));
 			webSocketSession2.sendMessage(new TextMessage(json));
 
-			PublishMessage pm = new PublishMessage("sendToAllExceptSet",
-					"the test message");
+			PublishMessage pm = new PublishMessage("sendToAllExceptSet", null);
 			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
 			EventMessage event2 = (EventMessage) result2.getWampMessage();

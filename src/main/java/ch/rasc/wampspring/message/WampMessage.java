@@ -35,7 +35,7 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public abstract class WampMessage implements Message<Object> {
 
-	private final static Object EMPTY_OBJECT = new Object();
+	protected final static Object EMPTY_OBJECT = new Object();
 
 	private final MutableMessageHeaders messageHeaders = new MutableMessageHeaders();
 

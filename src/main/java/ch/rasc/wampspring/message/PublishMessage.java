@@ -135,7 +135,7 @@ public class PublishMessage extends PubSubMessage {
 
 	@Override
 	public Object getPayload() {
-		return this.event;
+		return this.event != null ? this.event : EMPTY_OBJECT;
 	}
 
 	public Boolean getExcludeMe() {
