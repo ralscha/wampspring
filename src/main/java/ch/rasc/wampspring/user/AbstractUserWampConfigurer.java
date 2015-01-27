@@ -29,8 +29,8 @@ import ch.rasc.wampspring.message.EventMessage;
 /**
  * Configures a {@link UserSessionRegistry} that maps a {@link Principal}s name to a
  * WebSocket session id. Additionally a {@link UserEventMessenger} is configured as a bean
- * that allows sending {@link EventMessage}s to user name in addition to WebSocket session
- * ids.
+ * that allows sending {@link EventMessage}s to user names in addition to WebSocket
+ * session ids.
  *
  * <p>
  * Example:

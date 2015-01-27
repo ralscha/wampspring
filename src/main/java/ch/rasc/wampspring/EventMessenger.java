@@ -72,22 +72,22 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
 	 * given topicURI
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
+	 * @param event the payload of the {@link EventMessage}
 	 */
 	public void sendToAll(String topicURI, Object event) {
 		send(new EventMessage(topicURI, event));
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
 	 * provided topicURI except the one provided with the excludeSessionId parameter.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
+	 * @param event the payload of the {@link EventMessage}
 	 * @param excludeSessionId a WebSocket session id that will be excluded
 	 */
 	public void sendToAllExcept(String topicURI, Object event, String excludeSessionId) {
@@ -95,11 +95,11 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
 	 * provided topicURI except the ones listed in the excludeSessionIds set.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
+	 * @param event the payload of the {@link EventMessage}
 	 * @param excludeSessionIds a set of WebSocket session ids that will be excluded. If
 	 * null or empty no client will be excluded.
 	 */
@@ -111,14 +111,14 @@ public class EventMessenger {
 	}
 
 	/**
-	 * Send an {@link EventMessage} to the clients that are subscribed to the given
-	 * topicURI and are listed in the eligibleSessionIds set. If no session of the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
+	 * given topicURI and is listed in the eligibleSessionIds set. If no session of the
 	 * provided set is subscribed to the topicURI nothing happens.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
+	 * @param event the payload of the {@link EventMessage}
 	 * @param eligibleSessionIds only the WebSocket session ids listed here will receive
-	 * the message. If null or empty nobody receives the message.
+	 * the EVENT message. If null or empty nobody receives the message.
 	 */
 	public void sendTo(String topicURI, Object event, Set<String> eligibleSessionIds) {
 		EventMessage eventMessage = new EventMessage(topicURI, event);
@@ -128,13 +128,13 @@ public class EventMessenger {
 
 	/**
 	 * Send an {@link EventMessage} to one client that is subscribed to the given
-	 * topicURI. If the client with the given sessionId is not subscribed to the topicURI
-	 * nothing happens.
+	 * topicURI. If the client with the given WebSocket session id is not subscribed to
+	 * the topicURI nothing happens.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
-	 * @param eligibleSessionIds only the WebSocket session ids listed here will receive
-	 * the message
+	 * @param event the payload of the {@link EventMessage}
+	 * @param eligibleSessionIds only the client with the WebSocket session id listed here
+	 * will receive the EVENT message
 	 */
 	public void sendTo(String topicURI, Object event, String eligibleSessionId) {
 		sendTo(topicURI, event, Collections.singleton(eligibleSessionId));

@@ -79,11 +79,11 @@ public class UserEventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
 	 * provided topicURI except the one provided with the excludeUser parameter.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the payload for the {@link EventMessage}
+	 * @param event the payload of the {@link EventMessage}
 	 * @param user the user that will be excluded
 	 */
 	public void sendToAllExceptUser(String topicURI, Object event, String excludeUser) {
@@ -91,11 +91,11 @@ public class UserEventMessenger {
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
 	 * provided topicURI except the ones listed in the excludeUsers set.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
+	 * @param event the payload of the {@link EventMessage}
 	 * @param excludeUsers a set of users that will be excluded. If null or empty no user
 	 * will be excluded.
 	 */
@@ -115,14 +115,14 @@ public class UserEventMessenger {
 	}
 
 	/**
-	 * Send an {@link EventMessage} to the clients that are subscribed to the given
-	 * topicURI and are listed in the eligibleUsers set. If no user of the provided set is
-	 * subscribed to the topicURI nothing happens.
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
+	 * given topicURI and are listed in the eligibleUsers set. If no user of the provided
+	 * set is subscribed to the topicURI nothing happens.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
-	 * @param eligibleUsers only the users listed here will receive the message. If null
-	 * or empty nobody receives the message.
+	 * @param event the payload of the {@link EventMessage}
+	 * @param eligibleUsers only the users listed here will receive the EVENT message. If
+	 * null or empty nobody receives the message.
 	 */
 	public void sendToUsers(String topicURI, Object event, Set<String> eligibleUsers) {
 
@@ -144,7 +144,7 @@ public class UserEventMessenger {
 	 * nothing happens.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the payload for the {@link EventMessage}
+	 * @param event the payload of the {@link EventMessage}
 	 * @param eligibleUser only the user listed here will receive the message
 	 */
 	public void sendToUser(String topicURI, Object event, String eligibleUser) {
