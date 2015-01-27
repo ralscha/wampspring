@@ -265,7 +265,7 @@
 				<artifactId>license-maven-plugin</artifactId>
 				<version>2.7</version>
 				<configuration>
-					<header>${basedir}/../header.txt</header>
+					<header>${basedir}/header.txt</header>
 					<properties>
 						<owner>Ralph Schaer</owner>
 						<year>${project.inceptionYear}</year>
