@@ -58,7 +58,7 @@ public class BaseWampTest {
 			ExecutionException, TimeoutException, IOException {
 		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
-		WebSocketClient webSocketClient = new StandardWebSocketClient();
+		WebSocketClient webSocketClient = createWebSocketClient();
 
 		try (WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				wampEndpointUrl()).get()) {
@@ -70,9 +70,13 @@ public class BaseWampTest {
 		}
 	}
 
+	protected WebSocketClient createWebSocketClient() {
+		return new StandardWebSocketClient();
+	}
+
 	protected WebSocketSession startWebSocketSession(AbstractWebSocketHandler result)
 			throws InterruptedException, ExecutionException {
-		WebSocketClient webSocketClient = new StandardWebSocketClient();
+		WebSocketClient webSocketClient = createWebSocketClient();
 		return webSocketClient.doHandshake(result, wampEndpointUrl()).get();
 	}
 
@@ -84,7 +88,7 @@ public class BaseWampTest {
 		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
 
-		WebSocketClient webSocketClient = new StandardWebSocketClient();
+		WebSocketClient webSocketClient = createWebSocketClient();
 		try (WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
 				wampEndpointUrl()).get()) {
 
