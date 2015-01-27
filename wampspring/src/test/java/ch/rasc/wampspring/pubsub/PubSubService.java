@@ -17,7 +17,9 @@ package ch.rasc.wampspring.pubsub;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -27,6 +29,7 @@ import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.annotation.WampSubscribeListener;
 import ch.rasc.wampspring.annotation.WampUnsubscribeListener;
 import ch.rasc.wampspring.call.TestDto;
+import ch.rasc.wampspring.message.PublishMessage;
 
 public class PubSubService {
 
@@ -124,4 +127,18 @@ public class PubSubService {
 	public String payloadMethod(@Payload String event) {
 		return "payloadMethod method called: " + event;
 	}
+
+	@WampPublishListener("sendToAllExcept")
+	public void testSendToAllExcept(PublishMessage msg) {
+		this.eventMessenger.sendToAllExcept("responseSendToAllExcept", 1,
+				msg.getSessionId());
+	}
+
+	@WampPublishListener("sendToAllExceptSet")
+	public void testSendToAllExceptSet(PublishMessage msg) {
+		Set<String> except = new HashSet<>();
+		except.add(msg.getSessionId());
+		this.eventMessenger.sendToAllExcept("responseSendToAllExceptSet", 1, except);
+	}
+
 }

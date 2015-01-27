@@ -366,11 +366,6 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 			return new PubSubService();
 		}
 
-		@Bean
-		public EventSenderService eventSenderService() {
-			return new EventSenderService();
-		}
-
 		@Override
 		public Executor clientInboundChannelExecutor() {
 			return new SyncTaskExecutor();

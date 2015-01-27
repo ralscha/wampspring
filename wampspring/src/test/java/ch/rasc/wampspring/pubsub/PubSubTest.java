@@ -303,6 +303,75 @@ public class PubSubTest extends BaseWampTest {
 		}
 	}
 
+	@Test
+	public void testSendToAllExceptWithEventMessenger() throws IOException,
+			InterruptedException, ExecutionException, TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			SubscribeMessage subscribeMsg = new SubscribeMessage(
+					"responseSendToAllExcept");
+			String json = subscribeMsg.toJson(this.jsonFactory);
+			webSocketSession1.sendMessage(new TextMessage(json));
+			webSocketSession2.sendMessage(new TextMessage(json));
+
+			PublishMessage pm = new PublishMessage("sendToAllExcept", "the test message");
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+
+			EventMessage event2 = (EventMessage) result2.getWampMessage();
+			assertThat(event2.getTopicURI()).isEqualTo("responseSendToAllExcept");
+			assertThat(event2.getEvent()).isEqualTo(1);
+			try {
+				@SuppressWarnings("unused")
+				EventMessage event1 = (EventMessage) result1.getWampMessage();
+				Assert.fail("this call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+		}
+	}
+
+	@Test
+	public void testSendToAllExceptSetWithEventMessenger() throws IOException,
+			InterruptedException, ExecutionException, TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			SubscribeMessage subscribeMsg = new SubscribeMessage(
+					"responseSendToAllExceptSet");
+			String json = subscribeMsg.toJson(this.jsonFactory);
+			webSocketSession1.sendMessage(new TextMessage(json));
+			webSocketSession2.sendMessage(new TextMessage(json));
+
+			PublishMessage pm = new PublishMessage("sendToAllExceptSet",
+					"the test message");
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+
+			EventMessage event2 = (EventMessage) result2.getWampMessage();
+			assertThat(event2.getTopicURI()).isEqualTo("responseSendToAllExceptSet");
+			assertThat(event2.getEvent()).isEqualTo(1);
+			try {
+				@SuppressWarnings("unused")
+				EventMessage event1 = (EventMessage) result1.getWampMessage();
+				Assert.fail("this call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+		}
+	}
+
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableWamp
@@ -311,11 +380,6 @@ public class PubSubTest extends BaseWampTest {
 		@Bean
 		public PubSubService pubSubService() {
 			return new PubSubService();
-		}
-
-		@Bean
-		public EventSenderService eventSenderService() {
-			return new EventSenderService();
 		}
 
 	}
