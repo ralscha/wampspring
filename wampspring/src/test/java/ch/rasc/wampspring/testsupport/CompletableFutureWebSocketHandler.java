@@ -41,6 +41,8 @@ public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler 
 
 	private int noOfResults;
 
+	private final int timeout;
+
 	private List<WampMessage> receivedMessages;
 
 	public CompletableFutureWebSocketHandler(JsonFactory jsonFactory) {
@@ -50,9 +52,21 @@ public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler 
 	public CompletableFutureWebSocketHandler(int expectedNoOfResults,
 			JsonFactory jsonFactory) {
 		this.jsonFactory = jsonFactory;
-
+		this.timeout = getTimeoutValue();
 		this.welcomeMessageFuture = new CompletableFuture<>();
 		this.reset(expectedNoOfResults);
+	}
+
+	private static int getTimeoutValue() {
+		int timeout = 2;
+		try {
+			String timeoutValue = System.getenv("WS_TIMEOUT");
+			timeout = Integer.parseInt(timeoutValue);
+		}
+		catch (Exception e) {
+			// ignore error
+		}
+		return timeout;
 	}
 
 	public void reset() {
@@ -93,17 +107,18 @@ public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler 
 
 	public WampMessage getWampMessage() throws InterruptedException, ExecutionException,
 			TimeoutException {
-		List<WampMessage> results = this.messageFuture.get(2, TimeUnit.SECONDS);
+		List<WampMessage> results = this.messageFuture
+				.get(this.timeout, TimeUnit.SECONDS);
 		return results.get(0);
 	}
 
 	public List<WampMessage> getWampMessages() throws InterruptedException,
 			ExecutionException, TimeoutException {
-		return this.messageFuture.get(2, TimeUnit.SECONDS);
+		return this.messageFuture.get(this.timeout, TimeUnit.SECONDS);
 	}
 
 	public WelcomeMessage getWelcomeMessage() throws InterruptedException,
 			ExecutionException, TimeoutException {
-		return this.welcomeMessageFuture.get(2, TimeUnit.SECONDS);
+		return this.welcomeMessageFuture.get(this.timeout, TimeUnit.SECONDS);
 	}
 }
