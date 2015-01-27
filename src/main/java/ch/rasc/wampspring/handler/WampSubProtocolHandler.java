@@ -41,7 +41,7 @@ import ch.rasc.wampspring.message.WelcomeMessage;
 import com.fasterxml.jackson.core.JsonFactory;
 
 /**
- * A {@link SubProtocolHandler} for WAMP v1.0
+ * A WebSocket {@link SubProtocolHandler} for the WAMP v1 protocol.
  *
  * @author Rossen Stoyanchev
  * @author Andy Wilkinson
@@ -53,7 +53,7 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 
 	private static final Log logger = LogFactory.getLog(WampSubProtocolHandler.class);
 
-	private static final String SERVER_IDENTIFIER = "wampspring/1.0";
+	private static final String SERVER_IDENTIFIER = "wampspring/1.1";
 
 	private final JsonFactory jsonFactory;
 

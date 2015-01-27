@@ -38,10 +38,6 @@ import ch.rasc.wampspring.message.WampMessage;
  * Use {@link #setMessageMethodArgumentResolvers(HandlerMethodArgumentResolver)} to
  * customize the list of argument resolvers.
  * <p>
- * Credit goes to the Spring class
- * {@link org.springframework.messaging.handler.invocation.InvocableHandlerMethod} . This
- * class is just a copy where {@link org.springframework.messaging.Message} is replaced
- * with {@link WampMessage}
  *
  * @author Rossen Stoyanchev
  * @author Juergen Hoeller
