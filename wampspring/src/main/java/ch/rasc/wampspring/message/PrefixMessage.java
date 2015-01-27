@@ -88,19 +88,7 @@ public class PrefixMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("PrefixMessage [");
-		if (this.prefix != null) {
-			builder.append("prefix=");
-			builder.append(this.prefix);
-			builder.append(", ");
-		}
-		if (this.uri != null) {
-			builder.append("uri=");
-			builder.append(this.uri);
-		}
-		builder.append("]");
-		return builder.toString();
+		return "PrefixMessage [prefix=" + this.prefix + ", uri=" + this.uri + "]";
 	}
 
 }
