@@ -29,7 +29,7 @@ import org.springframework.security.messaging.access.intercept.MessageSecurityMe
 import org.springframework.security.messaging.context.AuthenticationPrincipalArgumentResolver;
 import org.springframework.security.messaging.context.SecurityContextChannelInterceptor;
 
-import ch.rasc.wampspring.config.WampConfigurerAdapter;
+import ch.rasc.wampspring.config.AbstractWampConfigurer;
 import ch.rasc.wampspring.message.WampMessageHeader;
 
 /**
@@ -55,7 +55,7 @@ import ch.rasc.wampspring.message.WampMessageHeader;
  * @author Rob Winch
  * @author Ralph Schaer
  */
-public abstract class AbstractSecurityWampConfigurer extends WampConfigurerAdapter {
+public abstract class AbstractSecurityWampConfigurer extends AbstractWampConfigurer {
 
 	private final WampMessageSecurityMetadataSourceRegistry inboundRegistry = new WampMessageSecurityMetadataSourceRegistry();
 

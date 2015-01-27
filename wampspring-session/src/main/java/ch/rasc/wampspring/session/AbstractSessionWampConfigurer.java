@@ -25,11 +25,11 @@ import org.springframework.session.ExpiringSession;
 import org.springframework.session.SessionRepository;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import ch.rasc.wampspring.config.WampConfigurerAdapter;
+import ch.rasc.wampspring.config.AbstractWampConfigurer;
 import ch.rasc.wampspring.config.WebSocketTransportRegistration;
 
 public abstract class AbstractSessionWampConfigurer<S extends ExpiringSession> extends
-		WampConfigurerAdapter {
+		AbstractWampConfigurer {
 
 	@Autowired
 	private SessionRepository<S> sessionRepository;
