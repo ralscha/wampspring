@@ -22,7 +22,7 @@ import org.springframework.messaging.support.AbstractMessageChannel;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 /**
- * Defines methods for configuring wamp support.
+ * Defines methods for configuring WAMP support.
  *
  * <p>
  * Used together with {@link EnableWamp}
@@ -56,7 +56,7 @@ public interface WampConfigurer {
 	void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers);
 
 	/*
-	 * Handshake interceptors that are added to every WampWebSocketEndpointRegistration.
+	 * Handshake interceptors that are added to every WAMP endpoint mapping.
 	 */
 	void addHandshakeInterceptors(List<HandshakeInterceptor> handshakeInterceptors);
 

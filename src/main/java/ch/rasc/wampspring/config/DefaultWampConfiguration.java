@@ -66,8 +66,8 @@ import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * To enable WAMP support create a @Configuration class that extends from this class. Or
- * add {@link EnableWamp} to a @Configuration class
+ * To enable WAMP support create a @Configuration class that extends this class. Or
+ * add {@link EnableWamp} to any @Configuration class.
  * <p>
  * If you overwrite a method annotated with @Bean, don't forget to add the annotation @Bean
  * to the overridden method as well.

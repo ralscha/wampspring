@@ -24,18 +24,35 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Import;
 
 /**
- * Add this annotation to a {@code @Configuration} class to enable WAMP support:
+ * Add this annotation to any {@code @Configuration} class to enable the WAMP support. A
+ * default endpoint '/wamp' will be registered.
  *
  * <pre class="code">
  * &#064;Configuration
  * &#064;EnableWamp
  * public class MyAppConfig {
- * 
  * }
  * </pre>
  * <p>
- * Customize the the WAMP configuration by subclassing {@link DefaultWampConfiguration}.
- * Don't add &#064;EnableWamp
+ * Another way to enable WAMP is by creating a &#064;Configuration class that extends
+ * {@link AbstractWampConfigurer}.
+ * 
+ * <pre class="code">
+ * &#064;Configuration
+ * &#064;EnableAutoConfiguration
+ * &#064;EnableWamp
+ * public class Config extends AbstractWampConfigurer {
+ * 	&#064;Override
+ * 	public void registerWampEndpoints(WampEndpointRegistry registry) {
+ * 		registry.addEndpoint(&quot;/wampOverSockJS&quot;).withSockJS();
+ * 	}
+ * }
+ * </pre>
+ * 
+ * <p>
+ * The third way to enable WAMP support is by creating a &#064;Configuration class that
+ * extends {@link DefaultWampConfiguration}. Don't add the &#064;EnableWamp annotation in
+ * this case.
  *
  * <pre class="code">
  * &#064;Configuration

@@ -22,7 +22,8 @@ import org.springframework.messaging.support.AbstractMessageChannel;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 /**
- * A convenient implementation for {@link WampConfigurer} providing empty method.
+ * A convenient implementation of the {@link WampConfigurer} interface, providing empty
+ * method.
  */
 public class AbstractWampConfigurer implements WampConfigurer {
 
