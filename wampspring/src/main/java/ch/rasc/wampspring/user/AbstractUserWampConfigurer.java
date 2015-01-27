@@ -22,7 +22,7 @@ import org.springframework.messaging.simp.user.DefaultUserSessionRegistry;
 import org.springframework.messaging.simp.user.UserSessionRegistry;
 
 import ch.rasc.wampspring.EventMessenger;
-import ch.rasc.wampspring.config.WampConfigurerAdapter;
+import ch.rasc.wampspring.config.AbstractWampConfigurer;
 import ch.rasc.wampspring.config.WebSocketTransportRegistration;
 import ch.rasc.wampspring.message.EventMessage;
 
@@ -51,7 +51,7 @@ import ch.rasc.wampspring.message.EventMessage;
  * @author Rob Winch
  * @author Ralph Schaer
  */
-public abstract class AbstractUserWampConfigurer extends WampConfigurerAdapter {
+public abstract class AbstractUserWampConfigurer extends AbstractWampConfigurer {
 
 	@Bean
 	public UserEventMessenger userEventMessenger(EventMessenger eventMessenger) {

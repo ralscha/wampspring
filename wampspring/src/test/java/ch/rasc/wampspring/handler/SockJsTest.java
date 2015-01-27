@@ -39,8 +39,8 @@ import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import ch.rasc.wampspring.annotation.WampCallListener;
+import ch.rasc.wampspring.config.AbstractWampConfigurer;
 import ch.rasc.wampspring.config.EnableWamp;
-import ch.rasc.wampspring.config.WampConfigurerAdapter;
 import ch.rasc.wampspring.config.WampEndpointRegistry;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
@@ -120,7 +120,7 @@ public class SockJsTest extends BaseWampTest {
 	@Configuration
 	@EnableAutoConfiguration
 	@EnableWamp
-	static class Config extends WampConfigurerAdapter {
+	static class Config extends AbstractWampConfigurer {
 		@Override
 		public void registerWampEndpoints(WampEndpointRegistry registry) {
 			registry.addEndpoint("/wampOverSockJS").withSockJS();

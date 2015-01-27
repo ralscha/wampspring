@@ -24,7 +24,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 /**
  * A convenient implementation for {@link WampConfigurer} providing empty method.
  */
-public class WampConfigurerAdapter implements WampConfigurer {
+public class AbstractWampConfigurer implements WampConfigurer {
 
 	@Override
 	public void registerWampEndpoints(WampEndpointRegistry registry) {
