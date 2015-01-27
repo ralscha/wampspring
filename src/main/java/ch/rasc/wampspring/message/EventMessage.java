@@ -27,14 +27,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * Subscribers receive PubSub events published by subscribers via the EVENT message. The
- * EVENT message contains the topicURI, the topic under which the event was published, and
- * the event, the PubSub event payload.
+ * Subscribers receive PubSub events published by other components of the system via the
+ * EVENT message. The EVENT message contains the topicURI, the topic under which the event
+ * was published, and the event, the PubSub payload.
  *
  * <p>
  * Server-to-Client message
  *
- * @see <a href="http://wamp.ws/spec/#event_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#event_message">WAMP specification</a>
  */
 public class EventMessage extends PubSubMessage {
 

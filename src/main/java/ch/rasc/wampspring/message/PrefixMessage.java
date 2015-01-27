@@ -24,13 +24,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 /**
- * A client requests access to a valid topicURI to receive events published to the given
- * topicURI.
+ * Client-to-Server message
  *
- * <p>
- * Auxiliary Messages
- *
- * @see <a href="http://wamp.ws/spec/#prefix_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#prefix_message">WAMP specification</a>
  */
 public class PrefixMessage extends WampMessage {
 

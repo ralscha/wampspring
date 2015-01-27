@@ -25,12 +25,12 @@ import com.fasterxml.jackson.core.JsonToken;
 
 /**
  * When a WAMP client connects to a WAMP server, the very first message sent by the server
- * is always this message.
+ * back to the client is this WELCOME message.
  *
  * <p>
  * Server-to-Client message
  *
- * @see <a href="http://wamp.ws/spec/#welcome_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#welcome_message">WAMP specification</a>
  */
 public class WelcomeMessage extends WampMessage {
 	public static final int PROTOCOL_VERSION = 1;

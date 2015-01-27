@@ -34,7 +34,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
  * <p>
  * Client-to-Server message
  *
- * @see <a href="http://wamp.ws/spec/#publish_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#publish_message">WAMP specification</a>
  */
 public class PublishMessage extends PubSubMessage {
 	private final Object event;

@@ -16,7 +16,7 @@
 package ch.rasc.wampspring.message;
 
 /**
- * Enumeration of the WAMP message types.
+ * Enumeration of the WAMP v1 message types.
  */
 public enum WampMessageType {
 

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.core.JsonToken;
  * <p>
  * Server-to-Client message
  *
- * @see <a href="http://wamp.ws/spec/#callerror_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#callerror_message">WAMP specification</a>
  */
 public class CallErrorMessage extends WampMessage {
 	private final String callID;

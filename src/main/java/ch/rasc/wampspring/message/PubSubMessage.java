@@ -16,8 +16,8 @@
 package ch.rasc.wampspring.message;
 
 /**
- * Base class for all publish/subscribe messages. They all share the same property
- * topicURI.
+ * Base class for the publish/subscribe messages. They all share the same property
+ * {@link #getTopicURI()}.
  *
  * @see SubscribeMessage
  * @see UnsubscribeMessage

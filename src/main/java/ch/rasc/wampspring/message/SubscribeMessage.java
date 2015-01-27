@@ -32,7 +32,7 @@ import com.fasterxml.jackson.core.JsonToken;
  * <p>
  * Client-to-Server message
  *
- * @see <a href="http://wamp.ws/spec/#subscribe_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#subscribe_message">WAMP specification</a>
  */
 public class SubscribeMessage extends PubSubMessage {
 
