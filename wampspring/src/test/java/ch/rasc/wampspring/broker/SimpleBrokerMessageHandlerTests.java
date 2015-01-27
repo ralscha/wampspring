@@ -424,6 +424,59 @@ public class SimpleBrokerMessageHandlerTests {
 				this.messageCaptor.capture());
 	}
 
+	@Test
+	public void testSubscribePatternQuestionMark() {
+		this.messageHandler.handleMessage(subscribeMessage("sess1", "/fo?"));
+		this.messageHandler.handleMessage(subscribeMessage("sess2", "/?oo"));
+
+		this.messageHandler.handleMessage(eventMessage("sess1", "/foo", "message1"));
+		this.messageHandler.handleMessage(eventMessage("sess2", "/boo", "message2"));
+
+		verify(this.clientOutboundChannel, times(3)).send(this.messageCaptor.capture());
+
+		assertCapturedMessage(eventMessage("sess1", "/foo", "message1"),
+				eventMessage("sess1", "/foo", "message2"),
+				eventMessage("sess2", "/boo", "message2"));
+	}
+
+	@Test
+	public void testSubscribePatternStar() {
+		this.messageHandler.handleMessage(subscribeMessage("sess1", "/fo*"));
+		this.messageHandler.handleMessage(subscribeMessage("sess2", "/*"));
+
+		this.messageHandler.handleMessage(eventMessage("sess1", "/foo", "message1"));
+		this.messageHandler.handleMessage(eventMessage("sess2", "/boo", "message2"));
+
+		verify(this.clientOutboundChannel, times(3)).send(this.messageCaptor.capture());
+
+		assertCapturedMessage(eventMessage("sess1", "/foo", "message1"),
+				eventMessage("sess1", "/foo", "message2"),
+				eventMessage("sess2", "/boo", "message2"));
+	}
+
+	@Test
+	public void testSubscribePatternMultipleStar() {
+		this.messageHandler.handleMessage(subscribeMessage("sess1", "/foo/**/1"));
+		this.messageHandler.handleMessage(subscribeMessage("sess2", "/foo/**/test/1"));
+
+		this.messageHandler.handleMessage(eventMessage("sess1", "/foo/1", "message1"));
+		this.messageHandler.handleMessage(eventMessage("sess1", "/foo/middle/1",
+				"message2"));
+		this.messageHandler
+				.handleMessage(eventMessage("sess2", "/foo/test/1", "message3"));
+		this.messageHandler.handleMessage(eventMessage("sess2", "/foo/middle/test/1",
+				"message4"));
+
+		verify(this.clientOutboundChannel, times(6)).send(this.messageCaptor.capture());
+
+		assertCapturedMessage(eventMessage("sess1", "/foo/1", "message1"),
+				eventMessage("sess1", "/foo/middle/1", "message2"),
+				eventMessage("sess1", "/foo/test/1", "message3"),
+				eventMessage("sess1", "/foo/middle/test/1", "message4"),
+				eventMessage("sess2", "/foo/test/1", "message3"),
+				eventMessage("sess2", "/foo/middle/test/1", "message4"));
+	}
+
 	@SuppressWarnings("resource")
 	@Test
 	public void testCleanupMessage() {
