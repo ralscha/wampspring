@@ -188,7 +188,7 @@ public abstract class WampMessage implements Message<Object> {
 			if (curie.length == 2) {
 				String prefix = wampSession.getPrefix(curie[0]);
 				if (prefix != null) {
-					return String.format("%s%s", prefix, curie[1]);
+					return prefix + curie[1];
 				}
 			}
 		}
