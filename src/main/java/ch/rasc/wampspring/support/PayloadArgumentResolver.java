@@ -24,7 +24,6 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.converter.MessageConversionException;
-import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
@@ -44,13 +43,15 @@ import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.handler.MethodParameterConverter;
 
 /**
- * A resolver to extract and convert the payload of a message using a
- * {@link MessageConverter}. It also validates the payload using a {@link Validator} if
- * the argument is annotated with a Validation annotation.
+ * A resolver to extract and convert the payload of a message. It also validates the
+ * payload using a {@link Validator} if the argument is annotated with a Validation
+ * annotation.
  *
  * <p>
  * This {@link HandlerMethodArgumentResolver} should be ordered last as it supports all
  * types and does not require the {@link Payload} annotation.
+ * <p>
+ * This resolver only supports {@link WampPublishListener} annotated methods.
  *
  * @author Rossen Stoyanchev
  * @author Brian Clozel
@@ -102,10 +103,6 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 		}
 	}
 
-	/**
-	 * This resolver only resolves arguments for {@link WampPublishListener} annotated
-	 * methods
-	 */
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		return parameter.getMethod().getAnnotation(WampPublishListener.class) != null;

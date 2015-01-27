@@ -310,6 +310,7 @@
 						<exclude>**/UserSessionWebSocketHandlerDecoratorFactory.java</exclude>
 						<exclude>**/PayloadArgumentResolverTest.java</exclude>
 						<exclude>**/WampSessionScopeTest.java</exclude>
+						<exclude>**/PrincipalMethodArgumentResolver.java</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>
