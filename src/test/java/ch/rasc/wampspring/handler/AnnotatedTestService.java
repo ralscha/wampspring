@@ -34,7 +34,6 @@ public class AnnotatedTestService {
 
 	@WampSubscribeListener(replyTo = "annotatedTestService.subscribeReplyTo")
 	public int subscribeReplyTo() {
-		System.out.println("3");
 		return 3;
 	}
 
@@ -42,6 +41,19 @@ public class AnnotatedTestService {
 			excludeSender = true)
 	public int subscribeExcludeMe() {
 		return 4;
+	}
+
+	@WampSubscribeListener(replyTo = "annotatedTestService.subscribeBroadcastOff",
+			broadcast = false)
+	public int subscribeBroadcastOff() {
+		return 44;
+	}
+
+	@WampSubscribeListener(
+			replyTo = "annotatedTestService.subscribeBroadcastOffAndExcludeMe",
+			broadcast = false, excludeSender = true)
+	public int subscribeBroadcastOffAndExcludeMe() {
+		return 444;
 	}
 
 	@WampUnsubscribeListener
@@ -60,6 +72,19 @@ public class AnnotatedTestService {
 		return 7;
 	}
 
+	@WampUnsubscribeListener(replyTo = "annotatedTestService.unsubscribeBroadcastOff",
+			broadcast = false)
+	public int unsubscribeBroadcastOff() {
+		return 77;
+	}
+
+	@WampUnsubscribeListener(
+			replyTo = "annotatedTestService.unsubscribeBroadcastOffAndExcludeMe",
+			broadcast = false, excludeSender = true)
+	public int unsubscribeBroadcastOffAndExcludeMe() {
+		return 777;
+	}
+
 	@WampPublishListener
 	public int publish() {
 		return 8;
@@ -74,5 +99,17 @@ public class AnnotatedTestService {
 			replyTo = "annotatedTestService.publishExcludeMe")
 	public int publishExcludeMe() {
 		return 10;
+	}
+
+	@WampPublishListener(broadcast = false,
+			replyTo = "annotatedTestService.publishBroadcastOff")
+	public int publishBroadcastOff() {
+		return 100;
+	}
+
+	@WampPublishListener(excludeSender = true, broadcast = false,
+			replyTo = "annotatedTestService.publishBroadcastOffAndExcludeMe")
+	public int publishBroadcastOffAndExcludeMe() {
+		return 1000;
 	}
 }

@@ -156,6 +156,35 @@ public class WampAnnotationMethodMessageHandlerTest {
 	}
 
 	@Test
+	public void testSubscribeBroadcastOff() {
+		SubscribeMessage subscribeMessage = new SubscribeMessage(
+				"annotatedTestService.subscribeBroadcastOff");
+		subscribeMessage.setSessionId("ws1");
+		this.messageHandler.handleMessage(subscribeMessage);
+
+		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Object> objectCaptor = ArgumentCaptor.forClass(Object.class);
+		ArgumentCaptor<String> string2Captor = ArgumentCaptor.forClass(String.class);
+		verifyZeroInteractions(this.clientOutboundChannel);
+		verify(this.eventMessenger, times(1)).sendTo(stringCaptor.capture(),
+				objectCaptor.capture(), string2Captor.capture());
+		assertThat(stringCaptor.getValue()).isEqualTo(
+				"annotatedTestService.subscribeBroadcastOff");
+		assertThat(objectCaptor.getValue()).isEqualTo(44);
+		assertThat(string2Captor.getValue()).isEqualTo("ws1");
+	}
+
+	@Test
+	public void testSubscribeBroadcastOffAndExcludeMe() {
+		SubscribeMessage subscribeMessage = new SubscribeMessage(
+				"annotatedTestService.subscribeBroadcastOffAndExcludeMe");
+		subscribeMessage.setSessionId("ws1");
+		this.messageHandler.handleMessage(subscribeMessage);
+		verifyZeroInteractions(this.clientOutboundChannel);
+		verifyZeroInteractions(this.eventMessenger);
+	}
+
+	@Test
 	public void testUnsubscribe() {
 		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 				"annotatedTestService.unsubscribe");
@@ -201,6 +230,36 @@ public class WampAnnotationMethodMessageHandlerTest {
 	}
 
 	@Test
+	public void testUnsubscribeBroadcastOff() {
+		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
+				"annotatedTestService.unsubscribeBroadcastOff");
+		unsubscribeMessage.setSessionId("ws1");
+		this.messageHandler.handleMessage(unsubscribeMessage);
+
+		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Object> objectCaptor = ArgumentCaptor.forClass(Object.class);
+		ArgumentCaptor<String> string2Captor = ArgumentCaptor.forClass(String.class);
+		verifyZeroInteractions(this.clientOutboundChannel);
+		verify(this.eventMessenger, times(1)).sendTo(stringCaptor.capture(),
+				objectCaptor.capture(), string2Captor.capture());
+		assertThat(stringCaptor.getValue()).isEqualTo(
+				"annotatedTestService.unsubscribeBroadcastOff");
+		assertThat(objectCaptor.getValue()).isEqualTo(77);
+		assertThat(string2Captor.getValue()).isEqualTo("ws1");
+	}
+
+	@Test
+	public void testUnsubscribeBroadcastOffAndExcludeMe() {
+		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
+				"annotatedTestService.unsubscribeBroadcastOffAndExcludeMe");
+		unsubscribeMessage.setSessionId("ws1");
+		this.messageHandler.handleMessage(unsubscribeMessage);
+
+		verifyZeroInteractions(this.clientOutboundChannel);
+		verifyZeroInteractions(this.eventMessenger);
+	}
+
+	@Test
 	public void testPublish() {
 		PublishMessage publishMessage = new PublishMessage(
 				"annotatedTestService.publish", null);
@@ -243,5 +302,34 @@ public class WampAnnotationMethodMessageHandlerTest {
 				"annotatedTestService.publishExcludeMe");
 		assertThat(objectCaptor.getValue()).isEqualTo(10);
 		assertThat(string2Captor.getValue()).isEqualTo("ws1");
+	}
+
+	@Test
+	public void testPublishBroadcastOff() {
+		PublishMessage publishMessage = new PublishMessage(
+				"annotatedTestService.publishBroadcastOff", null);
+		publishMessage.setSessionId("ws1");
+		this.messageHandler.handleMessage(publishMessage);
+
+		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+		ArgumentCaptor<Object> objectCaptor = ArgumentCaptor.forClass(Object.class);
+		ArgumentCaptor<String> string2Captor = ArgumentCaptor.forClass(String.class);
+		verifyZeroInteractions(this.clientOutboundChannel);
+		verify(this.eventMessenger, times(1)).sendTo(stringCaptor.capture(),
+				objectCaptor.capture(), string2Captor.capture());
+		assertThat(stringCaptor.getValue()).isEqualTo(
+				"annotatedTestService.publishBroadcastOff");
+		assertThat(objectCaptor.getValue()).isEqualTo(100);
+		assertThat(string2Captor.getValue()).isEqualTo("ws1");
+	}
+
+	@Test
+	public void testPublishBroadcastOffAndExcludeMe() {
+		PublishMessage publishMessage = new PublishMessage(
+				"annotatedTestService.publishBroadcastOffAndExcludeMe", null);
+		publishMessage.setSessionId("ws1");
+		this.messageHandler.handleMessage(publishMessage);
+		verifyZeroInteractions(this.clientOutboundChannel);
+		verifyZeroInteractions(this.eventMessenger);
 	}
 }
