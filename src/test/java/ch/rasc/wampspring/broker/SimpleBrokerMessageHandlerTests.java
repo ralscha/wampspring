@@ -335,7 +335,7 @@ public class SimpleBrokerMessageHandlerTests {
 		exclude.add("sess2");
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
 		eventMessage.setWebSocketSessionId("sess1");
-		eventMessage.setExcludeSessionIds(exclude);
+		eventMessage.setExcludeWebSocketSessionIds(exclude);
 		this.messageHandler.handleMessage(eventMessage);
 
 		verify(this.clientOutboundChannel, times(1)).send(this.messageCaptor.capture());
@@ -352,7 +352,7 @@ public class SimpleBrokerMessageHandlerTests {
 		exclude.add("sess2");
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
 		eventMessage.setWebSocketSessionId("sess1");
-		eventMessage.setExcludeSessionIds(exclude);
+		eventMessage.setExcludeWebSocketSessionIds(exclude);
 		this.messageHandler.handleMessage(eventMessage);
 
 		verify(this.clientOutboundChannel, Mockito.never()).send(
@@ -367,7 +367,7 @@ public class SimpleBrokerMessageHandlerTests {
 		Set<String> exclude = new HashSet<>();
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
 		eventMessage.setWebSocketSessionId("sess1");
-		eventMessage.setExcludeSessionIds(exclude);
+		eventMessage.setExcludeWebSocketSessionIds(exclude);
 		this.messageHandler.handleMessage(eventMessage);
 
 		verify(this.clientOutboundChannel, times(2)).send(this.messageCaptor.capture());
@@ -384,7 +384,7 @@ public class SimpleBrokerMessageHandlerTests {
 		eligible.add("sess2");
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
 		eventMessage.setWebSocketSessionId("sess1");
-		eventMessage.setEligibleSessionIds(eligible);
+		eventMessage.setEligibleWebSocketSessionIds(eligible);
 		this.messageHandler.handleMessage(eventMessage);
 
 		verify(this.clientOutboundChannel, times(1)).send(this.messageCaptor.capture());
@@ -401,7 +401,7 @@ public class SimpleBrokerMessageHandlerTests {
 		eligible.add("sess2");
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
 		eventMessage.setWebSocketSessionId("sess1");
-		eventMessage.setEligibleSessionIds(eligible);
+		eventMessage.setEligibleWebSocketSessionIds(eligible);
 		this.messageHandler.handleMessage(eventMessage);
 
 		verify(this.clientOutboundChannel, times(2)).send(this.messageCaptor.capture());
@@ -417,7 +417,7 @@ public class SimpleBrokerMessageHandlerTests {
 		Set<String> eligible = new HashSet<>();
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
 		eventMessage.setWebSocketSessionId("sess1");
-		eventMessage.setEligibleSessionIds(eligible);
+		eventMessage.setEligibleWebSocketSessionIds(eligible);
 		this.messageHandler.handleMessage(eventMessage);
 
 		verify(this.clientOutboundChannel, Mockito.never()).send(

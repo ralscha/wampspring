@@ -23,6 +23,7 @@ import org.springframework.messaging.simp.user.UserSessionRegistry;
 import org.springframework.util.Assert;
 
 import ch.rasc.wampspring.EventMessenger;
+import ch.rasc.wampspring.broker.SimpleBrokerMessageHandler;
 import ch.rasc.wampspring.message.EventMessage;
 
 /**
@@ -151,4 +152,46 @@ public class UserEventMessenger {
 		sendToUsers(topicURI, event, Collections.singleton(eligibleUser));
 	}
 
+	/**
+	 * Send an EventMessage directly to each client listed in the users set parameter. A
+	 * user is ignored if there is no entry in the {@link UserSessionRegistry} for his
+	 * username.
+	 * <p>
+	 * In contrast to {@link #sendToUsers(String, Object, Set)} this method does not check
+	 * if the receivers are subscribed to the destination. The
+	 * {@link SimpleBrokerMessageHandler} is not involved in sending these messages.
+	 *
+	 * @param topicURI the name of the topic
+	 * @param event the payload of the {@link EventMessage}
+	 * @param users list of receivers for the EVENT message
+	 */
+	public void sendToUsersDirect(String topicURI, Object event, Set<String> users) {
+
+		Set<String> webSocketSessionIds = null;
+		if (users != null && !users.isEmpty()) {
+			webSocketSessionIds = new HashSet<>(users.size());
+
+			for (String user : users) {
+				webSocketSessionIds.addAll(this.userSessionRegistry.getSessionIds(user));
+			}
+		}
+
+		this.eventMessenger.sendToDirect(topicURI, event, webSocketSessionIds);
+	}
+
+	/**
+	 * Send an EventMessage directly to the client specified with the user parameter. If
+	 * there is no entry in the {@link UserSessionRegistry} for this user nothing happens.
+	 * <p>
+	 * In contrast to {@link #sendToUser(String, Object, String)} this method does not
+	 * check if the receiver is subscribed to the destination. The
+	 * {@link SimpleBrokerMessageHandler} is not involved in sending this message.
+	 *
+	 * @param topicURI the name of the topic
+	 * @param event the payload of the {@link EventMessage}
+	 * @param user receiver of the EVENT message
+	 */
+	public void sendToUserDirect(String topicURI, Object event, String user) {
+		sendToUsersDirect(topicURI, event, Collections.singleton(user));
+	}
 }

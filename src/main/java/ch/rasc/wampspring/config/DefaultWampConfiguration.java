@@ -231,7 +231,7 @@ public class DefaultWampConfiguration {
 
 	@Bean
 	public EventMessenger eventMessenger() {
-		return new EventMessenger(brokerChannel());
+		return new EventMessenger(brokerChannel(), clientOutboundChannel());
 	}
 
 	/**

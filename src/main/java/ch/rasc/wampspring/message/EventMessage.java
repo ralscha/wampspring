@@ -40,9 +40,9 @@ public class EventMessage extends PubSubMessage {
 
 	private final Object event;
 
-	private Set<String> excludeSessionIds;
+	private Set<String> excludeWebSocketSessionIds;
 
-	private Set<String> eligibleSessionIds;
+	private Set<String> eligibleWebSocketSessionIds;
 
 	public EventMessage(EventMessage originEventMessage, String receiverWebSocketSessionId) {
 		super(WampMessageType.EVENT, originEventMessage.getTopicURI());
@@ -87,20 +87,20 @@ public class EventMessage extends PubSubMessage {
 		return this.event;
 	}
 
-	public Set<String> getExcludeSessionIds() {
-		return this.excludeSessionIds;
+	public Set<String> getExcludeWebSocketSessionIds() {
+		return this.excludeWebSocketSessionIds;
 	}
 
-	public void setExcludeSessionIds(Set<String> excludeSessionIds) {
-		this.excludeSessionIds = excludeSessionIds;
+	public void setExcludeWebSocketSessionIds(Set<String> excludeSessionIds) {
+		this.excludeWebSocketSessionIds = excludeSessionIds;
 	}
 
-	public Set<String> getEligibleSessionIds() {
-		return this.eligibleSessionIds;
+	public Set<String> getEligibleWebSocketSessionIds() {
+		return this.eligibleWebSocketSessionIds;
 	}
 
-	public void setEligibleSessionIds(Set<String> eligibleSessionIds) {
-		this.eligibleSessionIds = eligibleSessionIds;
+	public void setEligibleWebSocketSessionIds(Set<String> eligibleSessionIds) {
+		this.eligibleWebSocketSessionIds = eligibleSessionIds;
 	}
 
 	@Override

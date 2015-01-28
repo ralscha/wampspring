@@ -187,8 +187,9 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 				this.logger.debug("Broadcasting to " + sessionIds.size() + " sessions.");
 			}
 
-			Set<String> eligibleSessionIds = eventMessage.getEligibleSessionIds();
-			Set<String> excludeSessionIds = eventMessage.getExcludeSessionIds();
+			Set<String> eligibleSessionIds = eventMessage
+					.getEligibleWebSocketSessionIds();
+			Set<String> excludeSessionIds = eventMessage.getExcludeWebSocketSessionIds();
 
 			for (String sessionId : sessionIds) {
 				if (excludeSessionIds != null) {

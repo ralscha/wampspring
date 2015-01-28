@@ -94,9 +94,9 @@ public @interface WampUnsubscribeListener {
 	boolean excludeSender() default false;
 
 	/**
-	 * By default when the method has a return value and this value is not
-	 * {@code null} and the attribute {@link #replyTo()} is not empty an EventMessage
-	 * is created and sent to all subscribers of the listed topicURI(s)/destination(s).
+	 * By default when the method has a return value and this value is not {@code null}
+	 * and the attribute {@link #replyTo()} is not empty an EventMessage is created and
+	 * sent to all subscribers of the listed topicURI(s)/destination(s).
 	 * <p>
 	 * If this attribute is set to false only the sender of the UNSUBSCRIBE message will
 	 * receive the EVENT message.

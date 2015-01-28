@@ -39,6 +39,9 @@ public class EventMessengerTest {
 	@Mock
 	private SubscribableChannel brokerChannel;
 
+	@Mock
+	private SubscribableChannel clientOutboundChannel;
+
 	private EventMessenger eventMessenger;
 
 	@Captor
@@ -49,7 +52,8 @@ public class EventMessengerTest {
 		MockitoAnnotations.initMocks(this);
 		Mockito.when(this.brokerChannel.send(Matchers.any(WampMessage.class)))
 				.thenReturn(true);
-		this.eventMessenger = new EventMessenger(this.brokerChannel);
+		this.eventMessenger = new EventMessenger(this.brokerChannel,
+				this.clientOutboundChannel);
 	}
 
 	@Test
@@ -67,8 +71,8 @@ public class EventMessengerTest {
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("topic");
 		assertThat(msg.getEvent()).isEqualTo("1");
-		assertThat(msg.getExcludeSessionIds()).isNull();
-		assertThat(msg.getEligibleSessionIds()).isNull();
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
 	}
 
 	@Test(expected = MessageDeliveryException.class)
@@ -93,8 +97,8 @@ public class EventMessengerTest {
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("send");
 		assertThat(msg.getEvent()).isEqualTo(2);
-		assertThat(msg.getExcludeSessionIds()).isNull();
-		assertThat(msg.getEligibleSessionIds()).isNull();
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
 	}
 
 	@Test
@@ -106,8 +110,8 @@ public class EventMessengerTest {
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
 		assertThat(msg.getEvent()).isEqualTo(3);
-		assertThat(msg.getExcludeSessionIds()).isNull();
-		assertThat(msg.getEligibleSessionIds()).isNull();
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
 	}
 
 	@Test
@@ -119,8 +123,8 @@ public class EventMessengerTest {
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
 		assertThat(msg.getEvent()).isEqualTo(3);
-		assertThat(msg.getExcludeSessionIds()).containsOnly("ws1");
-		assertThat(msg.getEligibleSessionIds()).isNull();
+		assertThat(msg.getExcludeWebSocketSessionIds()).containsOnly("ws1");
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
 	}
 
 	@Test
@@ -133,8 +137,8 @@ public class EventMessengerTest {
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
 		assertThat(msg.getEvent()).isEqualTo(4);
-		assertThat(msg.getExcludeSessionIds()).containsOnly("ws1", "ws2", "ws3");
-		assertThat(msg.getEligibleSessionIds()).isNull();
+		assertThat(msg.getExcludeWebSocketSessionIds()).containsOnly("ws1", "ws2", "ws3");
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
 	}
 
 	@Test
@@ -146,8 +150,8 @@ public class EventMessengerTest {
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
 		assertThat(msg.getEvent()).isEqualTo(3);
-		assertThat(msg.getExcludeSessionIds()).isNull();
-		assertThat(msg.getEligibleSessionIds()).containsOnly("ws1");
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).containsOnly("ws1");
 	}
 
 	@Test
@@ -160,8 +164,9 @@ public class EventMessengerTest {
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
 		assertThat(msg.getEvent()).isEqualTo(4);
-		assertThat(msg.getExcludeSessionIds()).isNull();
-		assertThat(msg.getEligibleSessionIds()).containsOnly("ws1", "ws2", "ws3");
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds())
+				.containsOnly("ws1", "ws2", "ws3");
 	}
 
 }
