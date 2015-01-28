@@ -43,9 +43,8 @@ public class CallParameterTestService {
 	@WampCallListener(value = "headersMethod")
 	public String headersMethod(@Headers Map<String, Object> headers) {
 
-		assertThat(headers).hasSize(6).containsKey("WAMP_SESSION")
-				.containsKey("PRINCIPAL").containsKey("id")
-				.containsKey("WEBSOCKET_SESSION_ID").containsKey("timestamp")
+		assertThat(headers).hasSize(4).containsKey("WAMP_SESSION")
+				.containsKey("PRINCIPAL").containsKey("WEBSOCKET_SESSION_ID")
 				.containsKey("WAMP_MESSAGE_TYPE");
 
 		assertThat(
@@ -54,11 +53,6 @@ public class CallParameterTestService {
 
 		return "headersMethod called";
 	}
-
-	// @WampCallListener(value = "principalMethod")
-	// public String principalMethod(Principal principal) {
-	// return "principalMethod called";
-	// }
 
 	@WampCallListener(value = "wampSesionMethod")
 	public String wampSesionMethod(WampSession wampSession) {
@@ -83,7 +77,7 @@ public class CallParameterTestService {
 		assertThat(message.getDestination()).isEqualTo("messageMethod/23");
 		assertThat(param2).isEqualTo(2);
 		assertThat(wampSession).isNotNull();
-		assertThat(headers).hasSize(7);
+		assertThat(headers).hasSize(5);
 		assertThat(wampMessageType).isEqualTo(WampMessageType.CALL);
 		assertThat(param3).isEqualTo(3.3f);
 		assertThat(id).isEqualTo(23);

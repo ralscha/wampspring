@@ -173,7 +173,7 @@ public abstract class WampMessage implements Message<Object> {
 	private static class MutableMessageHeaders extends MessageHeaders {
 
 		public MutableMessageHeaders() {
-			super(null);
+			super(null, MessageHeaders.ID_VALUE_NONE, -1L);
 		}
 
 		@Override

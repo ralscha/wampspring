@@ -66,7 +66,7 @@ public class WampMessageTest {
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALLERROR);
 
 		MessageHeaders messageHeaders = callMessage.getHeaders();
-		assertThat(messageHeaders).hasSize(6); // + UUID and Timestamp
+		assertThat(messageHeaders).hasSize(4);
 		assertThat(messageHeaders).contains(MapEntry.entry("PRINCIPAL", testPrincipal),
 				MapEntry.entry("WAMP_SESSION", wampSession),
 				MapEntry.entry("WEBSOCKET_SESSION_ID", "ws1"),
