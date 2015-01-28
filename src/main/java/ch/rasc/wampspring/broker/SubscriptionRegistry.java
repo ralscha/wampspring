@@ -40,14 +40,14 @@ public interface SubscriptionRegistry {
 	void unregisterSubscription(UnsubscribeMessage unsubscribeMessage);
 
 	/**
-	 * Remove session
+	 * Unregister all subscriptions of the given WebSocket session
 	 */
-	void unregisterSession(String sessionId);
+	void unregisterSession(String webSocketSessionId);
 
 	/**
-	 * Find all sessionIds that should receive the given message.
+	 * Find all WebSocket session ids that should receive the given message.
 	 * @param message the message
-	 * @return a {@link Set} of session ids, possibly empty.
+	 * @return a {@link Set} of WebSocket session ids, possibly empty.
 	 */
 	Set<String> findSubscriptions(PubSubMessage pubSubMessage);
 
