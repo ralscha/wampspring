@@ -62,7 +62,7 @@ public class WampMessageTest {
 
 		assertThat(callMessage.getPrincipal()).isEqualTo(testPrincipal);
 		assertThat(callMessage.getWampSession()).isEqualTo(wampSession);
-		assertThat(callMessage.getSessionId()).isEqualTo("ws1");
+		assertThat(callMessage.getWebSocketSessionId()).isEqualTo("ws1");
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALLERROR);
 
 		MessageHeaders messageHeaders = callMessage.getHeaders();

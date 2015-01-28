@@ -306,13 +306,13 @@ public class DefaultSubscriptionRegistryTests {
 
 	private static SubscribeMessage subscribeMessage(String sessionId, String topicURI) {
 		SubscribeMessage message = new SubscribeMessage(topicURI);
-		message.setSessionId(sessionId);
+		message.setWebSocketSessionId(sessionId);
 		return message;
 	}
 
 	private static UnsubscribeMessage unsubscribeMessage(String sessionId, String topicURI) {
 		UnsubscribeMessage message = new UnsubscribeMessage(topicURI);
-		message.setSessionId(sessionId);
+		message.setWebSocketSessionId(sessionId);
 		return message;
 	}
 

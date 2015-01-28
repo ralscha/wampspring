@@ -53,7 +53,7 @@ public class CallErrorMessage extends WampMessage {
 		this.errorDesc = errorDesc;
 		this.errorDetails = errorDetails;
 
-		setSessionId(callMessage.getSessionId());
+		setWebSocketSessionId(callMessage.getWebSocketSessionId());
 		setPrincipal(callMessage.getPrincipal());
 	}
 

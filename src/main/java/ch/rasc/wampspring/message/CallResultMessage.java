@@ -41,7 +41,7 @@ public class CallResultMessage extends WampMessage {
 		this.callID = callMessage.getCallID();
 		this.result = result;
 
-		setSessionId(callMessage.getSessionId());
+		setWebSocketSessionId(callMessage.getWebSocketSessionId());
 		setPrincipal(callMessage.getPrincipal());
 	}
 

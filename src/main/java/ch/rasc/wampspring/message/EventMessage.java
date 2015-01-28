@@ -48,7 +48,7 @@ public class EventMessage extends PubSubMessage {
 		super(WampMessageType.EVENT, originEventMessage.getTopicURI());
 		this.event = originEventMessage.getEvent();
 
-		setSessionId(receiverWebSocketSessionId);
+		setWebSocketSessionId(receiverWebSocketSessionId);
 		setPrincipal(originEventMessage.getPrincipal());
 		setWampSession(originEventMessage.getWampSession());
 	}
@@ -57,7 +57,7 @@ public class EventMessage extends PubSubMessage {
 		super(WampMessageType.EVENT, publishMessage.getTopicURI());
 		this.event = publishMessage.getEvent();
 
-		setSessionId(receiverWebSocketSessionId);
+		setWebSocketSessionId(receiverWebSocketSessionId);
 		setPrincipal(publishMessage.getPrincipal());
 		setWampSession(publishMessage.getWampSession());
 	}

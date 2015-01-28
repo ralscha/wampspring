@@ -44,7 +44,7 @@ public class WelcomeMessageTest extends BaseMessageTest {
 
 		assertWampMessageTypeHeader(welcomeMessage, WampMessageType.WELCOME);
 		assertThat(welcomeMessage.getType()).isEqualTo(WampMessageType.WELCOME);
-		assertThat(welcomeMessage.getSessionId()).isEqualTo("v59mbCGDXZ7WTyxB");
+		assertThat(welcomeMessage.getWebSocketSessionId()).isEqualTo("v59mbCGDXZ7WTyxB");
 		assertThat(welcomeMessage.getServerIdent()).isEqualTo("Autobahn/0.5.1");
 		assertThat(welcomeMessage.getProtocolVersion()).isEqualTo(1);
 

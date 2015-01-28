@@ -53,8 +53,8 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 		}
 
 		try {
-			final String challenge = generateHMacSHA256(
-					message.getSessionId() + System.currentTimeMillis(), authKey);
+			final String challenge = generateHMacSHA256(message.getWebSocketSessionId()
+					+ System.currentTimeMillis(), authKey);
 			wampSession.setAuthKey(authKey);
 			wampSession.setChallenge(challenge);
 			return challenge;

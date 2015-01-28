@@ -160,7 +160,7 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 			UnsubscribeMessage unsubscribeMessage = (UnsubscribeMessage) wampMessage;
 			if (unsubscribeMessage.isCleanup()) {
 				this.subscriptionRegistry.unregisterSession(unsubscribeMessage
-						.getSessionId());
+						.getWebSocketSessionId());
 			}
 			else {
 				checkAuthentication(wampMessage);
@@ -261,7 +261,7 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 	private static boolean isSessionEligible(PublishMessage publishMessage,
 			String receiverSessionId) {
 
-		String myWebSocketSessionId = publishMessage.getSessionId();
+		String myWebSocketSessionId = publishMessage.getWebSocketSessionId();
 
 		if (publishMessage.getExcludeMe() != null && publishMessage.getExcludeMe()
 				&& myWebSocketSessionId.equals(receiverSessionId)) {

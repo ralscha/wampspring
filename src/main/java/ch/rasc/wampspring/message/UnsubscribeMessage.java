@@ -66,7 +66,7 @@ public class UnsubscribeMessage extends PubSubMessage {
 	public static UnsubscribeMessage createCleanupMessage(WebSocketSession session) {
 		UnsubscribeMessage msg = new UnsubscribeMessage("**");
 
-		msg.setSessionId(session.getId());
+		msg.setWebSocketSessionId(session.getId());
 		msg.setPrincipal(session.getPrincipal());
 		msg.setWampSession(new WampSession(session));
 

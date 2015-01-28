@@ -161,7 +161,7 @@ public class SimpleBrokerMessageHandlerTests {
 
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage1",
 				true);
-		publishMessage.setSessionId("sess1");
+		publishMessage.setWebSocketSessionId("sess1");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, times(1)).send(this.messageCaptor.capture());
@@ -177,7 +177,7 @@ public class SimpleBrokerMessageHandlerTests {
 		exclude.add("sess2");
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage1",
 				exclude);
-		publishMessage.setSessionId("sess1");
+		publishMessage.setWebSocketSessionId("sess1");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, times(1)).send(this.messageCaptor.capture());
@@ -194,7 +194,7 @@ public class SimpleBrokerMessageHandlerTests {
 		exclude.add("sess2");
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage1",
 				exclude);
-		publishMessage.setSessionId("sess1");
+		publishMessage.setWebSocketSessionId("sess1");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, Mockito.never()).send(
@@ -209,7 +209,7 @@ public class SimpleBrokerMessageHandlerTests {
 		Set<String> exclude = new HashSet<>();
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage1",
 				exclude);
-		publishMessage.setSessionId("sess1");
+		publishMessage.setWebSocketSessionId("sess1");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, times(2)).send(this.messageCaptor.capture());
@@ -226,7 +226,7 @@ public class SimpleBrokerMessageHandlerTests {
 		eligible.add("sess1");
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage1",
 				null, eligible);
-		publishMessage.setSessionId("sess2");
+		publishMessage.setWebSocketSessionId("sess2");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, times(1)).send(this.messageCaptor.capture());
@@ -243,7 +243,7 @@ public class SimpleBrokerMessageHandlerTests {
 		eligible.add("sess2");
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage1",
 				null, eligible);
-		publishMessage.setSessionId("sess2");
+		publishMessage.setWebSocketSessionId("sess2");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, times(2)).send(this.messageCaptor.capture());
@@ -259,7 +259,7 @@ public class SimpleBrokerMessageHandlerTests {
 		Set<String> eligible = new HashSet<>();
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage1",
 				null, eligible);
-		publishMessage.setSessionId("sess2");
+		publishMessage.setWebSocketSessionId("sess2");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, Mockito.never()).send(
@@ -277,7 +277,7 @@ public class SimpleBrokerMessageHandlerTests {
 		Set<String> eligible = new HashSet<>();
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage",
 				exclude, eligible);
-		publishMessage.setSessionId("sess1");
+		publishMessage.setWebSocketSessionId("sess1");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, Mockito.never()).send(
@@ -297,7 +297,7 @@ public class SimpleBrokerMessageHandlerTests {
 		eligible.add("sess1");
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage",
 				exclude, eligible);
-		publishMessage.setSessionId("sess2");
+		publishMessage.setWebSocketSessionId("sess2");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, Mockito.never()).send(
@@ -318,7 +318,7 @@ public class SimpleBrokerMessageHandlerTests {
 		eligible.add("sess3");
 		PublishMessage publishMessage = new PublishMessage("/topic", "publishMessage",
 				exclude, eligible);
-		publishMessage.setSessionId("sess2");
+		publishMessage.setWebSocketSessionId("sess2");
 		this.messageHandler.handleMessage(publishMessage);
 
 		verify(this.clientOutboundChannel, times(2)).send(this.messageCaptor.capture());
@@ -334,7 +334,7 @@ public class SimpleBrokerMessageHandlerTests {
 		Set<String> exclude = new HashSet<>();
 		exclude.add("sess2");
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
-		eventMessage.setSessionId("sess1");
+		eventMessage.setWebSocketSessionId("sess1");
 		eventMessage.setExcludeSessionIds(exclude);
 		this.messageHandler.handleMessage(eventMessage);
 
@@ -351,7 +351,7 @@ public class SimpleBrokerMessageHandlerTests {
 		exclude.add("sess1");
 		exclude.add("sess2");
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
-		eventMessage.setSessionId("sess1");
+		eventMessage.setWebSocketSessionId("sess1");
 		eventMessage.setExcludeSessionIds(exclude);
 		this.messageHandler.handleMessage(eventMessage);
 
@@ -366,7 +366,7 @@ public class SimpleBrokerMessageHandlerTests {
 
 		Set<String> exclude = new HashSet<>();
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
-		eventMessage.setSessionId("sess1");
+		eventMessage.setWebSocketSessionId("sess1");
 		eventMessage.setExcludeSessionIds(exclude);
 		this.messageHandler.handleMessage(eventMessage);
 
@@ -383,7 +383,7 @@ public class SimpleBrokerMessageHandlerTests {
 		Set<String> eligible = new HashSet<>();
 		eligible.add("sess2");
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
-		eventMessage.setSessionId("sess1");
+		eventMessage.setWebSocketSessionId("sess1");
 		eventMessage.setEligibleSessionIds(eligible);
 		this.messageHandler.handleMessage(eventMessage);
 
@@ -400,7 +400,7 @@ public class SimpleBrokerMessageHandlerTests {
 		eligible.add("sess1");
 		eligible.add("sess2");
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
-		eventMessage.setSessionId("sess1");
+		eventMessage.setWebSocketSessionId("sess1");
 		eventMessage.setEligibleSessionIds(eligible);
 		this.messageHandler.handleMessage(eventMessage);
 
@@ -416,7 +416,7 @@ public class SimpleBrokerMessageHandlerTests {
 
 		Set<String> eligible = new HashSet<>();
 		EventMessage eventMessage = new EventMessage("/topic", "eventMessage");
-		eventMessage.setSessionId("sess1");
+		eventMessage.setWebSocketSessionId("sess1");
 		eventMessage.setEligibleSessionIds(eligible);
 		this.messageHandler.handleMessage(eventMessage);
 
@@ -502,27 +502,27 @@ public class SimpleBrokerMessageHandlerTests {
 
 	private static SubscribeMessage subscribeMessage(String sessionId, String topicURI) {
 		SubscribeMessage message = new SubscribeMessage(topicURI);
-		message.setSessionId(sessionId);
+		message.setWebSocketSessionId(sessionId);
 		return message;
 	}
 
 	private static UnsubscribeMessage unsubscribeMessage(String sessionId, String topicURI) {
 		UnsubscribeMessage message = new UnsubscribeMessage(topicURI);
-		message.setSessionId(sessionId);
+		message.setWebSocketSessionId(sessionId);
 		return message;
 	}
 
 	private static EventMessage eventMessage(String sessionId, String topicURI,
 			Object payload) {
 		EventMessage eventMessage = new EventMessage(topicURI, payload);
-		eventMessage.setSessionId(sessionId);
+		eventMessage.setWebSocketSessionId(sessionId);
 		return eventMessage;
 	}
 
 	private static PublishMessage publishMessage(String sessionId, String topicURI,
 			Object payload) {
 		PublishMessage publishMessage = new PublishMessage(topicURI, payload);
-		publishMessage.setSessionId(sessionId);
+		publishMessage.setWebSocketSessionId(sessionId);
 		return publishMessage;
 	}
 
@@ -539,8 +539,8 @@ public class SimpleBrokerMessageHandlerTests {
 					if (capturedMessage.getPayload().equals(expectedMessage.getPayload())
 							&& capturedMessage.getDestination().equals(
 									expectedMessage.getDestination())
-							&& capturedMessage.getSessionId().equals(
-									expectedMessage.getSessionId())) {
+							&& capturedMessage.getWebSocketSessionId().equals(
+									expectedMessage.getWebSocketSessionId())) {
 						found = capturedMessage;
 					}
 				}

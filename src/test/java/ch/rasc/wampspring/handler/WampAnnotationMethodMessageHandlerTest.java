@@ -140,7 +140,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testSubscribeExcludeMe() {
 		SubscribeMessage subscribeMessage = new SubscribeMessage(
 				"annotatedTestService.subscribeExcludeMe");
-		subscribeMessage.setSessionId("ws1");
+		subscribeMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(subscribeMessage);
 
 		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
@@ -159,7 +159,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testSubscribeBroadcastOff() {
 		SubscribeMessage subscribeMessage = new SubscribeMessage(
 				"annotatedTestService.subscribeBroadcastOff");
-		subscribeMessage.setSessionId("ws1");
+		subscribeMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(subscribeMessage);
 
 		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
@@ -178,7 +178,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testSubscribeBroadcastOffAndExcludeMe() {
 		SubscribeMessage subscribeMessage = new SubscribeMessage(
 				"annotatedTestService.subscribeBroadcastOffAndExcludeMe");
-		subscribeMessage.setSessionId("ws1");
+		subscribeMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(subscribeMessage);
 		verifyZeroInteractions(this.clientOutboundChannel);
 		verifyZeroInteractions(this.eventMessenger);
@@ -214,7 +214,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testUnsubscribeExcludeMe() {
 		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 				"annotatedTestService.unsubscribeExcludeMe");
-		unsubscribeMessage.setSessionId("ws1");
+		unsubscribeMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(unsubscribeMessage);
 
 		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
@@ -233,7 +233,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testUnsubscribeBroadcastOff() {
 		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 				"annotatedTestService.unsubscribeBroadcastOff");
-		unsubscribeMessage.setSessionId("ws1");
+		unsubscribeMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(unsubscribeMessage);
 
 		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
@@ -252,7 +252,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testUnsubscribeBroadcastOffAndExcludeMe() {
 		UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 				"annotatedTestService.unsubscribeBroadcastOffAndExcludeMe");
-		unsubscribeMessage.setSessionId("ws1");
+		unsubscribeMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(unsubscribeMessage);
 
 		verifyZeroInteractions(this.clientOutboundChannel);
@@ -289,7 +289,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testPublishExcludeMe() {
 		PublishMessage publishMessage = new PublishMessage(
 				"annotatedTestService.publishExcludeMe", null);
-		publishMessage.setSessionId("ws1");
+		publishMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(publishMessage);
 
 		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
@@ -308,7 +308,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testPublishBroadcastOff() {
 		PublishMessage publishMessage = new PublishMessage(
 				"annotatedTestService.publishBroadcastOff", null);
-		publishMessage.setSessionId("ws1");
+		publishMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(publishMessage);
 
 		ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
@@ -327,7 +327,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 	public void testPublishBroadcastOffAndExcludeMe() {
 		PublishMessage publishMessage = new PublishMessage(
 				"annotatedTestService.publishBroadcastOffAndExcludeMe", null);
-		publishMessage.setSessionId("ws1");
+		publishMessage.setWebSocketSessionId("ws1");
 		this.messageHandler.handleMessage(publishMessage);
 		verifyZeroInteractions(this.clientOutboundChannel);
 		verifyZeroInteractions(this.eventMessenger);

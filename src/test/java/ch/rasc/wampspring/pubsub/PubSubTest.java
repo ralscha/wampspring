@@ -172,19 +172,21 @@ public class PubSubTest extends BaseWampTest {
 			else if (exclude != null) {
 				Set<String> excludeSet = new HashSet<>();
 				if (exclude.contains(1)) {
-					excludeSet.add(result1.getWelcomeMessage().getSessionId());
+					excludeSet.add(result1.getWelcomeMessage().getWebSocketSessionId());
 				}
 				if (exclude.contains(2)) {
-					excludeSet.add(result2.getWelcomeMessage().getSessionId());
+					excludeSet.add(result2.getWelcomeMessage().getWebSocketSessionId());
 				}
 
 				if (eligible != null) {
 					Set<String> eligibleSet = new HashSet<>();
 					if (eligible.contains(1)) {
-						eligibleSet.add(result1.getWelcomeMessage().getSessionId());
+						eligibleSet.add(result1.getWelcomeMessage()
+								.getWebSocketSessionId());
 					}
 					if (eligible.contains(2)) {
-						eligibleSet.add(result2.getWelcomeMessage().getSessionId());
+						eligibleSet.add(result2.getWelcomeMessage()
+								.getWebSocketSessionId());
 					}
 
 					pm = new PublishMessage("anotherTopic", "the test message",

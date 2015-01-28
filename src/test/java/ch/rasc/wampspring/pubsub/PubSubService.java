@@ -167,13 +167,13 @@ public class PubSubService {
 	@WampPublishListener("sendToAllExcept")
 	public void testSendToAllExcept(PublishMessage msg) {
 		this.eventMessenger.sendToAllExcept("responseSendToAllExcept", 1,
-				msg.getSessionId());
+				msg.getWebSocketSessionId());
 	}
 
 	@WampPublishListener("sendToAllExceptSet")
 	public void testSendToAllExceptSet(PublishMessage msg) {
 		Set<String> except = new HashSet<>();
-		except.add(msg.getSessionId());
+		except.add(msg.getWebSocketSessionId());
 		this.eventMessenger.sendToAllExcept("responseSendToAllExceptSet", 1, except);
 	}
 

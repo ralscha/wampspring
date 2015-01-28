@@ -70,11 +70,11 @@ public abstract class WampMessage implements Message<Object> {
 	/**
 	 * Convenient method to retrieve the WebSocket session id.
 	 */
-	public String getSessionId() {
+	public String getWebSocketSessionId() {
 		return getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID);
 	}
 
-	public void setSessionId(String webSocketSessionId) {
+	public void setWebSocketSessionId(String webSocketSessionId) {
 		setHeader(WampMessageHeader.WEBSOCKET_SESSION_ID, webSocketSessionId);
 	}
 
@@ -115,7 +115,7 @@ public abstract class WampMessage implements Message<Object> {
 
 		T newWampMessage = fromJson(jsonFactory, json, wampSession);
 
-		newWampMessage.setSessionId(session.getId());
+		newWampMessage.setWebSocketSessionId(session.getId());
 		newWampMessage.setPrincipal(session.getPrincipal());
 		newWampMessage.setWampSession(wampSession);
 

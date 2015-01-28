@@ -69,7 +69,7 @@ public class WelcomeMessage extends WampMessage {
 	}
 
 	@Override
-	public String getSessionId() {
+	public String getWebSocketSessionId() {
 		return this.sessionId;
 	}
 

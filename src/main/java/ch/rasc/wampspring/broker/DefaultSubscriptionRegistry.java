@@ -61,7 +61,7 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 
 	@Override
 	public final void registerSubscription(SubscribeMessage subscribeMessage) {
-		String sessionId = subscribeMessage.getSessionId();
+		String sessionId = subscribeMessage.getWebSocketSessionId();
 		String destination = subscribeMessage.getTopicURI();
 		if (sessionId != null && destination != null) {
 			addSessionId(sessionId, destination);
@@ -71,7 +71,7 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 
 	@Override
 	public final void unregisterSubscription(UnsubscribeMessage unsubscribeMessage) {
-		String sessionId = unsubscribeMessage.getSessionId();
+		String sessionId = unsubscribeMessage.getWebSocketSessionId();
 		String destination = unsubscribeMessage.getTopicURI();
 
 		if (sessionId != null && destination != null) {

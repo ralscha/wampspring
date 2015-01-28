@@ -326,7 +326,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 						if (wampHandlerMethod.isBroadcast()) {
 							if (wampHandlerMethod.isExcludeSender()) {
 								this.eventMessenger.sendToAllExcept(replyToTopicURI,
-										returnValue, wampMessage.getSessionId());
+										returnValue, wampMessage.getWebSocketSessionId());
 							}
 							else {
 								this.eventMessenger.sendToAll(replyToTopicURI,
@@ -336,7 +336,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 						else {
 							if (!wampHandlerMethod.isExcludeSender()) {
 								this.eventMessenger.sendTo(replyToTopicURI, returnValue,
-										wampMessage.getSessionId());
+										wampMessage.getWebSocketSessionId());
 							}
 						}
 					}
