@@ -22,12 +22,13 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.util.Assert;
 
+import ch.rasc.wampspring.broker.SimpleBrokerMessageHandler;
 import ch.rasc.wampspring.message.EventMessage;
 
 /**
- * A messenger that allows the calling code to send {@link EventMessage}s to the broker.
- * The EventMessenger is by default configured as a spring managed bean and can be
- * autowired into any other spring bean.
+ * A messenger that allows the calling code to send {@link EventMessage}s to either the
+ * broker or directly to client. The EventMessenger is by default configured as a spring
+ * managed bean and can be autowired into any other spring bean.
  *
  * e.g.
  *
@@ -45,30 +46,20 @@ import ch.rasc.wampspring.message.EventMessage;
  */
 public class EventMessenger {
 
-	private final MessageChannel messageChannel;
+	private final MessageChannel brokerChannel;
+
+	private final MessageChannel clientOutboundChannel;
 
 	private volatile long sendTimeout = -1;
 
-	public EventMessenger(MessageChannel messageChannel) {
-		Assert.notNull(messageChannel, "'messageChannel' must not be null");
-		this.messageChannel = messageChannel;
-	}
+	public EventMessenger(MessageChannel brokerChannel,
+			MessageChannel clientOutboundChannel) {
 
-	public void setSendTimeout(long sendTimeout) {
-		this.sendTimeout = sendTimeout;
-	}
+		Assert.notNull(brokerChannel, "'brokerChannel' must not be null");
+		Assert.notNull(clientOutboundChannel, "'clientOutboundChannel' must not be null");
 
-	public void send(EventMessage eventMessage) {
-		long timeout = this.sendTimeout;
-		boolean sent = timeout >= 0 ? this.messageChannel.send(eventMessage, timeout)
-				: this.messageChannel.send(eventMessage);
-
-		if (!sent) {
-			throw new MessageDeliveryException(eventMessage,
-					"Failed to send message with destination '"
-							+ eventMessage.getDestination() + "' within timeout: "
-							+ timeout);
-		}
+		this.brokerChannel = brokerChannel;
+		this.clientOutboundChannel = clientOutboundChannel;
 	}
 
 	/**
@@ -88,10 +79,11 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the payload of the {@link EventMessage}
-	 * @param excludeSessionId a WebSocket session id that will be excluded
+	 * @param excludeWebSocketSessionId a WebSocket session id that will be excluded
 	 */
-	public void sendToAllExcept(String topicURI, Object event, String excludeSessionId) {
-		sendToAllExcept(topicURI, event, Collections.singleton(excludeSessionId));
+	public void sendToAllExcept(String topicURI, Object event,
+			String excludeWebSocketSessionId) {
+		sendToAllExcept(topicURI, event, Collections.singleton(excludeWebSocketSessionId));
 	}
 
 	/**
@@ -100,13 +92,13 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the payload of the {@link EventMessage}
-	 * @param excludeSessionIds a set of WebSocket session ids that will be excluded. If
-	 * null or empty no client will be excluded.
+	 * @param excludeWebSocketSessionIds a set of WebSocket session ids that will be
+	 * excluded. If null or empty no client will be excluded.
 	 */
 	public void sendToAllExcept(String topicURI, Object event,
-			Set<String> excludeSessionIds) {
+			Set<String> excludeWebSocketSessionIds) {
 		EventMessage eventMessage = new EventMessage(topicURI, event);
-		eventMessage.setExcludeSessionIds(excludeSessionIds);
+		eventMessage.setExcludeWebSocketSessionIds(excludeWebSocketSessionIds);
 		send(eventMessage);
 	}
 
@@ -117,12 +109,13 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the payload of the {@link EventMessage}
-	 * @param eligibleSessionIds only the WebSocket session ids listed here will receive
-	 * the EVENT message. If null or empty nobody receives the message.
+	 * @param eligibleWebSocketSessionIds only the WebSocket session ids listed here will
+	 * receive the EVENT message. If null or empty nobody receives the message.
 	 */
-	public void sendTo(String topicURI, Object event, Set<String> eligibleSessionIds) {
+	public void sendTo(String topicURI, Object event,
+			Set<String> eligibleWebSocketSessionIds) {
 		EventMessage eventMessage = new EventMessage(topicURI, event);
-		eventMessage.setEligibleSessionIds(eligibleSessionIds);
+		eventMessage.setEligibleWebSocketSessionIds(eligibleWebSocketSessionIds);
 		send(eventMessage);
 	}
 
@@ -133,10 +126,105 @@ public class EventMessenger {
 	 *
 	 * @param topicURI the name of the topic
 	 * @param event the payload of the {@link EventMessage}
-	 * @param eligibleSessionIds only the client with the WebSocket session id listed here
-	 * will receive the EVENT message
+	 * @param eligibleWebSocketSessionId only the client with the WebSocket session id
+	 * listed here will receive the EVENT message
 	 */
-	public void sendTo(String topicURI, Object event, String eligibleSessionId) {
-		sendTo(topicURI, event, Collections.singleton(eligibleSessionId));
+	public void sendTo(String topicURI, Object event, String eligibleWebSocketSessionId) {
+		sendTo(topicURI, event, Collections.singleton(eligibleWebSocketSessionId));
 	}
+
+	/**
+	 * Send an EventMessage directly to each client listed in the webSocketSessionId set
+	 * parameter. If parameter webSocketSessionIds is null or empty no messages are sent.
+	 * <p>
+	 * In contrast to {@link #sendTo(String, Object, Set)} this method does not check if
+	 * the receivers are subscribed to the destination. The
+	 * {@link SimpleBrokerMessageHandler} is not involved in sending these messages.
+	 *
+	 * @param topicURI the name of the topic
+	 * @param event the payload of the {@link EventMessage}
+	 * @param webSocketSessionIds list of receivers for the EVENT message
+	 */
+	public void sendToDirect(String topicURI, Object event,
+			Set<String> webSocketSessionIds) {
+		if (webSocketSessionIds != null) {
+			for (String webSocketSessionId : webSocketSessionIds) {
+				EventMessage eventMessage = new EventMessage(topicURI, event);
+				eventMessage.setWebSocketSessionId(webSocketSessionId);
+				sendDirect(eventMessage);
+			}
+		}
+	}
+
+	/**
+	 * Send an EventMessage directly to the client specified with the webSocketSessionId
+	 * parameter.
+	 * <p>
+	 * In contrast to {@link #sendTo(String, Object, String)} this method does not check
+	 * if the receiver is subscribed to the destination. The
+	 * {@link SimpleBrokerMessageHandler} is not involved in sending this message.
+	 *
+	 * @param topicURI the name of the topic
+	 * @param event the payload of the {@link EventMessage}
+	 * @param webSocketSessionId receiver of the EVENT message
+	 */
+	public void sendToDirect(String topicURI, Object event, String webSocketSessionId) {
+		Assert.notNull(webSocketSessionId, "WebSocket session id must not be null");
+
+		sendToDirect(topicURI, event, Collections.singleton(webSocketSessionId));
+	}
+
+	public void setSendTimeout(long sendTimeout) {
+		this.sendTimeout = sendTimeout;
+	}
+
+	/**
+	 * Send an EventMessage to the {@link SimpleBrokerMessageHandler}. The broker looks up
+	 * if the receiver of the message ({@link EventMessage#getWebSocketSessionId()}) is
+	 * subscribed to the destination ({@link EventMessage#getDestination()}). If the
+	 * receiver is subscribed the broker sends the message to him.
+	 *
+	 * @param eventMessage The event message
+	 */
+	public void send(EventMessage eventMessage) {
+		long timeout = this.sendTimeout;
+		boolean sent = timeout >= 0 ? this.brokerChannel.send(eventMessage, timeout)
+				: this.brokerChannel.send(eventMessage);
+
+		if (!sent) {
+			throw new MessageDeliveryException(eventMessage,
+					"Failed to send message with destination '"
+							+ eventMessage.getDestination() + "' within timeout: "
+							+ timeout);
+		}
+	}
+
+	/**
+	 * Send an EventMessage directly to the client (
+	 * {@link EventMessage#getWebSocketSessionId()}).
+	 * <p>
+	 * In contrast to {@link #send(EventMessage)} this method does not check if the
+	 * receiver is subscribed to the destination. The {@link SimpleBrokerMessageHandler}
+	 * is not involved in sending this message.
+	 *
+	 * @param eventMessage The event message
+	 *
+	 * @see #send(EventMessage)
+	 */
+	public void sendDirect(EventMessage eventMessage) {
+		Assert.notNull(eventMessage.getWebSocketSessionId(),
+				"WebSocket session id must not be null");
+
+		long timeout = this.sendTimeout;
+		boolean sent = timeout >= 0 ? this.clientOutboundChannel.send(eventMessage,
+				timeout) : this.clientOutboundChannel.send(eventMessage);
+
+		if (!sent) {
+			throw new MessageDeliveryException(eventMessage,
+					"Failed to direct send message with destination '"
+							+ eventMessage.getDestination() + "' within timeout: "
+							+ timeout);
+		}
+	}
+
 }
