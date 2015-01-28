@@ -40,6 +40,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 
+import ch.rasc.wampspring.config.WampMessageSelectors;
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
@@ -70,7 +71,8 @@ public class SimpleBrokerMessageHandlerTests {
 		MockitoAnnotations.initMocks(this);
 		this.messageHandler = new SimpleBrokerMessageHandler(this.clientInboundChannel,
 				this.clientOutboundChannel, this.brokerChannel,
-				new DefaultSubscriptionRegistry(new AntPathMatcher()));
+				new DefaultSubscriptionRegistry(new AntPathMatcher()),
+				WampMessageSelectors.ACCEPT_ALL);
 		this.messageHandler.start();
 	}
 

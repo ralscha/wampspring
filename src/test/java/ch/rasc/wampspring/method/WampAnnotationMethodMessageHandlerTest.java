@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring.method;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -35,6 +35,7 @@ import org.springframework.messaging.SubscribableChannel;
 import org.springframework.util.AntPathMatcher;
 
 import ch.rasc.wampspring.EventMessenger;
+import ch.rasc.wampspring.config.WampMessageSelectors;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.EventMessage;
@@ -80,7 +81,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 		this.messageHandler = new WampAnnotationMethodMessageHandler(
 				this.clientInboundChannel, this.clientOutboundChannel,
 				this.eventMessenger, conversionService, paramConverter,
-				new AntPathMatcher());
+				new AntPathMatcher(), WampMessageSelectors.ACCEPT_ALL);
 
 		@SuppressWarnings("resource")
 		StaticApplicationContext applicationContext = new StaticApplicationContext();

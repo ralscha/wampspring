@@ -32,8 +32,6 @@ import org.springframework.web.socket.messaging.SubProtocolWebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.util.UrlPathHelper;
 
-import ch.rasc.wampspring.handler.WampSubProtocolHandler;
-
 import com.fasterxml.jackson.core.JsonFactory;
 
 /**

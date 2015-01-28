@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.support;
+package ch.rasc.wampspring.config;
 
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessagingException;
+import ch.rasc.wampspring.message.WampMessage;
 
-public class MissingWampSessionException extends MessagingException {
+public abstract class WampMessageSelectors {
 
-	private static final long serialVersionUID = 1L;
+	public static WampMessageSelector ACCEPT_ALL = new WampMessageSelector() {
+		@Override
+		public boolean accept(WampMessage message) {
+			return true;
+		}
+	};
 
-	public MissingWampSessionException(Message<?> message) {
-		super(message, "No \"wampSession\" header in message");
-	}
-
+	public static WampMessageSelector REJECT_ALL = new WampMessageSelector() {
+		@Override
+		public boolean accept(WampMessage message) {
+			return false;
+		}
+	};
 }

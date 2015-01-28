@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring.config;
 
 import java.io.Serializable;
 

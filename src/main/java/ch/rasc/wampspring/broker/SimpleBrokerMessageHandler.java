@@ -26,8 +26,10 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
 import org.springframework.util.Assert;
 
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampMessageSelector;
+import ch.rasc.wampspring.config.WampSession;
 import ch.rasc.wampspring.message.EventMessage;
+import ch.rasc.wampspring.message.PubSubMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
@@ -56,21 +58,26 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 
 	private final SubscriptionRegistry subscriptionRegistry;
 
+	private final WampMessageSelector wampMessageSelector;
+
 	private boolean authenticationRequiredGlobal = false;
 
 	public SimpleBrokerMessageHandler(SubscribableChannel inboundChannel,
 			MessageChannel outboundChannel, SubscribableChannel brokerChannel,
-			SubscriptionRegistry subscriptionRegistry) {
+			SubscriptionRegistry subscriptionRegistry,
+			WampMessageSelector wampMessageSelector) {
 
 		Assert.notNull(inboundChannel, "'inboundChannel' must not be null");
 		Assert.notNull(outboundChannel, "'outboundChannel' must not be null");
 		Assert.notNull(brokerChannel, "'brokerChannel' must not be null");
 		Assert.notNull(subscriptionRegistry, "'subscriptionRegistry' must not be null");
+		Assert.notNull(wampMessageSelector, "'wampMessageSelector' must not be null");
 
 		this.clientInboundChannel = inboundChannel;
 		this.clientOutboundChannel = outboundChannel;
 		this.brokerChannel = brokerChannel;
 		this.subscriptionRegistry = subscriptionRegistry;
+		this.wampMessageSelector = wampMessageSelector;
 	}
 
 	public void setAuthenticationRequiredGlobal(boolean authenticationRequiredGlobal) {
@@ -138,6 +145,11 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 			if (this.logger.isTraceEnabled()) {
 				this.logger.trace(this + " not running yet. Ignoring " + message);
 			}
+			return;
+		}
+
+		if (!(message instanceof PubSubMessage && this.wampMessageSelector
+				.accept((WampMessage) message))) {
 			return;
 		}
 

@@ -25,7 +25,7 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Service;
 
 import ch.rasc.wampspring.annotation.WampCallListener;
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.WampMessageHeader;
 import ch.rasc.wampspring.message.WampMessageType;

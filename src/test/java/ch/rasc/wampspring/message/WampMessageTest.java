@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.web.socket.WebSocketSession;
 
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 import ch.rasc.wampspring.testsupport.TestPrincipal;
 
 public class WampMessageTest {

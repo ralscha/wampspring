@@ -27,7 +27,7 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.support.DestinationVariableMethodArgumentResolver;
 import org.springframework.web.socket.WebSocketSession;
 
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;

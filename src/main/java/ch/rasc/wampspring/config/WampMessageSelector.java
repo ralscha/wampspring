@@ -13,17 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.support;
+package ch.rasc.wampspring.config;
 
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessagingException;
+import ch.rasc.wampspring.message.WampMessage;
 
-public class MissingPrincipalException extends MessagingException {
-
-	private static final long serialVersionUID = 1L;
-
-	public MissingPrincipalException(Message<?> message) {
-		super(message, "No \"principal\" header in message");
-	}
-
+public interface WampMessageSelector {
+	boolean accept(WampMessage message);
 }

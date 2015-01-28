@@ -18,7 +18,7 @@ package ch.rasc.wampspring.message;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;

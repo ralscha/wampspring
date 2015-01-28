@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Set;
 
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring.method;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 

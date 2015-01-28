@@ -56,11 +56,8 @@ import ch.rasc.wampspring.broker.SubscriptionRegistry;
 import ch.rasc.wampspring.cra.AuthenticationHandler;
 import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
 import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
-import ch.rasc.wampspring.handler.MethodParameterConverter;
-import ch.rasc.wampspring.handler.WampAnnotationMethodMessageHandler;
-import ch.rasc.wampspring.handler.WampSession;
-import ch.rasc.wampspring.handler.WampSessionScope;
-import ch.rasc.wampspring.handler.WampSubProtocolHandler;
+import ch.rasc.wampspring.method.MethodParameterConverter;
+import ch.rasc.wampspring.method.WampAnnotationMethodMessageHandler;
 
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -184,7 +181,7 @@ public class DefaultWampConfiguration {
 	public MessageHandler brokerMessageHandler() {
 		SimpleBrokerMessageHandler messageHandler = new SimpleBrokerMessageHandler(
 				clientInboundChannel(), clientOutboundChannel(), brokerChannel(),
-				subscriptionRegistry());
+				subscriptionRegistry(), brokerMessageHandlerMessageSelector());
 
 		messageHandler.setAuthenticationRequiredGlobal(authenticationRequired());
 
@@ -194,6 +191,10 @@ public class DefaultWampConfiguration {
 	@Bean
 	public SubscriptionRegistry subscriptionRegistry() {
 		return new DefaultSubscriptionRegistry(pathMatcher());
+	}
+
+	protected WampMessageSelector brokerMessageHandlerMessageSelector() {
+		return WampMessageSelectors.ACCEPT_ALL;
 	}
 
 	@Bean
@@ -208,7 +209,8 @@ public class DefaultWampConfiguration {
 
 		WampAnnotationMethodMessageHandler messageHandler = new WampAnnotationMethodMessageHandler(
 				clientInboundChannel(), clientOutboundChannel(), eventMessenger(),
-				conversionService(), methodParameterConverter(), pathMatcher());
+				conversionService(), methodParameterConverter(), pathMatcher(),
+				methodMessageHandlerMessageSelector());
 
 		messageHandler.setAuthenticationRequiredGlobal(authenticationRequired());
 
@@ -221,6 +223,10 @@ public class DefaultWampConfiguration {
 
 	protected MethodParameterConverter methodParameterConverter() {
 		return new MethodParameterConverter(lookupObjectMapper(), conversionService());
+	}
+
+	protected WampMessageSelector methodMessageHandlerMessageSelector() {
+		return WampMessageSelectors.ACCEPT_ALL;
 	}
 
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {

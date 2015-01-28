@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.support;
+package ch.rasc.wampspring.method;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -23,10 +23,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.core.MethodParameter;
+import org.springframework.messaging.MessageHandlingException;
 import org.springframework.web.socket.WebSocketSession;
 
 import ch.rasc.wampspring.annotation.WampPublishListener;
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.WampMessageHeader;
 
@@ -66,7 +67,7 @@ public class WampSessionMethodArgumentResolverTest {
 				.isEqualTo(wampSession);
 	}
 
-	@Test(expected = MissingWampSessionException.class)
+	@Test(expected = MessageHandlingException.class)
 	public void missingWampSessionTest() throws Exception {
 		CallMessage callMessage = new CallMessage("1", "call");
 		WampSession wampSession = new WampSession(this.nativeSession);

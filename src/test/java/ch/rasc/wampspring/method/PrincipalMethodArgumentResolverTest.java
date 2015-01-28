@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.support;
+package ch.rasc.wampspring.method;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -23,6 +23,7 @@ import java.security.Principal;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.MethodParameter;
+import org.springframework.messaging.MessageHandlingException;
 
 import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.message.CallMessage;
@@ -60,7 +61,7 @@ public class PrincipalMethodArgumentResolverTest {
 				.isEqualTo(testPrincipal);
 	}
 
-	@Test(expected = MissingPrincipalException.class)
+	@Test(expected = MessageHandlingException.class)
 	public void missingPrincipalTest() throws Exception {
 		CallMessage callMessage = new CallMessage("1", "call");
 		TestPrincipal testPrincipal = new TestPrincipal("testPrincipal");

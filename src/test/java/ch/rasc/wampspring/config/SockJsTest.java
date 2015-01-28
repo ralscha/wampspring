@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring.config;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -39,9 +39,6 @@ import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import ch.rasc.wampspring.annotation.WampCallListener;
-import ch.rasc.wampspring.config.AbstractWampConfigurer;
-import ch.rasc.wampspring.config.EnableWamp;
-import ch.rasc.wampspring.config.WampEndpointRegistry;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.EventMessage;

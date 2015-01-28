@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring.method;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -62,6 +62,9 @@ import ch.rasc.wampspring.annotation.WampCallListener;
 import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.annotation.WampSubscribeListener;
 import ch.rasc.wampspring.annotation.WampUnsubscribeListener;
+import ch.rasc.wampspring.config.WampMessageSelector;
+import ch.rasc.wampspring.config.WampSession;
+import ch.rasc.wampspring.config.WampSessionContextHolder;
 import ch.rasc.wampspring.message.CallErrorMessage;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
@@ -69,9 +72,6 @@ import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.message.WampMessage;
-import ch.rasc.wampspring.support.PayloadArgumentResolver;
-import ch.rasc.wampspring.support.PrincipalMethodArgumentResolver;
-import ch.rasc.wampspring.support.WampSessionMethodArgumentResolver;
 
 /**
  * Internal class that is responsible for calling methods that are annotated with
@@ -104,6 +104,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 	private final PathMatcher pathMatcher;
 
+	private final WampMessageSelector wampMessageSelector;
+
 	private boolean authenticationRequiredGlobal = false;
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -124,13 +126,15 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	public WampAnnotationMethodMessageHandler(SubscribableChannel clientInboundChannel,
 			MessageChannel clientOutboundChannel, EventMessenger eventMessenger,
 			ConversionService conversionService,
-			MethodParameterConverter methodParameterConverter, PathMatcher pathMatcher) {
+			MethodParameterConverter methodParameterConverter, PathMatcher pathMatcher,
+			WampMessageSelector wampMessageSelector) {
 		this.clientInboundChannel = clientInboundChannel;
 		this.clientOutboundChannel = clientOutboundChannel;
 		this.eventMessenger = eventMessenger;
 		this.conversionService = conversionService;
 		this.methodParameterConverter = methodParameterConverter;
 		this.pathMatcher = pathMatcher;
+		this.wampMessageSelector = wampMessageSelector;
 	}
 
 	public void setAuthenticationRequiredGlobal(boolean authenticationRequiredGlobal) {
@@ -254,12 +258,18 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	@Override
 	public void handleMessage(Message<?> message) throws MessagingException {
 
-		String destination = ((WampMessage) message).getDestination();
+		if (!(message instanceof WampMessage && this.wampMessageSelector
+				.accept((WampMessage) message))) {
+			return;
+		}
+
+		WampMessage wampMessage = (WampMessage) message;
+		String destination = wampMessage.getDestination();
 		if (destination == null) {
 			return;
 		}
 
-		handleMessageInternal((WampMessage) message, destination);
+		handleMessageInternal(wampMessage, destination);
 	}
 
 	private void handleCallMessage(CallMessage callMessage,

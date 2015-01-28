@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.support;
+package ch.rasc.wampspring.method;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -44,7 +44,6 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 
 import ch.rasc.wampspring.annotation.WampPublishListener;
-import ch.rasc.wampspring.handler.MethodParameterConverter;
 import ch.rasc.wampspring.message.PublishMessage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

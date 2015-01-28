@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring.config;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;

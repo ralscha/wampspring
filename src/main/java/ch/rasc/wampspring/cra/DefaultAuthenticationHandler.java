@@ -27,7 +27,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 import ch.rasc.wampspring.message.CallMessage;
 
 public class DefaultAuthenticationHandler implements AuthenticationHandler {

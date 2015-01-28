@@ -20,7 +20,7 @@ import java.io.StringWriter;
 
 import org.springframework.web.socket.WebSocketSession;
 
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;

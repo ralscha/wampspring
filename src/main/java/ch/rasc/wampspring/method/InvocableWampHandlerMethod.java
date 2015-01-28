@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.rasc.wampspring.handler;
+package ch.rasc.wampspring.method;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
