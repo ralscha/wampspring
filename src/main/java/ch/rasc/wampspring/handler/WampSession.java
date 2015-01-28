@@ -108,7 +108,7 @@ public class WampSession {
 	public void registerDestructionCallback(String name, Runnable callback) {
 		synchronized (getSessionMutex()) {
 			if (isSessionCompleted()) {
-				throw new IllegalStateException("Session id=" + getSessionId()
+				throw new IllegalStateException("Session id=" + getWebSocketSessionId()
 						+ " already completed");
 			}
 			setAttribute(DESTRUCTION_CALLBACK_NAME_PREFIX + name, callback);
@@ -123,10 +123,10 @@ public class WampSession {
 	}
 
 	/**
-	 * Return an id for the associated session.
+	 * Return an id for the associated WebSocket session.
 	 * @return the session id as String (never {@code null})
 	 */
-	public String getSessionId() {
+	public String getWebSocketSessionId() {
 		return this.webSocketSession.getId();
 	}
 

@@ -82,7 +82,7 @@ public class WampSessionScope implements Scope {
 
 	@Override
 	public String getConversationId() {
-		return WampSessionContextHolder.currentAttributes().getSessionId();
+		return WampSessionContextHolder.currentAttributes().getWebSocketSessionId();
 	}
 
 	@SuppressWarnings("serial")

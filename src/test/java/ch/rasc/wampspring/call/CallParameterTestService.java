@@ -37,7 +37,7 @@ public class CallParameterTestService {
 	public String headerMethod(WampSession wampSession, @Header(
 			value = "WEBSOCKET_SESSION_ID") String webSocketSessionId) {
 		return "headerMethod called: "
-				+ wampSession.getSessionId().equals(webSocketSessionId);
+				+ wampSession.getWebSocketSessionId().equals(webSocketSessionId);
 	}
 
 	@WampCallListener(value = "headersMethod")
