@@ -81,7 +81,7 @@ public @interface WampSubscribeListener {
 	 * If not empty the return value of this method (wrapped in an {@link EventMessage})
 	 * is sent to all subscribers of the listed topicURI(s)/destination(s). This attribute
 	 * is ignored when the method does not have a return value or the return value is
-	 * <code>null</code>.
+	 * {@code null}.
 	 */
 	String[] replyTo() default {};
 
@@ -95,7 +95,7 @@ public @interface WampSubscribeListener {
 
 	/**
 	 * By default when the method has a return value and this value is not
-	 * <code>null</code> and the attribute {@link #replyTo()} is not empty an EventMessage
+	 * {@code null} and the attribute {@link #replyTo()} is not empty an EventMessage
 	 * is created and sent to all subscribers of the listed topicURI(s)/destination(s).
 	 * <p>
 	 * If this attribute is set to false only the sender of the SUBSCRIBE message will
