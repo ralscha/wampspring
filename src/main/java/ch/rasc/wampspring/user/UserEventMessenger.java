@@ -79,6 +79,19 @@ public class UserEventMessenger {
 		this.eventMessenger.sendTo(topicURI, event, eligibleSessionId);
 	}
 
+	public void sendToDirect(String topicURI, Object event,
+			Set<String> webSocketSessionIds) {
+		this.eventMessenger.sendToDirect(topicURI, event, webSocketSessionIds);
+	}
+
+	public void sendToDirect(String topicURI, Object event, String webSocketSessionId) {
+		this.eventMessenger.sendToDirect(topicURI, event, webSocketSessionId);
+	}
+
+	public void sendDirect(EventMessage eventMessage) {
+		this.eventMessenger.sendDirect(eventMessage);
+	}
+
 	/**
 	 * Send an {@link EventMessage} to every client that is currently subscribed to the
 	 * provided topicURI except the one provided with the excludeUser parameter.
