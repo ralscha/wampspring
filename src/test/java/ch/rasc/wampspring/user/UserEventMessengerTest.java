@@ -19,6 +19,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -58,12 +60,15 @@ public class UserEventMessengerTest {
 		MockitoAnnotations.initMocks(this);
 		Mockito.when(this.brokerChannel.send(Matchers.any(WampMessage.class)))
 				.thenReturn(true);
+		Mockito.when(this.clientOutboundChannel.send(Matchers.any(WampMessage.class)))
+				.thenReturn(true);
 
 		this.userSessionRegistry = new DefaultUserSessionRegistry();
 		this.userSessionRegistry.registerSessionId("A", "ws1");
 		this.userSessionRegistry.registerSessionId("B", "ws2");
 		this.userSessionRegistry.registerSessionId("C", "ws3");
 		this.userSessionRegistry.registerSessionId("D", "ws4");
+
 		this.userEventMessenger = new UserEventMessenger(new EventMessenger(
 				this.brokerChannel, this.clientOutboundChannel), this.userSessionRegistry);
 	}
@@ -79,6 +84,7 @@ public class UserEventMessengerTest {
 		ArgumentCaptor<Long> timeOutArgument = ArgumentCaptor.forClass(Long.class);
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture(), timeOutArgument.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 		assertThat(timeOutArgument.getValue()).isEqualTo(11);
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("topic");
@@ -98,6 +104,41 @@ public class UserEventMessengerTest {
 	}
 
 	@Test
+	public void testSendDirectWithTimeoutOk() {
+		Mockito.when(
+				this.clientOutboundChannel.send(Matchers.any(WampMessage.class),
+						Matchers.anyLong())).thenReturn(true);
+		this.userEventMessenger.setSendTimeout(11);
+		EventMessage eventMessage = new EventMessage("topic", "1");
+		eventMessage.setWebSocketSessionId("ws1");
+		this.userEventMessenger.sendDirect(eventMessage);
+
+		ArgumentCaptor<Long> timeOutArgument = ArgumentCaptor.forClass(Long.class);
+		Mockito.verify(this.clientOutboundChannel, Mockito.times(1)).send(
+				this.messageCaptor.capture(), timeOutArgument.capture());
+		Mockito.verifyZeroInteractions(this.brokerChannel);
+		assertThat(timeOutArgument.getValue()).isEqualTo(11);
+		EventMessage msg = this.messageCaptor.getValue();
+		assertThat(msg.getDestination()).isEqualTo("topic");
+		assertThat(msg.getEvent()).isEqualTo("1");
+		assertThat(msg.getWebSocketSessionId()).isEqualTo("ws1");
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
+	}
+
+	@Test(expected = MessageDeliveryException.class)
+	public void testSendDirectWithTimeoutException() {
+		Mockito.when(
+				this.clientOutboundChannel.send(Matchers.any(WampMessage.class),
+						Matchers.anyLong())).thenReturn(false);
+
+		this.userEventMessenger.setSendTimeout(10);
+		EventMessage eventMessage = new EventMessage("topic", "2");
+		eventMessage.setWebSocketSessionId("ws1");
+		this.userEventMessenger.send(eventMessage);
+	}
+
+	@Test
 	public void testSend() {
 		this.userEventMessenger.send(new EventMessage("send", 2));
 		Mockito.verify(this.brokerChannel, Mockito.never()).send(
@@ -105,6 +146,7 @@ public class UserEventMessengerTest {
 
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("send");
@@ -118,6 +160,7 @@ public class UserEventMessengerTest {
 		this.userEventMessenger.sendToAll("all", 3);
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
@@ -127,10 +170,11 @@ public class UserEventMessengerTest {
 	}
 
 	@Test
-	public void testSendToAllExceptStringObjectString() {
+	public void testSendToAllExcept() {
 		this.userEventMessenger.sendToAllExcept("all", 3, "ws1");
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
@@ -140,11 +184,12 @@ public class UserEventMessengerTest {
 	}
 
 	@Test
-	public void testSendToAllExceptStringObjectSetOfString() {
+	public void testSendToAllExceptSet() {
 		this.userEventMessenger.sendToAllExcept("all", 4,
 				new HashSet<>(Arrays.asList("ws1", "ws2", "ws3")));
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
@@ -154,10 +199,11 @@ public class UserEventMessengerTest {
 	}
 
 	@Test
-	public void testSendToStringObjectString() {
+	public void testSendTo() {
 		this.userEventMessenger.sendTo("all", 3, "ws1");
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
@@ -167,11 +213,12 @@ public class UserEventMessengerTest {
 	}
 
 	@Test
-	public void testSendToStringObjectSetOfString() {
+	public void testSendToSet() {
 		this.userEventMessenger.sendTo("all", 4,
 				new HashSet<>(Arrays.asList("ws1", "ws2", "ws3")));
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
@@ -182,10 +229,60 @@ public class UserEventMessengerTest {
 	}
 
 	@Test
+	public void testSendToDirect() {
+		this.userEventMessenger.sendToDirect("all", 5, "ws1");
+		Mockito.verify(this.clientOutboundChannel, Mockito.times(1)).send(
+				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.brokerChannel);
+
+		EventMessage msg = this.messageCaptor.getValue();
+		assertThat(msg.getDestination()).isEqualTo("all");
+		assertThat(msg.getEvent()).isEqualTo(5);
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
+		assertThat(msg.getWebSocketSessionId()).isEqualTo("ws1");
+	}
+
+	@Test
+	public void testSendToDirectSet() {
+		this.userEventMessenger.sendToDirect("all", 6,
+				new LinkedHashSet<>(Arrays.asList("ws1", "ws2", "ws3")));
+
+		Mockito.verify(this.clientOutboundChannel, Mockito.times(3)).send(
+				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.brokerChannel);
+
+		List<EventMessage> msgs = this.messageCaptor.getAllValues();
+
+		EventMessage msg = msgs.get(0);
+		assertThat(msg.getDestination()).isEqualTo("all");
+		assertThat(msg.getEvent()).isEqualTo(6);
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
+		assertThat(msg.getWebSocketSessionId()).isEqualTo("ws1");
+
+		msg = msgs.get(1);
+		assertThat(msg.getDestination()).isEqualTo("all");
+		assertThat(msg.getEvent()).isEqualTo(6);
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
+		assertThat(msg.getWebSocketSessionId()).isEqualTo("ws2");
+
+		msg = msgs.get(2);
+		assertThat(msg.getDestination()).isEqualTo("all");
+		assertThat(msg.getEvent()).isEqualTo(6);
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
+		assertThat(msg.getWebSocketSessionId()).isEqualTo("ws3");
+	}
+
+	@Test
 	public void testSendToAllExceptUser() {
 		this.userEventMessenger.sendToAllExceptUser("all", 4, "A");
+
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
@@ -200,8 +297,10 @@ public class UserEventMessengerTest {
 		users.add("B");
 		users.add("C");
 		this.userEventMessenger.sendToAllExceptUsers("all", 5, users);
+
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("all");
@@ -213,8 +312,10 @@ public class UserEventMessengerTest {
 	@Test
 	public void testSendToUser() {
 		this.userEventMessenger.sendToUser("one", 6, "D");
+
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("one");
@@ -229,8 +330,10 @@ public class UserEventMessengerTest {
 		users.add("B");
 		users.add("C");
 		this.userEventMessenger.sendToUsers("two", 7, users);
+
 		Mockito.verify(this.brokerChannel, Mockito.times(1)).send(
 				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.clientOutboundChannel);
 
 		EventMessage msg = this.messageCaptor.getValue();
 		assertThat(msg.getDestination()).isEqualTo("two");
@@ -239,4 +342,52 @@ public class UserEventMessengerTest {
 		assertThat(msg.getEligibleWebSocketSessionIds()).containsOnly("ws2", "ws3");
 	}
 
+	@Test
+	public void testSendToUserDirect() {
+		this.userEventMessenger.sendToUserDirect("one", 6, "D");
+
+		Mockito.verify(this.clientOutboundChannel, Mockito.times(1)).send(
+				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.brokerChannel);
+
+		EventMessage msg = this.messageCaptor.getValue();
+		assertThat(msg.getDestination()).isEqualTo("one");
+		assertThat(msg.getEvent()).isEqualTo(6);
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
+		assertThat(msg.getWebSocketSessionId()).isEqualTo("ws4");
+	}
+
+	@Test
+	public void testSendToUsersDirect() {
+		Set<String> users = new HashSet<>();
+		users.add("B");
+		users.add("C");
+		this.userEventMessenger.sendToUsersDirect("two", 7, users);
+
+		Mockito.verify(this.clientOutboundChannel, Mockito.times(2)).send(
+				this.messageCaptor.capture());
+		Mockito.verifyZeroInteractions(this.brokerChannel);
+
+		List<EventMessage> msgs = this.messageCaptor.getAllValues();
+
+		Set<String> wsIds = new HashSet<>();
+		EventMessage msg = msgs.get(0);
+		assertThat(msg.getDestination()).isEqualTo("two");
+		assertThat(msg.getEvent()).isEqualTo(7);
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
+		assertThat(msg.getWebSocketSessionId()).isIn("ws2", "ws3");
+		wsIds.add(msg.getWebSocketSessionId());
+
+		msg = msgs.get(1);
+		assertThat(msg.getDestination()).isEqualTo("two");
+		assertThat(msg.getEvent()).isEqualTo(7);
+		assertThat(msg.getExcludeWebSocketSessionIds()).isNull();
+		assertThat(msg.getEligibleWebSocketSessionIds()).isNull();
+		assertThat(msg.getWebSocketSessionId()).isIn("ws2", "ws3");
+		wsIds.add(msg.getWebSocketSessionId());
+
+		assertThat(wsIds).containsOnly("ws2", "ws3");
+	}
 }
