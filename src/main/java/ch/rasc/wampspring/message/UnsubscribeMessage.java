@@ -18,6 +18,10 @@ package ch.rasc.wampspring.message;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.springframework.web.socket.WebSocketSession;
+
+import ch.rasc.wampspring.config.WampSession;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -30,26 +34,49 @@ import com.fasterxml.jackson.core.JsonToken;
  * <p>
  * Client-to-Server message
  *
- * @see <a href="http://wamp.ws/spec/#unsubscribe_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#unsubscribe_message">WAMP specification</a>
  */
-public class UnsubscribeMessage extends WampMessage {
-	private final String topicURI;
+public class UnsubscribeMessage extends PubSubMessage {
+
+	private boolean cleanup = false;
 
 	public UnsubscribeMessage(String topicURI) {
-		super(WampMessageType.UNSUBSCRIBE);
-		this.topicURI = topicURI;
+		super(WampMessageType.UNSUBSCRIBE, topicURI);
 	}
 
 	public UnsubscribeMessage(JsonParser jp) throws IOException {
+		this(jp, null);
+	}
+
+	public UnsubscribeMessage(JsonParser jp, WampSession wampSession) throws IOException {
 		super(WampMessageType.UNSUBSCRIBE);
 		if (jp.nextToken() != JsonToken.VALUE_STRING) {
 			throw new IOException();
 		}
-		this.topicURI = jp.getValueAsString();
+		setTopicURI(replacePrefix(jp.getValueAsString(), wampSession));
 	}
 
-	public String getTopicURI() {
-		return topicURI;
+	/**
+	 * Creates an internal unsubscribe message. The system creates this message when the
+	 * WebSocket session ends and sends it to the subscribed message handlers for cleaning
+	 * up
+	 *
+	 * @param sessionId the WebSocket session id
+	 **/
+	public static UnsubscribeMessage createCleanupMessage(WebSocketSession session) {
+		UnsubscribeMessage msg = new UnsubscribeMessage("**");
+
+		msg.setWebSocketSessionId(session.getId());
+		msg.setPrincipal(session.getPrincipal());
+		msg.setWampSession(new WampSession(session));
+
+		msg.cleanup = true;
+
+		return msg;
+	}
+
+	public boolean isCleanup() {
+		return this.cleanup;
 	}
 
 	@Override
@@ -58,7 +85,7 @@ public class UnsubscribeMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(topicURI);
+			jg.writeString(getTopicURI());
 			jg.writeEndArray();
 			jg.close();
 			return sw.toString();
@@ -67,7 +94,7 @@ public class UnsubscribeMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "UnsubscribeMessage [topicURI=" + topicURI + "]";
+		return "UnsubscribeMessage [topicURI=" + getTopicURI() + "]";
 	}
 
 }

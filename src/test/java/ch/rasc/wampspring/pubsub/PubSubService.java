@@ -17,15 +17,19 @@ package ch.rasc.wampspring.pubsub;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Payload;
 
 import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.annotation.WampSubscribeListener;
 import ch.rasc.wampspring.annotation.WampUnsubscribeListener;
 import ch.rasc.wampspring.call.TestDto;
+import ch.rasc.wampspring.message.PublishMessage;
 
 public class PubSubService {
 
@@ -34,7 +38,7 @@ public class PubSubService {
 
 	@WampSubscribeListener("secondTopic")
 	public void subscribe() {
-		eventMessenger.sendToAll("secondTopic", "a simple message");
+		this.eventMessenger.sendToAll("secondTopic", "a simple message");
 	}
 
 	@WampPublishListener("sumTopic")
@@ -43,14 +47,14 @@ public class PubSubService {
 		for (Integer number : numbers) {
 			total += number;
 		}
-		eventMessenger.sendToAll("resultTopic", total);
+		this.eventMessenger.sendToAll("resultTopic", total);
 	}
 
 	@WampPublishListener
 	public void dto(TestDto testDto) {
 		assertThat(testDto.getName()).isEqualTo("Hello PubSub");
-		eventMessenger.sendToAll("pubSubService.dto.result",
-				"Server says: " + testDto.getName());
+		this.eventMessenger.sendToAll("pubSubService.dto.result", "Server says: "
+				+ testDto.getName());
 	}
 
 	@WampPublishListener(replyTo = "replyTo1")
@@ -75,6 +79,18 @@ public class PubSubService {
 		return "return4:" + incoming;
 	}
 
+	@WampPublishListener(value = "incomingPublish5", replyTo = "replyTo5",
+			broadcast = false)
+	public String incomingPublish5(String incoming) {
+		return "return5:" + incoming;
+	}
+
+	@WampPublishListener(value = "incomingPublish6", replyTo = "replyTo6",
+			broadcast = false, excludeSender = true)
+	public String incomingPublish6(String incoming) {
+		return "return6:" + incoming;
+	}
+
 	@WampSubscribeListener(replyTo = "replyTo1")
 	public String incomingSubscribe1() {
 		return "returnSub1";
@@ -95,6 +111,18 @@ public class PubSubService {
 			"replyTo4_2", "replyTo4_3" })
 	public String incomingSubscribe4() {
 		return "returnSub4";
+	}
+
+	@WampSubscribeListener(value = "incomingSub5", replyTo = "replyTo5",
+			broadcast = false)
+	public String incomingSubscribe5() {
+		return "returnSub5";
+	}
+
+	@WampSubscribeListener(value = "incomingSub6", replyTo = "replyTo6",
+			broadcast = false, excludeSender = true)
+	public String incomingSubscribe6() {
+		return "returnSub6";
 	}
 
 	@WampUnsubscribeListener(replyTo = "replyTo1")
@@ -118,4 +146,35 @@ public class PubSubService {
 	public String incomingUnsubscribe4() {
 		return "returnUnsub4";
 	}
+
+	@WampUnsubscribeListener(value = "incomingUnsub5", replyTo = "replyTo5",
+			broadcast = false)
+	public String incomingUnsubscribe5() {
+		return "returnUnsub5";
+	}
+
+	@WampUnsubscribeListener(value = "incomingUnsub6", replyTo = "replyTo6",
+			broadcast = false, excludeSender = true)
+	public String incomingUnsubscribe6() {
+		return "returnUnsub6";
+	}
+
+	@WampPublishListener(value = "payloadMethod", replyTo = "payloadMethodResult")
+	public String payloadMethod(@Payload String event) {
+		return "payloadMethod method called: " + event;
+	}
+
+	@WampPublishListener("sendToAllExcept")
+	public void testSendToAllExcept(PublishMessage msg) {
+		this.eventMessenger.sendToAllExcept("responseSendToAllExcept", 1,
+				msg.getWebSocketSessionId());
+	}
+
+	@WampPublishListener("sendToAllExceptSet")
+	public void testSendToAllExceptSet(PublishMessage msg) {
+		Set<String> except = new HashSet<>();
+		except.add(msg.getWebSocketSessionId());
+		this.eventMessenger.sendToAllExcept("responseSendToAllExceptSet", 1, except);
+	}
+
 }

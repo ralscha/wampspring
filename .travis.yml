@@ -1,6 +1,11 @@
 language: java
+
+jdk:
+  - oraclejdk8
+
 env:
   global:
+  - WS_TIMEOUT=4
   - SONATYPE_USERNAME=ralscha23
   - secure: cA9LHuzV5hLTjXNng+YuA2zO/tap9ozEnfIFmTMWox6eDgoP/4WOOD32imJo5K0PJzbQaoXHHXOGuqQB0soVbVikPJ1+9h5Qsqi7q7zcA5wDk+IEQl0d6Z+ytUqD0o/I6LXAHuPRzU3wW98KJuB9rvFh0NGeksCzVLG8x88KD3U=
 after_success:

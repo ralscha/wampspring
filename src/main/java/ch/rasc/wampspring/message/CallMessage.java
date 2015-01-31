@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import ch.rasc.wampspring.config.WampSession;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -32,7 +34,7 @@ import com.fasterxml.jackson.core.JsonToken;
  * <p>
  * Client-to-Server message
  *
- * @see <a href="http://wamp.ws/spec/#call_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#call_message">WAMP specification</a>
  */
 public class CallMessage extends WampMessage {
 	private final String callID;
@@ -51,9 +53,14 @@ public class CallMessage extends WampMessage {
 		else {
 			this.arguments = null;
 		}
+
 	}
 
 	public CallMessage(JsonParser jp) throws IOException {
+		this(jp, null);
+	}
+
+	public CallMessage(JsonParser jp, WampSession wampSession) throws IOException {
 		super(WampMessageType.CALL);
 
 		if (jp.nextToken() != JsonToken.VALUE_STRING) {
@@ -64,7 +71,7 @@ public class CallMessage extends WampMessage {
 		if (jp.nextToken() != JsonToken.VALUE_STRING) {
 			throw new IOException();
 		}
-		this.procURI = jp.getValueAsString();
+		this.procURI = replacePrefix(jp.getValueAsString(), wampSession);
 
 		List<Object> args = new ArrayList<>();
 		while (jp.nextToken() != JsonToken.END_ARRAY) {
@@ -80,15 +87,20 @@ public class CallMessage extends WampMessage {
 	}
 
 	public String getCallID() {
-		return callID;
+		return this.callID;
 	}
 
 	public String getProcURI() {
-		return procURI;
+		return this.procURI;
 	}
 
 	public List<Object> getArguments() {
-		return arguments;
+		return this.arguments;
+	}
+
+	@Override
+	public String getDestination() {
+		return this.procURI;
 	}
 
 	@Override
@@ -97,10 +109,10 @@ public class CallMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(callID);
-			jg.writeString(procURI);
-			if (arguments != null) {
-				for (Object argument : arguments) {
+			jg.writeString(this.callID);
+			jg.writeString(this.procURI);
+			if (this.arguments != null) {
+				for (Object argument : this.arguments) {
 					jg.writeObject(argument);
 				}
 			}
@@ -113,8 +125,8 @@ public class CallMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "CallMessage [callID=" + callID + ", procURI=" + procURI + ", arguments="
-				+ arguments + "]";
+		return "CallMessage [callID=" + this.callID + ", procURI=" + this.procURI
+				+ ", arguments=" + this.arguments + "]";
 	}
 
 }

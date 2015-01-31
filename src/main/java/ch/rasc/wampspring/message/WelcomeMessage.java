@@ -25,12 +25,12 @@ import com.fasterxml.jackson.core.JsonToken;
 
 /**
  * When a WAMP client connects to a WAMP server, the very first message sent by the server
- * is always this message.
+ * back to the client is this WELCOME message.
  *
  * <p>
  * Server-to-Client message
  *
- * @see <a href="http://wamp.ws/spec/#welcome_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#welcome_message">WAMP specification</a>
  */
 public class WelcomeMessage extends WampMessage {
 	public static final int PROTOCOL_VERSION = 1;
@@ -68,16 +68,17 @@ public class WelcomeMessage extends WampMessage {
 
 	}
 
-	public String getSessionId() {
-		return sessionId;
+	@Override
+	public String getWebSocketSessionId() {
+		return this.sessionId;
 	}
 
 	public int getProtocolVersion() {
-		return protocolVersion;
+		return this.protocolVersion;
 	}
 
 	public String getServerIdent() {
-		return serverIdent;
+		return this.serverIdent;
 	}
 
 	@Override
@@ -86,9 +87,9 @@ public class WelcomeMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(sessionId);
-			jg.writeNumber(protocolVersion);
-			jg.writeString(serverIdent);
+			jg.writeString(this.sessionId);
+			jg.writeNumber(this.protocolVersion);
+			jg.writeString(this.serverIdent);
 			jg.writeEndArray();
 			jg.close();
 			return sw.toString();
@@ -97,8 +98,8 @@ public class WelcomeMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "WelcomeMessage [sessionId=" + sessionId + ", protocolVersion="
-				+ protocolVersion + ", serverIdent=" + serverIdent + "]";
+		return "WelcomeMessage [sessionId=" + this.sessionId + ", protocolVersion="
+				+ this.protocolVersion + ", serverIdent=" + this.serverIdent + "]";
 	}
 
 }

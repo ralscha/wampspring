@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Set;
 
+import ch.rasc.wampspring.config.WampSession;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -32,11 +34,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
  * <p>
  * Client-to-Server message
  *
- * @see <a href="http://wamp.ws/spec/#publish_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#publish_message">WAMP specification</a>
  */
-public class PublishMessage extends WampMessage {
-	private final String topicURI;
-
+public class PublishMessage extends PubSubMessage {
 	private final Object event;
 
 	private final Boolean excludeMe;
@@ -64,8 +64,7 @@ public class PublishMessage extends WampMessage {
 
 	private PublishMessage(String topicURI, Object event, Boolean excludeMe,
 			Set<String> exclude, Set<String> eligible) {
-		super(WampMessageType.PUBLISH);
-		this.topicURI = topicURI;
+		super(WampMessageType.PUBLISH, topicURI);
 		this.event = event;
 		this.excludeMe = excludeMe;
 		this.exclude = exclude;
@@ -73,12 +72,16 @@ public class PublishMessage extends WampMessage {
 	}
 
 	public PublishMessage(JsonParser jp) throws IOException {
+		this(jp, null);
+	}
+
+	public PublishMessage(JsonParser jp, WampSession wampSession) throws IOException {
 		super(WampMessageType.PUBLISH);
 
 		if (jp.nextToken() != JsonToken.VALUE_STRING) {
 			throw new IOException();
 		}
-		this.topicURI = jp.getValueAsString();
+		setTopicURI(replacePrefix(jp.getValueAsString(), wampSession));
 
 		jp.nextToken();
 		this.event = jp.readValueAs(Object.class);
@@ -126,24 +129,25 @@ public class PublishMessage extends WampMessage {
 
 	}
 
-	public String getTopicURI() {
-		return topicURI;
+	public Object getEvent() {
+		return this.event;
 	}
 
-	public Object getEvent() {
-		return event;
+	@Override
+	public Object getPayload() {
+		return this.event != null ? this.event : EMPTY_OBJECT;
 	}
 
 	public Boolean getExcludeMe() {
-		return excludeMe;
+		return this.excludeMe;
 	}
 
 	public Set<String> getExclude() {
-		return exclude;
+		return this.exclude;
 	}
 
 	public Set<String> getEligible() {
-		return eligible;
+		return this.eligible;
 	}
 
 	@Override
@@ -152,16 +156,16 @@ public class PublishMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(topicURI);
+			jg.writeString(getTopicURI());
 
-			jg.writeObject(event);
-			if (excludeMe != null && excludeMe) {
+			jg.writeObject(this.event);
+			if (this.excludeMe != null && this.excludeMe) {
 				jg.writeBoolean(true);
 			}
-			else if (exclude != null) {
-				jg.writeObject(exclude);
-				if (eligible != null) {
-					jg.writeObject(eligible);
+			else if (this.exclude != null) {
+				jg.writeObject(this.exclude);
+				if (this.eligible != null) {
+					jg.writeObject(this.eligible);
 				}
 			}
 
@@ -173,9 +177,9 @@ public class PublishMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "PublishMessage [topicURI=" + topicURI + ", event=" + event
-				+ ", excludeMe=" + excludeMe + ", exclude=" + exclude + ", eligible="
-				+ eligible + "]";
+		return "PublishMessage [topicURI=" + getTopicURI() + ", event=" + this.event
+				+ ", excludeMe=" + this.excludeMe + ", exclude=" + this.exclude
+				+ ", eligible=" + this.eligible + "]";
 	}
 
 }

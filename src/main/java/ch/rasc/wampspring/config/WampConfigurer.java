@@ -15,76 +15,49 @@
  */
 package ch.rasc.wampspring.config;
 
-import java.util.concurrent.Executor;
+import java.util.List;
 
-import org.springframework.core.convert.ConversionService;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistration;
-
-import ch.rasc.wampspring.annotation.WampCallListener;
-import ch.rasc.wampspring.annotation.WampPublishListener;
-import ch.rasc.wampspring.annotation.WampSubscribeListener;
-import ch.rasc.wampspring.annotation.WampUnsubscribeListener;
-import ch.rasc.wampspring.cra.AuthenticationHandler;
-import ch.rasc.wampspring.cra.AuthenticationSecretProvider;
-import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
-import ch.rasc.wampspring.cra.NoOpAuthenticationSecretProvider;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
+import org.springframework.messaging.support.AbstractMessageChannel;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 
 /**
- * Defines callback methods to configure the WAMP support via {@link EnableWamp}
+ * Defines methods for configuring WAMP support.
+ *
+ * <p>
+ * Used together with {@link EnableWamp}
  */
 public interface WampConfigurer {
 
 	/**
-	 * Configures an {@link Executor} which is used for sending outbound WAMP messages.
+	 * Register WAMP endpoints mapping each to a specific URL and (optionally) enabling
+	 * and configuring SockJS fallback options.
 	 */
-	Executor outboundExecutor();
+	void registerWampEndpoints(WampEndpointRegistry registry);
 
 	/**
-	 * Configures the endpoint path where the WebSocket WAMP handler is listening for
-	 * requests. This path must start with an / character.
+	 * Configure options related to the processing of messages received from and sent to
+	 * WebSocket clients.
 	 */
-	String wampEndpointPath();
+	void configureWebSocketTransport(WebSocketTransportRegistration registration);
 
 	/**
-	 * Configures Jackson's {@link ObjectMapper} instance. This mapper is used for
-	 * serializing and deserializing wamp messages.
+	 * Configure the {@link org.springframework.messaging.MessageChannel} used for
+	 * incoming messages from WebSocket clients.
 	 */
-	ObjectMapper objectMapper();
+	void configureClientInboundChannel(AbstractMessageChannel channel);
 
 	/**
-	 * Configures a ConversionService that is used by the
-	 * {@link WampMessageBodyMethodArgumentResolver}
+	 * Add resolvers to support custom controller method argument types.
+	 * <p>
+	 * This does not override the built-in argument resolvers.
+	 * @param argumentResolvers the resolvers to register (initially an empty list)
 	 */
-	ConversionService conversionService();
+	void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers);
 
-	/**
-	 * Doing some additional configuration of the WampWebsocketHandler registration. For
-	 * example reg.withSockJS() turns SockJS support on.
+	/*
+	 * Handshake interceptors that are added to every WAMP endpoint mapping.
 	 */
-	void configureWampWebsocketHandler(WebSocketHandlerRegistration reg);
+	void addHandshakeInterceptors(List<HandshakeInterceptor> handshakeInterceptors);
 
-	/**
-	 * Configures an implementation of the secret provider interface
-	 * {@link AuthenticationSecretProvider} for authentication. If not configured the
-	 * library creates and uses an instance of the class
-	 * {@link NoOpAuthenticationSecretProvider}.
-	 */
-	AuthenticationSecretProvider authenticationSecretProvider();
-
-	/**
-	 * Configures an implementation of the {@link AuthenticationHandler} interface. If not
-	 * configured the library creates and uses an instance of the class
-	 * {@link DefaultAuthenticationHandler}.
-	 */
-	AuthenticationHandler authenticationHandler();
-
-	/**
-	 * When this method returns true, all calls to a wamp server endpoint (methods
-	 * annotated with {@link WampCallListener}, {@link WampPublishListener},
-	 * {@link WampSubscribeListener} or {@link WampUnsubscribeListener}) have to be
-	 * authenticated.
-	 */
-	boolean authenticationRequired();
 }

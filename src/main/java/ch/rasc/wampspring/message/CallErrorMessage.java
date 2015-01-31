@@ -30,7 +30,7 @@ import com.fasterxml.jackson.core.JsonToken;
  * <p>
  * Server-to-Client message
  *
- * @see <a href="http://wamp.ws/spec/#callerror_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#callerror_message">WAMP specification</a>
  */
 public class CallErrorMessage extends WampMessage {
 	private final String callID;
@@ -41,17 +41,20 @@ public class CallErrorMessage extends WampMessage {
 
 	private final Object errorDetails;
 
-	public CallErrorMessage(String callID, String errorURI, String errorDesc) {
-		this(callID, errorURI, errorDesc, null);
+	public CallErrorMessage(CallMessage callMessage, String errorURI, String errorDesc) {
+		this(callMessage, errorURI, errorDesc, null);
 	}
 
-	public CallErrorMessage(String callID, String errorURI, String errorDesc,
+	public CallErrorMessage(CallMessage callMessage, String errorURI, String errorDesc,
 			Object errorDetails) {
 		super(WampMessageType.CALLERROR);
-		this.callID = callID;
+		this.callID = callMessage.getCallID();
 		this.errorURI = errorURI;
 		this.errorDesc = errorDesc;
 		this.errorDetails = errorDetails;
+
+		setWebSocketSessionId(callMessage.getWebSocketSessionId());
+		setPrincipal(callMessage.getPrincipal());
 	}
 
 	public CallErrorMessage(JsonParser jp) throws IOException {
@@ -81,19 +84,19 @@ public class CallErrorMessage extends WampMessage {
 	}
 
 	public String getCallID() {
-		return callID;
+		return this.callID;
 	}
 
 	public String getErrorURI() {
-		return errorURI;
+		return this.errorURI;
 	}
 
 	public String getErrorDesc() {
-		return errorDesc;
+		return this.errorDesc;
 	}
 
 	public Object getErrorDetails() {
-		return errorDetails;
+		return this.errorDetails;
 	}
 
 	@Override
@@ -102,11 +105,11 @@ public class CallErrorMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(callID);
-			jg.writeString(errorURI);
-			jg.writeString(errorDesc);
-			if (errorDetails != null) {
-				jg.writeObject(errorDetails);
+			jg.writeString(this.callID);
+			jg.writeString(this.errorURI);
+			jg.writeString(this.errorDesc);
+			if (this.errorDetails != null) {
+				jg.writeObject(this.errorDetails);
 			}
 			jg.writeEndArray();
 			jg.close();
@@ -117,8 +120,9 @@ public class CallErrorMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "CallErrorMessage [callID=" + callID + ", errorURI=" + errorURI
-				+ ", errorDesc=" + errorDesc + ", errorDetails=" + errorDetails + "]";
+		return "CallErrorMessage [callID=" + this.callID + ", errorURI=" + this.errorURI
+				+ ", errorDesc=" + this.errorDesc + ", errorDetails=" + this.errorDetails
+				+ "]";
 	}
 
 }

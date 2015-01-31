@@ -21,20 +21,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import ch.rasc.wampspring.config.WampConfigurer;
+import ch.rasc.wampspring.config.DefaultWampConfiguration;
 
 /**
- * Class level annotation.
+ * Class annotation.
  * <p>
- * If present all wamp calls to methods in this class that are annotated with
+ * If present all WAMP calls to methods in this class that are annotated with
  * {@link WampCallListener}, {@link WampPublishListener}, {@link WampSubscribeListener} or
  * {@link WampUnsubscribeListener} must be authenticated.
  * <p>
- * Every method can disable this requirement by setting the authentication attribute to
- * false
+ * A method can disable this requirement by setting the authentication attribute to false
  *
  * This annotation is ignored when authentication is globally enabled (
- * {@link WampConfigurer#authenticationRequired()})
+ * {@link DefaultWampConfiguration#authenticationRequired()})
  *
  * @see WampCallListener#authenticated()
  * @see WampPublishListener#authenticated()

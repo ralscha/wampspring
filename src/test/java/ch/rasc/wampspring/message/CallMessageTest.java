@@ -31,13 +31,15 @@ public class CallMessageTest extends BaseMessageTest {
 	public void serializationTest() throws IOException {
 		CallMessage callMessage = new CallMessage("7DK6TdN4wLiUJgNM",
 				"http://example.com/api#howdy");
-		String json = callMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
+		String json = callMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALL.getTypeId(), "7DK6TdN4wLiUJgNM",
 						"http://example.com/api#howdy"));
 
 		callMessage = new CallMessage("Yp9EFZt9DFkuKndg", "api:add2", 23, 99);
-		json = callMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
+		json = callMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALL.getTypeId(), "Yp9EFZt9DFkuKndg",
 						"api:add2", 23, 99));
@@ -47,21 +49,23 @@ public class CallMessageTest extends BaseMessageTest {
 		callObject.put("calories", 2309);
 		callMessage = new CallMessage("J5DkZJgByutvaDWc",
 				"http://example.com/api#storeMeal", callObject);
-		json = callMessage.toJson(jsonFactory);
+		json = callMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALL.getTypeId(), "J5DkZJgByutvaDWc",
 						"http://example.com/api#storeMeal", callObject));
 
 		callMessage = new CallMessage("Dns3wuQo0ipOX1Xc",
 				"http://example.com/api#woooat", new Object[] { null });
-		json = callMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
+		json = callMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALL.getTypeId(), "Dns3wuQo0ipOX1Xc",
 						"http://example.com/api#woooat", null));
 
 		callMessage = new CallMessage("M0nncaH0ywCSYzRv", "api:sum", Arrays.asList(9, 1,
 				3, 4));
-		json = callMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
+		json = callMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALL.getTypeId(), "M0nncaH0ywCSYzRv",
 						"api:sum", Arrays.asList(9, 1, 3, 4)));
@@ -73,23 +77,26 @@ public class CallMessageTest extends BaseMessageTest {
 		callObject.put("modified", "2012-03-29T10:29:16.625Z");
 		callMessage = new CallMessage("ujL7WKGXCn8bkvFV", "keyvalue:set", "foobar",
 				callObject);
-		json = callMessage.toJson(jsonFactory);
+		json = callMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.CALL.getTypeId(), "ujL7WKGXCn8bkvFV",
 						"keyvalue:set", "foobar", callObject));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(2, "7DK6TdN4wLiUJgNM", "http://example.com/api#howdy");
-		CallMessage callMessage = WampMessage.fromJson(jsonFactory, json);
+		CallMessage callMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALL);
 		assertThat(callMessage.getCallID()).isEqualTo("7DK6TdN4wLiUJgNM");
 		assertThat(callMessage.getProcURI()).isEqualTo("http://example.com/api#howdy");
 		assertThat(callMessage.getArguments()).isNull();
 
 		json = toJsonArray(2, "Yp9EFZt9DFkuKndg", "api:add2", 23, 99);
-		callMessage = WampMessage.fromJson(jsonFactory, json);
+		callMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALL);
 		assertThat(callMessage.getCallID()).isEqualTo("Yp9EFZt9DFkuKndg");
 		assertThat(callMessage.getProcURI()).isEqualTo("api:add2");
@@ -101,7 +108,8 @@ public class CallMessageTest extends BaseMessageTest {
 		json = toJsonArray(2, "J5DkZJgByutvaDWc", "http://example.com/api#storeMeal",
 				callObject);
 
-		callMessage = WampMessage.fromJson(jsonFactory, json);
+		callMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALL);
 		assertThat(callMessage.getCallID()).isEqualTo("J5DkZJgByutvaDWc");
 		assertThat(callMessage.getProcURI())
@@ -111,14 +119,16 @@ public class CallMessageTest extends BaseMessageTest {
 				MapEntry.entry("category", "dinner"), MapEntry.entry("calories", 2309));
 
 		json = toJsonArray(2, "Dns3wuQo0ipOX1Xc", "http://example.com/api#woooat", null);
-		callMessage = WampMessage.fromJson(jsonFactory, json);
+		callMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALL);
 		assertThat(callMessage.getCallID()).isEqualTo("Dns3wuQo0ipOX1Xc");
 		assertThat(callMessage.getProcURI()).isEqualTo("http://example.com/api#woooat");
 		assertThat(callMessage.getArguments()).hasSize(1).containsNull();
 
 		json = toJsonArray(2, "M0nncaH0ywCSYzRv", "api:sum", Arrays.asList(9, 1, 3, 4));
-		callMessage = WampMessage.fromJson(jsonFactory, json);
+		callMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALL);
 		assertThat(callMessage.getCallID()).isEqualTo("M0nncaH0ywCSYzRv");
 		assertThat(callMessage.getProcURI()).isEqualTo("api:sum");
@@ -132,7 +142,8 @@ public class CallMessageTest extends BaseMessageTest {
 		callObject.put("modified", "2012-03-29T10:29:16.625Z");
 
 		json = toJsonArray(2, "ujL7WKGXCn8bkvFV", "keyvalue:set", "foobar", callObject);
-		callMessage = WampMessage.fromJson(jsonFactory, json);
+		callMessage = WampMessage.fromJson(getJsonFactory(), json);
+		assertWampMessageTypeHeader(callMessage, WampMessageType.CALL);
 		assertThat(callMessage.getType()).isEqualTo(WampMessageType.CALL);
 		assertThat(callMessage.getCallID()).isEqualTo("ujL7WKGXCn8bkvFV");
 		assertThat(callMessage.getProcURI()).isEqualTo("keyvalue:set");

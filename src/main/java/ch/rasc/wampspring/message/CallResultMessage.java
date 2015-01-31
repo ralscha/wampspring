@@ -29,17 +29,20 @@ import com.fasterxml.jackson.core.JsonToken;
  * <p>
  * Server-to-Client message
  *
- * @see <a href="http://wamp.ws/spec/#callresult_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#callresult_message">WAMP specification</a>
  */
 public class CallResultMessage extends WampMessage {
 	private final String callID;
 
 	private final Object result;
 
-	public CallResultMessage(String callID, Object result) {
+	public CallResultMessage(CallMessage callMessage, Object result) {
 		super(WampMessageType.CALLRESULT);
-		this.callID = callID;
+		this.callID = callMessage.getCallID();
 		this.result = result;
+
+		setWebSocketSessionId(callMessage.getWebSocketSessionId());
+		setPrincipal(callMessage.getPrincipal());
 	}
 
 	public CallResultMessage(JsonParser jp) throws IOException {
@@ -55,11 +58,11 @@ public class CallResultMessage extends WampMessage {
 	}
 
 	public String getCallID() {
-		return callID;
+		return this.callID;
 	}
 
 	public Object getResult() {
-		return result;
+		return this.result;
 	}
 
 	@Override
@@ -68,8 +71,8 @@ public class CallResultMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(callID);
-			jg.writeObject(result);
+			jg.writeString(this.callID);
+			jg.writeObject(this.result);
 			jg.writeEndArray();
 			jg.close();
 			return sw.toString();
@@ -78,7 +81,8 @@ public class CallResultMessage extends WampMessage {
 
 	@Override
 	public String toString() {
-		return "CallResultMessage [callID=" + callID + ", result=" + result + "]";
+		return "CallResultMessage [callID=" + this.callID + ", result=" + this.result
+				+ "]";
 	}
 
 }

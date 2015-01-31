@@ -18,6 +18,8 @@ package ch.rasc.wampspring.message;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import ch.rasc.wampspring.config.WampSession;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -30,23 +32,25 @@ import com.fasterxml.jackson.core.JsonToken;
  * <p>
  * Client-to-Server message
  *
- * @see <a href="http://wamp.ws/spec/#subscribe_message">WAMP specification</a>
+ * @see <a href="http://wamp.ws/spec/wamp1/#subscribe_message">WAMP specification</a>
  */
-public class SubscribeMessage extends WampMessage {
-	private final String topicURI;
+public class SubscribeMessage extends PubSubMessage {
 
 	public SubscribeMessage(String topicURI) {
-		super(WampMessageType.SUBSCRIBE);
-		this.topicURI = topicURI;
+		super(WampMessageType.SUBSCRIBE, topicURI);
 	}
 
 	public SubscribeMessage(JsonParser jp) throws IOException {
+		this(jp, null);
+	}
+
+	public SubscribeMessage(JsonParser jp, WampSession wampSession) throws IOException {
 		super(WampMessageType.SUBSCRIBE);
 
 		if (jp.nextToken() != JsonToken.VALUE_STRING) {
 			throw new IOException();
 		}
-		this.topicURI = jp.getValueAsString();
+		setTopicURI(replacePrefix(jp.getValueAsString(), wampSession));
 	}
 
 	@Override
@@ -55,20 +59,16 @@ public class SubscribeMessage extends WampMessage {
 				JsonGenerator jg = jsonFactory.createGenerator(sw)) {
 			jg.writeStartArray();
 			jg.writeNumber(getTypeId());
-			jg.writeString(topicURI);
+			jg.writeString(getTopicURI());
 			jg.writeEndArray();
 			jg.close();
 			return sw.toString();
 		}
 	}
 
-	public String getTopicURI() {
-		return topicURI;
-	}
-
 	@Override
 	public String toString() {
-		return "SubscribeMessage [topicURI=" + topicURI + "]";
+		return "SubscribeMessage [topicURI=" + getTopicURI() + "]";
 	}
 
 }

@@ -21,5 +21,5 @@ package ch.rasc.wampspring.message;
  * header
  */
 public enum WampMessageHeader {
-	PRINCIPAL, WEBSOCKET_SESSION_ID, WAMP_SESSION
+	WAMP_MESSAGE_TYPE, PRINCIPAL, WEBSOCKET_SESSION_ID, WAMP_SESSION
 }

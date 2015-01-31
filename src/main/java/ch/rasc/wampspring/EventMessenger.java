@@ -18,13 +18,17 @@ package ch.rasc.wampspring;
 import java.util.Collections;
 import java.util.Set;
 
-import ch.rasc.wampspring.handler.PubSubHandler;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.util.Assert;
+
+import ch.rasc.wampspring.broker.SimpleBrokerMessageHandler;
 import ch.rasc.wampspring.message.EventMessage;
 
 /**
- * A messenger that allows the calling code to send {@link EventMessage}s back to the
- * client. This is a spring bean that can be autowired into any other spring bean and
- * allows any part of the application to send messages back to the client
+ * A messenger that allows the calling code to send {@link EventMessage}s to either the
+ * broker or directly to client. The EventMessenger is by default configured as a spring
+ * managed bean and can be autowired into any other spring bean.
  *
  * e.g.
  *
@@ -39,67 +43,188 @@ import ch.rasc.wampspring.message.EventMessage;
  * 	}
  * }
  * </pre>
- * <p>
- * This is very similar to the
- * {@link org.springframework.messaging.simp.SimpMessagingTemplate} class from Spring's
- * STOMP support.
  */
 public class EventMessenger {
 
-	private final PubSubHandler pubSubHandler;
+	private final MessageChannel brokerChannel;
 
-	public EventMessenger(PubSubHandler pubSubHandler) {
-		this.pubSubHandler = pubSubHandler;
+	private final MessageChannel clientOutboundChannel;
+
+	private volatile long sendTimeout = -1;
+
+	public EventMessenger(MessageChannel brokerChannel,
+			MessageChannel clientOutboundChannel) {
+
+		Assert.notNull(brokerChannel, "'brokerChannel' must not be null");
+		Assert.notNull(clientOutboundChannel, "'clientOutboundChannel' must not be null");
+
+		this.brokerChannel = brokerChannel;
+		this.clientOutboundChannel = clientOutboundChannel;
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
-	 * provided topicURI
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
+	 * given topicURI
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
+	 * @param event the payload of the {@link EventMessage}
 	 */
 	public void sendToAll(String topicURI, Object event) {
-		pubSubHandler.sendToAll(new EventMessage(topicURI, event));
+		send(new EventMessage(topicURI, event));
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
 	 * provided topicURI except the one provided with the excludeSessionId parameter.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
-	 * @param excludeSessionId a session id that will be excluded
+	 * @param event the payload of the {@link EventMessage}
+	 * @param excludeWebSocketSessionId a WebSocket session id that will be excluded
 	 */
-	public void sendToAllExcept(String topicURI, Object event, String excludeSessionId) {
-		pubSubHandler.sendToAllExcept(new EventMessage(topicURI, event),
-				Collections.singleton(excludeSessionId));
+	public void sendToAllExcept(String topicURI, Object event,
+			String excludeWebSocketSessionId) {
+		sendToAllExcept(topicURI, event, Collections.singleton(excludeWebSocketSessionId));
 	}
 
 	/**
-	 * Send a {@link EventMessage} to every client that is currently subscribed to the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
 	 * provided topicURI except the ones listed in the excludeSessionIds set.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
-	 * @param excludeSessionIds a set of session ids that will be excluded
+	 * @param event the payload of the {@link EventMessage}
+	 * @param excludeWebSocketSessionIds a set of WebSocket session ids that will be
+	 * excluded. If null or empty no client will be excluded.
 	 */
 	public void sendToAllExcept(String topicURI, Object event,
-			Set<String> excludeSessionIds) {
-		pubSubHandler.sendToAllExcept(new EventMessage(topicURI, event),
-				excludeSessionIds);
+			Set<String> excludeWebSocketSessionIds) {
+		EventMessage eventMessage = new EventMessage(topicURI, event);
+		eventMessage.setExcludeWebSocketSessionIds(excludeWebSocketSessionIds);
+		send(eventMessage);
 	}
 
 	/**
-	 * Send a {@link EventMessage} to the clients that are subscribed to the provided
-	 * topicURI and are listed in the eligibleSessionIds set. If no session of the
+	 * Send an {@link EventMessage} to every client that is currently subscribed to the
+	 * given topicURI and is listed in the eligibleSessionIds set. If no session of the
 	 * provided set is subscribed to the topicURI nothing happens.
 	 *
 	 * @param topicURI the name of the topic
-	 * @param event the message
-	 * @param eligibleSessionIds only the session ids listed here will receive the message
+	 * @param event the payload of the {@link EventMessage}
+	 * @param eligibleWebSocketSessionIds only the WebSocket session ids listed here will
+	 * receive the EVENT message. If null or empty nobody receives the message.
 	 */
-	public void sendTo(String topicURI, Object event, Set<String> eligibleSessionIds) {
-		pubSubHandler.sendTo(new EventMessage(topicURI, event), eligibleSessionIds);
+	public void sendTo(String topicURI, Object event,
+			Set<String> eligibleWebSocketSessionIds) {
+		EventMessage eventMessage = new EventMessage(topicURI, event);
+		eventMessage.setEligibleWebSocketSessionIds(eligibleWebSocketSessionIds);
+		send(eventMessage);
 	}
+
+	/**
+	 * Send an {@link EventMessage} to one client that is subscribed to the given
+	 * topicURI. If the client with the given WebSocket session id is not subscribed to
+	 * the topicURI nothing happens.
+	 *
+	 * @param topicURI the name of the topic
+	 * @param event the payload of the {@link EventMessage}
+	 * @param eligibleWebSocketSessionId only the client with the WebSocket session id
+	 * listed here will receive the EVENT message
+	 */
+	public void sendTo(String topicURI, Object event, String eligibleWebSocketSessionId) {
+		sendTo(topicURI, event, Collections.singleton(eligibleWebSocketSessionId));
+	}
+
+	/**
+	 * Send an EventMessage directly to each client listed in the webSocketSessionId set
+	 * parameter. If parameter webSocketSessionIds is null or empty no messages are sent.
+	 * <p>
+	 * In contrast to {@link #sendTo(String, Object, Set)} this method does not check if
+	 * the receivers are subscribed to the destination. The
+	 * {@link SimpleBrokerMessageHandler} is not involved in sending these messages.
+	 *
+	 * @param topicURI the name of the topic
+	 * @param event the payload of the {@link EventMessage}
+	 * @param webSocketSessionIds list of receivers for the EVENT message
+	 */
+	public void sendToDirect(String topicURI, Object event,
+			Set<String> webSocketSessionIds) {
+		if (webSocketSessionIds != null) {
+			for (String webSocketSessionId : webSocketSessionIds) {
+				EventMessage eventMessage = new EventMessage(topicURI, event);
+				eventMessage.setWebSocketSessionId(webSocketSessionId);
+				sendDirect(eventMessage);
+			}
+		}
+	}
+
+	/**
+	 * Send an EventMessage directly to the client specified with the webSocketSessionId
+	 * parameter.
+	 * <p>
+	 * In contrast to {@link #sendTo(String, Object, String)} this method does not check
+	 * if the receiver is subscribed to the destination. The
+	 * {@link SimpleBrokerMessageHandler} is not involved in sending this message.
+	 *
+	 * @param topicURI the name of the topic
+	 * @param event the payload of the {@link EventMessage}
+	 * @param webSocketSessionId receiver of the EVENT message
+	 */
+	public void sendToDirect(String topicURI, Object event, String webSocketSessionId) {
+		Assert.notNull(webSocketSessionId, "WebSocket session id must not be null");
+
+		sendToDirect(topicURI, event, Collections.singleton(webSocketSessionId));
+	}
+
+	public void setSendTimeout(long sendTimeout) {
+		this.sendTimeout = sendTimeout;
+	}
+
+	/**
+	 * Send an EventMessage to the {@link SimpleBrokerMessageHandler}. The broker looks up
+	 * if the receiver of the message ({@link EventMessage#getWebSocketSessionId()}) is
+	 * subscribed to the destination ({@link EventMessage#getDestination()}). If the
+	 * receiver is subscribed the broker sends the message to him.
+	 *
+	 * @param eventMessage The event message
+	 */
+	public void send(EventMessage eventMessage) {
+		long timeout = this.sendTimeout;
+		boolean sent = timeout >= 0 ? this.brokerChannel.send(eventMessage, timeout)
+				: this.brokerChannel.send(eventMessage);
+
+		if (!sent) {
+			throw new MessageDeliveryException(eventMessage,
+					"Failed to send message with destination '"
+							+ eventMessage.getDestination() + "' within timeout: "
+							+ timeout);
+		}
+	}
+
+	/**
+	 * Send an EventMessage directly to the client (
+	 * {@link EventMessage#getWebSocketSessionId()}).
+	 * <p>
+	 * In contrast to {@link #send(EventMessage)} this method does not check if the
+	 * receiver is subscribed to the destination. The {@link SimpleBrokerMessageHandler}
+	 * is not involved in sending this message.
+	 *
+	 * @param eventMessage The event message
+	 *
+	 * @see #send(EventMessage)
+	 */
+	public void sendDirect(EventMessage eventMessage) {
+		Assert.notNull(eventMessage.getWebSocketSessionId(),
+				"WebSocket session id must not be null");
+
+		long timeout = this.sendTimeout;
+		boolean sent = timeout >= 0 ? this.clientOutboundChannel.send(eventMessage,
+				timeout) : this.clientOutboundChannel.send(eventMessage);
+
+		if (!sent) {
+			throw new MessageDeliveryException(eventMessage,
+					"Failed to direct send message with destination '"
+							+ eventMessage.getDestination() + "' within timeout: "
+							+ timeout);
+		}
+	}
+
 }

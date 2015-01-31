@@ -20,39 +20,35 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import ch.rasc.wampspring.handler.WampSession;
+import ch.rasc.wampspring.config.WampSession;
 import ch.rasc.wampspring.message.CallMessage;
 
 public class DefaultAuthenticationHandler implements AuthenticationHandler {
 
-	@Autowired
-	private AuthenticationSecretProvider authenticationSecretProvider = null;
+	private final AuthenticationSecretProvider authenticationSecretProvider;
 
-	@PostConstruct
-	void postConstruct() {
-		if (authenticationSecretProvider == null) {
-			authenticationSecretProvider = new NoOpAuthenticationSecretProvider();
-		}
+	public DefaultAuthenticationHandler(AuthenticationSecretProvider provider) {
+		this.authenticationSecretProvider = provider;
 	}
 
 	@Override
 	public Object handleAuthReq(String authKey, Map<String, Object> extra,
 			CallMessage message) {
+
 		WampSession wampSession = message.getWampSession();
+
 		if (wampSession.isAuthRequested()) {
 			throw new IllegalStateException("Already authenticated");
 		}
 
-		if (authenticationSecretProvider.getSecret(authKey) == null) {
+		if (this.authenticationSecretProvider.getSecret(authKey) == null) {
 			throw new IllegalStateException("Secret key does not exist");
 		}
 
@@ -71,13 +67,14 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 	@Override
 	public Object handleAuth(String clientSignature, CallMessage message) {
 		WampSession wampSession = message.getWampSession();
+
 		if (!wampSession.isAuthRequested()) {
 			throw new IllegalStateException("No authentication previously requested");
 		}
 
 		final String correctSignature;
 		try {
-			final String secret = authenticationSecretProvider.getSecret(wampSession
+			final String secret = this.authenticationSecretProvider.getSecret(wampSession
 					.getAuthKey());
 			if (!StringUtils.hasText(secret)) {
 				throw new IllegalStateException("Secret does not exist");
@@ -113,4 +110,5 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 
 		return DatatypeConverter.printBase64Binary(res);
 	}
+
 }

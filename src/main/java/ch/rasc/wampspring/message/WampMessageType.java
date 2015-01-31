@@ -16,7 +16,7 @@
 package ch.rasc.wampspring.message;
 
 /**
- * Enumeration of the WAMP message types. PREFIX is not supported
+ * Enumeration of the WAMP v1 message types.
  */
 public enum WampMessageType {
 
@@ -54,7 +54,7 @@ public enum WampMessageType {
 	}
 
 	public int getTypeId() {
-		return typeId;
+		return this.typeId;
 	}
 
 	public static WampMessageType fromTypeId(int typeId) {

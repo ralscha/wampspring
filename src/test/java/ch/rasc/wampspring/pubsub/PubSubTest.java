@@ -24,8 +24,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
+import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.TextMessage;
@@ -33,182 +39,205 @@ import org.springframework.web.socket.WebSocketSession;
 
 import ch.rasc.wampspring.call.TestDto;
 import ch.rasc.wampspring.config.EnableWamp;
-import ch.rasc.wampspring.config.WampConfigurerAdapter;
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
-import ch.rasc.wampspring.support.AbstractWebSocketIntegrationTests;
-import ch.rasc.wampspring.support.ResultWebSocketHandler;
+import ch.rasc.wampspring.testsupport.BaseWampTest;
+import ch.rasc.wampspring.testsupport.CompletableFutureWebSocketHandler;
 
-public class PubSubTest extends AbstractWebSocketIntegrationTests {
+@SpringApplicationConfiguration(classes = PubSubTest.Config.class)
+public class PubSubTest extends BaseWampTest {
+
+	@Rule
+	public final ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void testSimplePublishEvent() throws InterruptedException, ExecutionException,
-			IOException {
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
-		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
-				getWsBaseUrl() + wampEndpointPath()).get();
+			IOException, TimeoutException {
 
-		SubscribeMessage subscribeMsg = new SubscribeMessage("topicURI");
-		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
+		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
-		PublishMessage pm = new PublishMessage("topicURI", "a message");
-		webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			SubscribeMessage subscribeMsg = new SubscribeMessage("topicURI");
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
-		EventMessage event = (EventMessage) result.getWampMessage();
-		assertThat(event.getTopicURI()).isEqualTo("topicURI");
-		assertThat(event.getEvent()).isEqualTo("a message");
+			PublishMessage pm = new PublishMessage("topicURI", "a message");
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
-		result.reset();
-		UnsubscribeMessage unsubscribeMsg = new UnsubscribeMessage("topicURI");
-		webSocketSession.sendMessage(new TextMessage(unsubscribeMsg.toJson(jsonFactory)));
+			EventMessage event = (EventMessage) result.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("topicURI");
+			assertThat(event.getEvent()).isEqualTo("a message");
 
-		pm = new PublishMessage("topicURI", "a second message");
-		webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			result.reset();
+			UnsubscribeMessage unsubscribeMsg = new UnsubscribeMessage("topicURI");
+			webSocketSession.sendMessage(new TextMessage(unsubscribeMsg
+					.toJson(this.jsonFactory)));
 
-		event = (EventMessage) result.getWampMessage();
-		assertThat(event).isNull();
+			pm = new PublishMessage("topicURI", "a second message");
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
-		webSocketSession.close();
+			this.thrown.expect(TimeoutException.class);
+			event = (EventMessage) result.getWampMessage();
+		}
 	}
 
 	@Test
 	public void testDtoPublishEvent() throws InterruptedException, ExecutionException,
-			IOException {
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
-		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
-				getWsBaseUrl() + wampEndpointPath()).get();
+			IOException, TimeoutException {
+		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
-		SubscribeMessage subscribeMsg = new SubscribeMessage("pubSubService.dto.result");
-		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
+			SubscribeMessage subscribeMsg = new SubscribeMessage(
+					"pubSubService.dto.result");
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
-		TestDto testDto = new TestDto();
-		testDto.setName("Hello PubSub");
-		PublishMessage pm = new PublishMessage("pubSubService.dto", testDto);
-		webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			TestDto testDto = new TestDto();
+			testDto.setName("Hello PubSub");
+			PublishMessage pm = new PublishMessage("pubSubService.dto", testDto);
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
-		EventMessage event = (EventMessage) result.getWampMessage();
-		assertThat(event.getTopicURI()).isEqualTo("pubSubService.dto.result");
-		assertThat(event.getEvent()).isEqualTo("Server says: Hello PubSub");
+			EventMessage event = (EventMessage) result.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("pubSubService.dto.result");
+			assertThat(event.getEvent()).isEqualTo("Server says: Hello PubSub");
 
-		webSocketSession.close();
+		}
 	}
 
 	@Test
 	public void testEventMessenger() throws InterruptedException, ExecutionException,
-			IOException {
+			IOException, TimeoutException {
 
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
-		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
-				getWsBaseUrl() + wampEndpointPath()).get();
+		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
-		SubscribeMessage subscribeMsg = new SubscribeMessage("secondTopic");
-		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
+			SubscribeMessage subscribeMsg = new SubscribeMessage("secondTopic");
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
-		EventMessage event = (EventMessage) result.getWampMessage();
-		assertThat(event.getTopicURI()).isEqualTo("secondTopic");
-		assertThat(event.getEvent()).isEqualTo("a simple message");
+			EventMessage event = (EventMessage) result.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("secondTopic");
+			assertThat(event.getEvent()).isEqualTo("a simple message");
 
-		webSocketSession.close();
+		}
 	}
 
 	@Test
 	public void testPublishToMethod() throws InterruptedException, ExecutionException,
-			IOException {
+			IOException, TimeoutException {
 
-		ResultWebSocketHandler result = new ResultWebSocketHandler(jsonFactory);
-		final WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
-				getWsBaseUrl() + wampEndpointPath()).get();
+		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
-		SubscribeMessage subscribeMsg = new SubscribeMessage("resultTopic");
-		webSocketSession.sendMessage(new TextMessage(subscribeMsg.toJson(jsonFactory)));
+			SubscribeMessage subscribeMsg = new SubscribeMessage("resultTopic");
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
 
-		PublishMessage pm = new PublishMessage("sumTopic", Arrays.asList(1, 2, 3, 4));
-		webSocketSession.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			PublishMessage pm = new PublishMessage("sumTopic", Arrays.asList(1, 2, 3, 4));
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
-		EventMessage event = (EventMessage) result.getWampMessage();
-		assertThat(event.getTopicURI()).isEqualTo("resultTopic");
-		assertThat(event.getEvent()).isEqualTo(10);
-
-		webSocketSession.close();
+			EventMessage event = (EventMessage) result.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("resultTopic");
+			assertThat(event.getEvent()).isEqualTo(10);
+		}
 	}
 
 	private void testExcludeEligible(Boolean excludeMe, List<Integer> exclude,
 			List<Integer> eligible, List<Integer> expectedReceiver)
-			throws InterruptedException, ExecutionException, IOException {
-		ResultWebSocketHandler result1 = new ResultWebSocketHandler(jsonFactory);
-		final WebSocketSession webSocketSession1 = webSocketClient.doHandshake(result1,
-				getWsBaseUrl() + wampEndpointPath()).get();
+			throws InterruptedException, ExecutionException, IOException,
+			TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
 
-		ResultWebSocketHandler result2 = new ResultWebSocketHandler(jsonFactory);
-		final WebSocketSession webSocketSession2 = webSocketClient.doHandshake(result2,
-				getWsBaseUrl() + wampEndpointPath()).get();
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
 
-		SubscribeMessage subscribeMsg = new SubscribeMessage("anotherTopic");
-		String json = subscribeMsg.toJson(jsonFactory);
-		webSocketSession1.sendMessage(new TextMessage(json));
-		webSocketSession2.sendMessage(new TextMessage(json));
+			SubscribeMessage subscribeMsg = new SubscribeMessage("anotherTopic");
+			String json = subscribeMsg.toJson(this.jsonFactory);
+			webSocketSession1.sendMessage(new TextMessage(json));
+			webSocketSession2.sendMessage(new TextMessage(json));
 
-		PublishMessage pm;
-		if (excludeMe != null) {
-			pm = new PublishMessage("anotherTopic", "the test message", excludeMe);
-		}
-		else if (exclude != null) {
-			Set<String> excludeSet = new HashSet<>();
-			if (exclude.contains(1)) {
-				excludeSet.add(result1.getSessionId());
+			PublishMessage pm;
+			if (excludeMe != null) {
+				pm = new PublishMessage("anotherTopic", "the test message", excludeMe);
 			}
-			if (exclude.contains(2)) {
-				excludeSet.add(result2.getSessionId());
-			}
-
-			if (eligible != null) {
-				Set<String> eligibleSet = new HashSet<>();
-				if (eligible.contains(1)) {
-					eligibleSet.add(result1.getSessionId());
+			else if (exclude != null) {
+				Set<String> excludeSet = new HashSet<>();
+				if (exclude.contains(1)) {
+					excludeSet.add(result1.getWelcomeMessage().getWebSocketSessionId());
 				}
-				if (eligible.contains(2)) {
-					eligibleSet.add(result2.getSessionId());
+				if (exclude.contains(2)) {
+					excludeSet.add(result2.getWelcomeMessage().getWebSocketSessionId());
 				}
 
-				pm = new PublishMessage("anotherTopic", "the test message", excludeSet,
-						eligibleSet);
+				if (eligible != null) {
+					Set<String> eligibleSet = new HashSet<>();
+					if (eligible.contains(1)) {
+						eligibleSet.add(result1.getWelcomeMessage()
+								.getWebSocketSessionId());
+					}
+					if (eligible.contains(2)) {
+						eligibleSet.add(result2.getWelcomeMessage()
+								.getWebSocketSessionId());
+					}
+
+					pm = new PublishMessage("anotherTopic", "the test message",
+							excludeSet, eligibleSet);
+				}
+				else {
+					pm = new PublishMessage("anotherTopic", "the test message",
+							excludeSet);
+				}
 			}
 			else {
-				pm = new PublishMessage("anotherTopic", "the test message", excludeSet);
+				pm = new PublishMessage("anotherTopic", "the test message");
 			}
-		}
-		else {
-			pm = new PublishMessage("anotherTopic", "the test message");
-		}
-		webSocketSession1.sendMessage(new TextMessage(pm.toJson(jsonFactory)));
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
 
-		EventMessage event1 = (EventMessage) result1.getWampMessage();
-		if (expectedReceiver.contains(1)) {
-			assertThat(event1.getTopicURI()).isEqualTo("anotherTopic");
-			assertThat(event1.getEvent()).isEqualTo("the test message");
-		}
-		else {
-			assertThat(event1).isNull();
-		}
+			if (expectedReceiver.contains(1)) {
+				EventMessage event1 = (EventMessage) result1.getWampMessage();
+				assertThat(event1.getTopicURI()).isEqualTo("anotherTopic");
+				assertThat(event1.getEvent()).isEqualTo("the test message");
+			}
+			else {
+				try {
+					result1.getWampMessage();
+					Assert.fail("call has to timeout");
+				}
+				catch (Exception e) {
+					assertThat(e).isInstanceOf(TimeoutException.class);
+				}
+			}
 
-		EventMessage event2 = (EventMessage) result2.getWampMessage();
-		if (expectedReceiver.contains(2)) {
-			assertThat(event2.getTopicURI()).isEqualTo("anotherTopic");
-			assertThat(event2.getEvent()).isEqualTo("the test message");
-		}
-		else {
-			assertThat(event2).isNull();
-		}
+			if (expectedReceiver.contains(2)) {
+				EventMessage event2 = (EventMessage) result2.getWampMessage();
+				assertThat(event2.getTopicURI()).isEqualTo("anotherTopic");
+				assertThat(event2.getEvent()).isEqualTo("the test message");
+			}
+			else {
+				try {
+					result2.getWampMessage();
+					Assert.fail("call has to timeout");
+				}
+				catch (Exception e) {
+					assertThat(e).isInstanceOf(TimeoutException.class);
+				}
+			}
 
-		webSocketSession1.close();
-		webSocketSession2.close();
+		}
 	}
 
 	@Test
 	public void testExcludeEligible() throws InterruptedException, ExecutionException,
-			IOException {
+			IOException, TimeoutException {
 		// excludeMe, exclude, eligible, expectedReceivers
 		testExcludeEligible(null, null, null, Arrays.asList(1, 2));
 		testExcludeEligible(Boolean.TRUE, null, null, Arrays.asList(2));
@@ -254,23 +283,106 @@ public class PubSubTest extends AbstractWebSocketIntegrationTests {
 				Collections.<Integer> emptyList());
 	}
 
-	@Override
-	protected Class<?>[] getAnnotatedConfigClasses() {
-		return new Class<?>[] { Config.class };
+	@Test
+	public void testPayload() throws InterruptedException, ExecutionException,
+			IOException, TimeoutException {
+		CompletableFutureWebSocketHandler result = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
+
+			SubscribeMessage subscribeMsg = new SubscribeMessage("payloadMethodResult");
+			webSocketSession.sendMessage(new TextMessage(subscribeMsg
+					.toJson(this.jsonFactory)));
+
+			PublishMessage pm = new PublishMessage("payloadMethod", "payload");
+			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+
+			EventMessage event = (EventMessage) result.getWampMessage();
+			assertThat(event.getTopicURI()).isEqualTo("payloadMethodResult");
+			assertThat(event.getEvent())
+					.isEqualTo("payloadMethod method called: payload");
+
+		}
+	}
+
+	@Test
+	public void testSendToAllExceptWithEventMessenger() throws IOException,
+			InterruptedException, ExecutionException, TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			SubscribeMessage subscribeMsg = new SubscribeMessage(
+					"responseSendToAllExcept");
+			String json = subscribeMsg.toJson(this.jsonFactory);
+			webSocketSession1.sendMessage(new TextMessage(json));
+			webSocketSession2.sendMessage(new TextMessage(json));
+
+			PublishMessage pm = new PublishMessage("sendToAllExcept", "the test message");
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+
+			EventMessage event2 = (EventMessage) result2.getWampMessage();
+			assertThat(event2.getTopicURI()).isEqualTo("responseSendToAllExcept");
+			assertThat(event2.getEvent()).isEqualTo(1);
+			try {
+				@SuppressWarnings("unused")
+				EventMessage event1 = (EventMessage) result1.getWampMessage();
+				Assert.fail("this call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+		}
+	}
+
+	@Test
+	public void testSendToAllExceptSetWithEventMessenger() throws IOException,
+			InterruptedException, ExecutionException, TimeoutException {
+		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
+				this.jsonFactory);
+
+		try (WebSocketSession webSocketSession1 = startWebSocketSession(result1);
+				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
+
+			SubscribeMessage subscribeMsg = new SubscribeMessage(
+					"responseSendToAllExceptSet");
+			String json = subscribeMsg.toJson(this.jsonFactory);
+			webSocketSession1.sendMessage(new TextMessage(json));
+			webSocketSession2.sendMessage(new TextMessage(json));
+
+			PublishMessage pm = new PublishMessage("sendToAllExceptSet", null);
+			webSocketSession1.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
+
+			EventMessage event2 = (EventMessage) result2.getWampMessage();
+			assertThat(event2.getTopicURI()).isEqualTo("responseSendToAllExceptSet");
+			assertThat(event2.getEvent()).isEqualTo(1);
+			try {
+				@SuppressWarnings("unused")
+				EventMessage event1 = (EventMessage) result1.getWampMessage();
+				Assert.fail("this call has to timeout");
+			}
+			catch (Exception e) {
+				assertThat(e).isInstanceOf(TimeoutException.class);
+			}
+		}
 	}
 
 	@Configuration
+	@EnableAutoConfiguration
 	@EnableWamp
-	static class Config extends WampConfigurerAdapter {
+	static class Config {
+
 		@Bean
 		public PubSubService pubSubService() {
 			return new PubSubService();
 		}
 
-		@Bean
-		public EventSenderService eventSenderService() {
-			return new EventSenderService();
-		}
 	}
 
 }

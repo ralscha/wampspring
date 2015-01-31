@@ -18,23 +18,30 @@ package ch.rasc.wampspring.cra;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import ch.rasc.wampspring.config.EnableWamp;
-import ch.rasc.wampspring.config.WampConfigurerAdapter;
+import ch.rasc.wampspring.config.DefaultWampConfiguration;
+import ch.rasc.wampspring.config.WampEndpointRegistry;
+import ch.rasc.wampspring.message.CallErrorMessage;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
-import ch.rasc.wampspring.support.AbstractWebSocketIntegrationTests;
+import ch.rasc.wampspring.testsupport.BaseWampTest;
 
-public class ClassEnableTest extends AbstractWebSocketIntegrationTests {
+@SpringApplicationConfiguration(classes = ClassEnableTest.Config.class)
+public class ClassEnableTest extends BaseWampTest {
 
 	@Test
 	public void testWithoutAuthentication() throws Exception {
 		CallMessage sumMessage = new CallMessage("12", "callService.sum", 3, 4);
 		WampMessage receivedMessage = sendWampMessage(sumMessage);
-		assertThat(receivedMessage).isNull();
+		assertThat(receivedMessage).isInstanceOf(CallErrorMessage.class);
+		CallErrorMessage errorMessage = (CallErrorMessage) receivedMessage;
+		assertThat(errorMessage.getCallID()).isEqualTo("12");
+		assertThat(errorMessage.getErrorDesc()).contains("Not authenticated");
 	}
 
 	@Test
@@ -58,31 +65,26 @@ public class ClassEnableTest extends AbstractWebSocketIntegrationTests {
 	}
 
 	@Override
-	protected String wampEndpointPath() {
-		return "/ws";
-	}
-
-	@Override
-	protected Class<?>[] getAnnotatedConfigClasses() {
-		return new Class<?>[] { Config.class };
+	protected String wampEndpointUrl() {
+		return "ws://localhost:" + this.port + "/ws";
 	}
 
 	@Configuration
-	@EnableWamp
-	static class Config extends WampConfigurerAdapter {
+	@EnableAutoConfiguration
+	static class Config extends DefaultWampConfiguration {
 		@Bean
 		public AuthenticatedClassService callService() {
 			return new AuthenticatedClassService();
 		}
 
 		@Override
-		public String wampEndpointPath() {
-			return "/ws";
+		public AuthenticationSecretProvider authenticationSecretProvider() {
+			return new TestSecretProvider();
 		}
 
 		@Override
-		public AuthenticationSecretProvider authenticationSecretProvider() {
-			return new TestSecretProvider();
+		public void registerWampEndpoints(WampEndpointRegistry registry) {
+			registry.addEndpoint("/ws");
 		}
 
 	}

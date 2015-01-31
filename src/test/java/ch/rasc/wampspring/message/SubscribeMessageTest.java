@@ -28,7 +28,8 @@ public class SubscribeMessageTest extends BaseMessageTest {
 		SubscribeMessage subscribeMessage = new SubscribeMessage(
 				"http://example.com/simple");
 
-		String json = subscribeMessage.toJson(jsonFactory);
+		assertWampMessageTypeHeader(subscribeMessage, WampMessageType.SUBSCRIBE);
+		String json = subscribeMessage.toJson(getJsonFactory());
 		assertThat(json).isEqualTo(
 				toJsonArray(WampMessageType.SUBSCRIBE.getTypeId(),
 						"http://example.com/simple"));
@@ -38,10 +39,13 @@ public class SubscribeMessageTest extends BaseMessageTest {
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(5, "http://example.com/simple");
 
-		SubscribeMessage subscribeMessage = WampMessage.fromJson(jsonFactory, json);
+		SubscribeMessage subscribeMessage = WampMessage.fromJson(getJsonFactory(), json);
 
+		assertWampMessageTypeHeader(subscribeMessage, WampMessageType.SUBSCRIBE);
 		assertThat(subscribeMessage.getType()).isEqualTo(WampMessageType.SUBSCRIBE);
 		assertThat(subscribeMessage.getTopicURI()).isEqualTo("http://example.com/simple");
+		assertThat(subscribeMessage.getDestination()).isEqualTo(
+				"http://example.com/simple");
 
 	}
 }
