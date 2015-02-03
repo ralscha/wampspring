@@ -1,0 +1,8 @@
+Ideas for next version
+
+  - UserSessionRegistry should have a method that returns all usernames that are currently connected
+  
+  - A stats module similar to WebSocketMessageBrokerStats
+  
+  - Default stomp support has a error queue: /user/queue/errors
+ 

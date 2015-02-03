@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -296,6 +297,22 @@ public class DefaultSubscriptionRegistryTests {
 	public void unregisterAllSubscriptionsNoMatch() {
 		this.registry.unregisterSession("bogus");
 		// no exceptions
+	}
+
+	@Test
+	public void findSubscriptionsReturnsMapSafeToIterate() throws Exception {
+		this.registry.registerSubscription(subscribeMessage("sess1", "/foo"));
+		this.registry.registerSubscription(subscribeMessage("sess2", "/foo"));
+		Set<String> subscriptions = this.registry.findSubscriptions(message("/foo"));
+		assertEquals(2, subscriptions.size());
+
+		Iterator<String> iterator = subscriptions.iterator();
+		iterator.next();
+
+		this.registry.registerSubscription(subscribeMessage("sess3", "/foo"));
+
+		iterator.next();
+		// no ConcurrentModificationException
 	}
 
 	@Test

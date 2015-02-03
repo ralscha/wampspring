@@ -197,8 +197,8 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 
 		public void addSessionIds(String destination, Set<String> sessionIds) {
 			synchronized (this.updateCache) {
-				this.updateCache.put(destination, sessionIds);
-				this.accessCache.put(destination, new HashSet<>(sessionIds));
+				this.updateCache.put(destination, new HashSet<>(sessionIds));
+				this.accessCache.put(destination, sessionIds);
 			}
 		}
 
