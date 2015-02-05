@@ -4,7 +4,7 @@
 
 A [WAMP version 1](http://wamp.ws/spec/wamp1/) server and client Java library based on the Spring Framework 4.1 WebSocket support.
 
-For more informations see the [wiki](https://github.com/ralscha/wampspring/wiki)
+For more informations see the [Wiki](https://github.com/ralscha/wampspring/wiki)
 
 Sample applications: https://github.com/ralscha/wampspring-demos
 
