@@ -9,7 +9,6 @@ For more informations see the [wiki](https://github.com/ralscha/wampspring/wiki)
 Sample applications: https://github.com/ralscha/wampspring-demos
 
 
-**Additional modules**:
-Integration with [Spring Session](http://projects.spring.io/spring-session/): https://github.com/ralscha/wampspring-session
-
+**Additional modules**:   
+Integration with [Spring Session](http://projects.spring.io/spring-session/): https://github.com/ralscha/wampspring-session   
 Integration with [Spring Security](http://projects.spring.io/spring-security/): https://github.com/ralscha/wampspring-security
