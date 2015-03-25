@@ -115,11 +115,7 @@ public class WebMvcWampWebSocketEndpointRegistration implements
 	protected HandshakeInterceptor[] getInterceptors() {
 		List<HandshakeInterceptor> handshakeInterceptors = new ArrayList<>();
 		handshakeInterceptors.addAll(this.interceptors);
-		if (!this.allowedOrigins.isEmpty()) {
-			OriginHandshakeInterceptor interceptor = new OriginHandshakeInterceptor();
-			interceptor.setAllowedOrigins(this.allowedOrigins);
-			handshakeInterceptors.add(interceptor);
-		}
+		handshakeInterceptors.add(new OriginHandshakeInterceptor(this.allowedOrigins));
 		return handshakeInterceptors
 				.toArray(new HandshakeInterceptor[handshakeInterceptors.size()]);
 	}
