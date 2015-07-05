@@ -19,12 +19,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Set;
 
-import ch.rasc.wampspring.config.WampSession;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
+import ch.rasc.wampspring.config.WampSession;
 
 /**
  * Subscribers receive PubSub events published by other components of the system via the
@@ -44,7 +44,8 @@ public class EventMessage extends PubSubMessage {
 
 	private Set<String> eligibleWebSocketSessionIds;
 
-	public EventMessage(EventMessage originEventMessage, String receiverWebSocketSessionId) {
+	public EventMessage(EventMessage originEventMessage,
+			String receiverWebSocketSessionId) {
 		super(WampMessageType.EVENT, originEventMessage.getTopicURI());
 		this.event = originEventMessage.getEvent();
 
@@ -53,7 +54,8 @@ public class EventMessage extends PubSubMessage {
 		setWampSession(originEventMessage.getWampSession());
 	}
 
-	public EventMessage(PublishMessage publishMessage, String receiverWebSocketSessionId) {
+	public EventMessage(PublishMessage publishMessage,
+			String receiverWebSocketSessionId) {
 		super(WampMessageType.EVENT, publishMessage.getTopicURI());
 		this.event = publishMessage.getEvent();
 

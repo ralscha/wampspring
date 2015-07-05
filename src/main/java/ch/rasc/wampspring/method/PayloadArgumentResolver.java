@@ -73,8 +73,8 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 			this.validator = applicationContext.getBean(MVC_VALIDATOR_NAME,
 					Validator.class);
 		}
-		else if (ClassUtils.isPresent("javax.validation.Validator", getClass()
-				.getClassLoader())) {
+		else if (ClassUtils.isPresent("javax.validation.Validator",
+				getClass().getClassLoader())) {
 			Class<?> clazz;
 			try {
 				String className = "org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean";
@@ -122,8 +122,8 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 				String paramName = getParameterName(param);
 				BindingResult bindingResult = new BeanPropertyBindingResult(payload,
 						paramName);
-				bindingResult.addError(new ObjectError(paramName,
-						"@Payload param is required"));
+				bindingResult.addError(
+						new ObjectError(paramName, "@Payload param is required"));
 				throw new MethodArgumentNotValidException(message, param, bindingResult);
 			}
 			return null;
@@ -170,7 +170,8 @@ public class PayloadArgumentResolver implements HandlerMethodArgumentResolver {
 		return paramName != null ? paramName : "Arg " + param.getParameterIndex();
 	}
 
-	protected void validate(Message<?> message, MethodParameter parameter, Object target) {
+	protected void validate(Message<?> message, MethodParameter parameter,
+			Object target) {
 		if (this.validator == null) {
 			return;
 		}

@@ -210,8 +210,8 @@ public class DefaultSubscriptionRegistry implements SubscriptionRegistry {
 							cachedDestination)) {
 						Set<String> sessionIds = entry.getValue();
 						sessionIds.add(sessionId);
-						this.accessCache
-								.put(cachedDestination, new HashSet<>(sessionIds));
+						this.accessCache.put(cachedDestination,
+								new HashSet<>(sessionIds));
 					}
 				}
 			}

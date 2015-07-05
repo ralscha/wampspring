@@ -40,7 +40,7 @@ import ch.rasc.wampspring.message.EventMessage;
  * &#064;Configuration
  * &#064;EnableWamp
  * public class UserWampConfigurer extends AbstractUserWampConfigurer {
- * 
+ *
  * 	&#064;Override
  * 	public void registerWampEndpoints(WampEndpointRegistry registry) {
  * 		registry.addEndpoint(&quot;/wamp&quot;).withSockJS();
@@ -65,8 +65,8 @@ public abstract class AbstractUserWampConfigurer extends AbstractWampConfigurer 
 
 	@Override
 	public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
-		registration.addDecoratorFactory(new UserSessionWebSocketHandlerDecoratorFactory(
-				userSessionRegistry()));
+		registration.addDecoratorFactory(
+				new UserSessionWebSocketHandlerDecoratorFactory(userSessionRegistry()));
 	}
 
 }

@@ -53,8 +53,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo1");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("pubSubService.incomingPublish1",
 					"testPublish1");
@@ -80,10 +80,10 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo2");
-			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
-			webSocketSession2.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession1
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
+			webSocketSession2
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("pubSubService.incomingPublish2",
 					"testPublish2");
@@ -114,8 +114,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo3");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("incomingPublish3", "testPublish3");
 			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
@@ -134,12 +134,12 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 				3, this.jsonFactory);
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_1").toJson(this.jsonFactory)));
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_2").toJson(this.jsonFactory)));
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_3").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_1").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_2").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_3").toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("incomingPublish4", "testPublish4");
 			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
@@ -190,8 +190,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 	}
 
 	@Test
-	public void testPublish6() throws InterruptedException, ExecutionException,
-			IOException {
+	public void testPublish6()
+			throws InterruptedException, ExecutionException, IOException {
 		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
 		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
@@ -237,12 +237,12 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo1");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			subscribeMsg = new SubscribeMessage("pubSubService.incomingSubscribe1");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("replyTo1");
@@ -263,14 +263,14 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo2");
-			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
-			webSocketSession2.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession1
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
+			webSocketSession2
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			subscribeMsg = new SubscribeMessage("pubSubService.incomingSubscribe2");
-			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession1
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result2.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("replyTo2");
@@ -296,12 +296,12 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo3");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			subscribeMsg = new SubscribeMessage("incomingSub3");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("replyTo3");
@@ -317,16 +317,16 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 				3, this.jsonFactory);
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_1").toJson(this.jsonFactory)));
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_2").toJson(this.jsonFactory)));
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_3").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_1").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_2").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_3").toJson(this.jsonFactory)));
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("incomingSub4");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			List<WampMessage> resultList = result.getWampMessages();
 
@@ -355,8 +355,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 					new SubscribeMessage("replyTo5").toJson(this.jsonFactory)));
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("incomingSub5");
-			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession1
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			EventMessage event1 = (EventMessage) result1.getWampMessage();
 			assertThat(event1.getTopicURI()).isEqualTo("replyTo5");
@@ -375,8 +375,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 	}
 
 	@Test
-	public void testSubscribe6() throws InterruptedException, ExecutionException,
-			IOException {
+	public void testSubscribe6()
+			throws InterruptedException, ExecutionException, IOException {
 		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
 		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
@@ -391,8 +391,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 					new SubscribeMessage("replyTo6").toJson(this.jsonFactory)));
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("incomingSub6");
-			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession1
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			EventMessage event = null;
 			try {
@@ -423,13 +423,13 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo1");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 					"pubSubService.incomingUnsubscribe1");
-			webSocketSession.sendMessage(new TextMessage(unsubscribeMessage
-					.toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(
+					new TextMessage(unsubscribeMessage.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("replyTo1");
@@ -451,15 +451,15 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 				WebSocketSession webSocketSession2 = startWebSocketSession(result2)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo2");
-			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
-			webSocketSession2.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession1
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
+			webSocketSession2
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 					"pubSubService.incomingUnsubscribe2");
-			webSocketSession1.sendMessage(new TextMessage(unsubscribeMessage
-					.toJson(this.jsonFactory)));
+			webSocketSession1.sendMessage(
+					new TextMessage(unsubscribeMessage.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result2.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("replyTo2");
@@ -486,13 +486,13 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("replyTo3");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 					"incomingUnsub3");
-			webSocketSession.sendMessage(new TextMessage(unsubscribeMessage
-					.toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(
+					new TextMessage(unsubscribeMessage.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("replyTo3");
@@ -508,17 +508,17 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 				3, this.jsonFactory);
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_1").toJson(this.jsonFactory)));
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_2").toJson(this.jsonFactory)));
-			webSocketSession.sendMessage(new TextMessage(new SubscribeMessage(
-					"replyTo4_3").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_1").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_2").toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(new TextMessage(
+					new SubscribeMessage("replyTo4_3").toJson(this.jsonFactory)));
 
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 					"incomingUnsub4");
-			webSocketSession.sendMessage(new TextMessage(unsubscribeMessage
-					.toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(
+					new TextMessage(unsubscribeMessage.toJson(this.jsonFactory)));
 
 			List<WampMessage> resultList = result.getWampMessages();
 
@@ -549,8 +549,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 					"incomingUnsub5");
-			webSocketSession1.sendMessage(new TextMessage(unsubscribeMessage
-					.toJson(this.jsonFactory)));
+			webSocketSession1.sendMessage(
+					new TextMessage(unsubscribeMessage.toJson(this.jsonFactory)));
 
 			EventMessage event1 = (EventMessage) result1.getWampMessage();
 			assertThat(event1.getTopicURI()).isEqualTo("replyTo5");
@@ -569,8 +569,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 	}
 
 	@Test
-	public void testUnsubscribe6() throws InterruptedException, ExecutionException,
-			IOException {
+	public void testUnsubscribe6()
+			throws InterruptedException, ExecutionException, IOException {
 		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
 		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
@@ -586,8 +586,8 @@ public class PubSubReplyAnnotationTest extends BaseWampTest {
 
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage(
 					"incomingUnsub6");
-			webSocketSession1.sendMessage(new TextMessage(unsubscribeMessage
-					.toJson(this.jsonFactory)));
+			webSocketSession1.sendMessage(
+					new TextMessage(unsubscribeMessage.toJson(this.jsonFactory)));
 
 			EventMessage event = null;
 			try {

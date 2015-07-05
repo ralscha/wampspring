@@ -41,10 +41,9 @@ public class CallErrorMessageTest extends BaseMessageTest {
 				"1001 too big for me, max is 1000", 1000);
 		assertWampMessageTypeHeader(callErrorIntMessage, WampMessageType.CALLERROR);
 		json = callErrorIntMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALLERROR.getTypeId(), "gwbN3EDtFv6JvNV5",
-						"http://example.com/error#number_too_big",
-						"1001 too big for me, max is 1000", 1000));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.CALLERROR.getTypeId(),
+				"gwbN3EDtFv6JvNV5", "http://example.com/error#number_too_big",
+				"1001 too big for me, max is 1000", 1000));
 
 		callMessage = new CallMessage("7bVW5pv8r60ZeL6u", "testProcURI");
 		CallErrorMessage listCallErrorMessage = new CallErrorMessage(callMessage,
@@ -52,10 +51,9 @@ public class CallErrorMessageTest extends BaseMessageTest {
 				"one or more numbers are multiples of 3", Arrays.asList(0, 3));
 		assertWampMessageTypeHeader(listCallErrorMessage, WampMessageType.CALLERROR);
 		json = listCallErrorMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALLERROR.getTypeId(), "7bVW5pv8r60ZeL6u",
-						"http://example.com/error#invalid_numbers",
-						"one or more numbers are multiples of 3", Arrays.asList(0, 3)));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.CALLERROR.getTypeId(),
+				"7bVW5pv8r60ZeL6u", "http://example.com/error#invalid_numbers",
+				"one or more numbers are multiples of 3", Arrays.asList(0, 3)));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -67,8 +65,8 @@ public class CallErrorMessageTest extends BaseMessageTest {
 		assertWampMessageTypeHeader(callErrorMessage, WampMessageType.CALLERROR);
 		assertThat(callErrorMessage.getType()).isEqualTo(WampMessageType.CALLERROR);
 		assertThat(callErrorMessage.getCallID()).isEqualTo("gwbN3EDtFv6JvNV5");
-		assertThat(callErrorMessage.getErrorURI()).isEqualTo(
-				"http://autobahn.tavendo.de/error#generic");
+		assertThat(callErrorMessage.getErrorURI())
+				.isEqualTo("http://autobahn.tavendo.de/error#generic");
 		assertThat(callErrorMessage.getErrorDesc()).isEqualTo("math domain error");
 		assertThat(callErrorMessage.getErrorDetails()).isNull();
 
@@ -80,10 +78,10 @@ public class CallErrorMessageTest extends BaseMessageTest {
 		assertWampMessageTypeHeader(intCallErrorMessage, WampMessageType.CALLERROR);
 		assertThat(intCallErrorMessage.getType()).isEqualTo(WampMessageType.CALLERROR);
 		assertThat(intCallErrorMessage.getCallID()).isEqualTo("7bVW5pv8r60ZeL6u");
-		assertThat(intCallErrorMessage.getErrorURI()).isEqualTo(
-				"http://example.com/error#number_too_big");
-		assertThat(intCallErrorMessage.getErrorDesc()).isEqualTo(
-				"1001 too big for me, max is 1000");
+		assertThat(intCallErrorMessage.getErrorURI())
+				.isEqualTo("http://example.com/error#number_too_big");
+		assertThat(intCallErrorMessage.getErrorDesc())
+				.isEqualTo("1001 too big for me, max is 1000");
 		assertThat(intCallErrorMessage.getErrorDetails()).isEqualTo(1000);
 
 		json = toJsonArray(4, "AStPd8RS60pfYP8c",
@@ -95,10 +93,10 @@ public class CallErrorMessageTest extends BaseMessageTest {
 		assertWampMessageTypeHeader(listCallErrorMessage, WampMessageType.CALLERROR);
 		assertThat(listCallErrorMessage.getType()).isEqualTo(WampMessageType.CALLERROR);
 		assertThat(listCallErrorMessage.getCallID()).isEqualTo("AStPd8RS60pfYP8c");
-		assertThat(listCallErrorMessage.getErrorURI()).isEqualTo(
-				"http://example.com/error#invalid_numbers");
-		assertThat(listCallErrorMessage.getErrorDesc()).isEqualTo(
-				"one or more numbers are multiples of 3");
+		assertThat(listCallErrorMessage.getErrorURI())
+				.isEqualTo("http://example.com/error#invalid_numbers");
+		assertThat(listCallErrorMessage.getErrorDesc())
+				.isEqualTo("one or more numbers are multiples of 3");
 		assertThat((List) listCallErrorMessage.getErrorDetails()).contains(0, 3);
 
 	}

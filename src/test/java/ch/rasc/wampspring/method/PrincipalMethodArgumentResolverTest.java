@@ -38,8 +38,8 @@ public class PrincipalMethodArgumentResolverTest {
 
 	@Before
 	public void setup() throws Exception {
-		Method testMethod = getClass().getDeclaredMethod("handleMessage",
-				Principal.class, String.class);
+		Method testMethod = getClass().getDeclaredMethod("handleMessage", Principal.class,
+				String.class);
 		this.resolver = new PrincipalMethodArgumentResolver();
 		this.principalParameter = new MethodParameter(testMethod, 0);
 		this.stringParameter = new MethodParameter(testMethod, 1);

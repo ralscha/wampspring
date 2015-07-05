@@ -56,8 +56,8 @@ public class MethodParameterConverterTest {
 		assertThat(this.converter.convert(param, 4L)).isEqualTo("4");
 		assertThat(this.converter.convert(param, 5.5f)).isEqualTo("5.5");
 		assertThat(this.converter.convert(param, 6.6)).isEqualTo("6.6");
-		assertThat(this.converter.convert(param, new BigDecimal("3.141"))).isEqualTo(
-				"3.141");
+		assertThat(this.converter.convert(param, new BigDecimal("3.141")))
+				.isEqualTo("3.141");
 	}
 
 	@Test
@@ -93,8 +93,8 @@ public class MethodParameterConverterTest {
 		assertThat(this.converter.convert(param, 4L)).isEqualTo(Integer.valueOf(4));
 		assertThat(this.converter.convert(param, 5.5f)).isEqualTo(Integer.valueOf(5));
 		assertThat(this.converter.convert(param, 6.6)).isEqualTo(Integer.valueOf(6));
-		assertThat(this.converter.convert(param, new BigDecimal("3.141"))).isEqualTo(
-				Integer.valueOf(3));
+		assertThat(this.converter.convert(param, new BigDecimal("3.141")))
+				.isEqualTo(Integer.valueOf(3));
 	}
 
 	@Test(expected = ConversionFailedException.class)
@@ -112,19 +112,19 @@ public class MethodParameterConverterTest {
 		assertThat(this.converter.convert(param, null)).isNull();
 		assertThat(this.converter.convert(param, (byte) 1))
 				.isEqualTo(new BigDecimal("1"));
-		assertThat(this.converter.convert(param, (short) 2)).isEqualTo(
-				new BigDecimal("2"));
+		assertThat(this.converter.convert(param, (short) 2))
+				.isEqualTo(new BigDecimal("2"));
 		assertThat(this.converter.convert(param, 3)).isEqualTo(new BigDecimal("3"));
 		assertThat(this.converter.convert(param, 4L)).isEqualTo(new BigDecimal("4"));
 		assertThat(this.converter.convert(param, 5.5f)).isEqualTo(new BigDecimal("5.5"));
 		assertThat(this.converter.convert(param, 6.6)).isEqualTo(new BigDecimal("6.6"));
-		assertThat(this.converter.convert(param, new BigDecimal("3.141"))).isEqualTo(
-				new BigDecimal("3.141"));
+		assertThat(this.converter.convert(param, new BigDecimal("3.141")))
+				.isEqualTo(new BigDecimal("3.141"));
 	}
 
 	@Test(expected = ConversionFailedException.class)
-	public void testToBigDecimalException() throws NoSuchMethodException,
-			SecurityException {
+	public void testToBigDecimalException()
+			throws NoSuchMethodException, SecurityException {
 		Method testMethod = getClass().getDeclaredMethod("BigDecimalParam",
 				BigDecimal.class);
 		MethodParameter param = new MethodParameter(testMethod, 0);
@@ -203,10 +203,10 @@ public class MethodParameterConverterTest {
 		Method testMethod = getClass().getDeclaredMethod("listParam", List.class);
 		MethodParameter param = new MethodParameter(testMethod, 0);
 		assertThat(this.converter.convert(param, null)).isNull();
-		assertThat((List) this.converter.convert(param, "1")).hasSize(1).containsExactly(
-				"1");
-		assertThat((List) this.converter.convert(param, Arrays.asList(1, 2, 3))).hasSize(
-				3).containsExactly("1", "2", "3");
+		assertThat((List) this.converter.convert(param, "1")).hasSize(1)
+				.containsExactly("1");
+		assertThat((List) this.converter.convert(param, Arrays.asList(1, 2, 3)))
+				.hasSize(3).containsExactly("1", "2", "3");
 	}
 
 	private void stringParam(String param) {

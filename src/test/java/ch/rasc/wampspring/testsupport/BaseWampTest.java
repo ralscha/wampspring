@@ -35,14 +35,14 @@ import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest({ "server.port=0", "spring.main.show_banner=false" })
@@ -60,8 +60,8 @@ public class BaseWampTest {
 				this.jsonFactory);
 		WebSocketClient webSocketClient = createWebSocketClient();
 
-		try (WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
-				wampEndpointUrl()).get()) {
+		try (WebSocketSession webSocketSession = webSocketClient
+				.doHandshake(result, wampEndpointUrl()).get()) {
 
 			result.getWelcomeMessage();
 			webSocketSession.sendMessage(new TextMessage(msg.toJson(this.jsonFactory)));
@@ -89,8 +89,8 @@ public class BaseWampTest {
 				this.jsonFactory);
 
 		WebSocketClient webSocketClient = createWebSocketClient();
-		try (WebSocketSession webSocketSession = webSocketClient.doHandshake(result,
-				wampEndpointUrl()).get()) {
+		try (WebSocketSession webSocketSession = webSocketClient
+				.doHandshake(result, wampEndpointUrl()).get()) {
 
 			result.getWelcomeMessage();
 			authenticate(result, webSocketSession);
@@ -101,13 +101,13 @@ public class BaseWampTest {
 	}
 
 	protected void authenticate(CompletableFutureWebSocketHandler result,
-			WebSocketSession webSocketSession) throws IOException, InterruptedException,
-			InvalidKeyException, NoSuchAlgorithmException, ExecutionException,
-			TimeoutException {
+			WebSocketSession webSocketSession)
+					throws IOException, InterruptedException, InvalidKeyException,
+					NoSuchAlgorithmException, ExecutionException, TimeoutException {
 		CallMessage authReqCallMessage = new CallMessage("1",
 				"http://api.wamp.ws/procedure#authreq", "a", Collections.emptyMap());
-		webSocketSession.sendMessage(new TextMessage(authReqCallMessage
-				.toJson(this.jsonFactory)));
+		webSocketSession.sendMessage(
+				new TextMessage(authReqCallMessage.toJson(this.jsonFactory)));
 		WampMessage response = result.getWampMessage();
 
 		assertThat(response).isInstanceOf(CallResultMessage.class);
@@ -123,8 +123,8 @@ public class BaseWampTest {
 
 		CallMessage authCallMessage = new CallMessage("2",
 				"http://api.wamp.ws/procedure#auth", signature);
-		webSocketSession.sendMessage(new TextMessage(authCallMessage
-				.toJson(this.jsonFactory)));
+		webSocketSession
+				.sendMessage(new TextMessage(authCallMessage.toJson(this.jsonFactory)));
 		response = result.getWampMessage();
 
 		assertThat(response).isInstanceOf(CallResultMessage.class);

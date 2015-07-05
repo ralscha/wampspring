@@ -70,8 +70,8 @@ public class WampMessageMappingInfo implements MessageCondition<WampMessageMappi
 
 	@Override
 	public int compareTo(WampMessageMappingInfo other, Message<?> message) {
-		int result = this.messageTypeMessageCondition.compareTo(
-				other.messageTypeMessageCondition, message);
+		int result = this.messageTypeMessageCondition
+				.compareTo(other.messageTypeMessageCondition, message);
 		if (result != 0) {
 			return result;
 		}

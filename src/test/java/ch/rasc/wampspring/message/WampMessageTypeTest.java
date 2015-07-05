@@ -36,23 +36,23 @@ public class WampMessageTypeTest extends BaseMessageTest {
 
 	@Test
 	public void fromTypeIdTest() {
-		assertThat(WampMessageType.fromTypeId(0)).isEqualsToByComparingFields(
-				WampMessageType.WELCOME);
-		assertThat(WampMessageType.fromTypeId(1)).isEqualsToByComparingFields(
-				WampMessageType.PREFIX);
-		assertThat(WampMessageType.fromTypeId(2)).isEqualsToByComparingFields(
-				WampMessageType.CALL);
-		assertThat(WampMessageType.fromTypeId(3)).isEqualsToByComparingFields(
-				WampMessageType.CALLRESULT);
-		assertThat(WampMessageType.fromTypeId(4)).isEqualsToByComparingFields(
-				WampMessageType.CALLERROR);
-		assertThat(WampMessageType.fromTypeId(5)).isEqualsToByComparingFields(
-				WampMessageType.SUBSCRIBE);
-		assertThat(WampMessageType.fromTypeId(6)).isEqualsToByComparingFields(
-				WampMessageType.UNSUBSCRIBE);
-		assertThat(WampMessageType.fromTypeId(7)).isEqualsToByComparingFields(
-				WampMessageType.PUBLISH);
-		assertThat(WampMessageType.fromTypeId(8)).isEqualsToByComparingFields(
-				WampMessageType.EVENT);
+		assertThat(WampMessageType.fromTypeId(0))
+				.isEqualsToByComparingFields(WampMessageType.WELCOME);
+		assertThat(WampMessageType.fromTypeId(1))
+				.isEqualsToByComparingFields(WampMessageType.PREFIX);
+		assertThat(WampMessageType.fromTypeId(2))
+				.isEqualsToByComparingFields(WampMessageType.CALL);
+		assertThat(WampMessageType.fromTypeId(3))
+				.isEqualsToByComparingFields(WampMessageType.CALLRESULT);
+		assertThat(WampMessageType.fromTypeId(4))
+				.isEqualsToByComparingFields(WampMessageType.CALLERROR);
+		assertThat(WampMessageType.fromTypeId(5))
+				.isEqualsToByComparingFields(WampMessageType.SUBSCRIBE);
+		assertThat(WampMessageType.fromTypeId(6))
+				.isEqualsToByComparingFields(WampMessageType.UNSUBSCRIBE);
+		assertThat(WampMessageType.fromTypeId(7))
+				.isEqualsToByComparingFields(WampMessageType.PUBLISH);
+		assertThat(WampMessageType.fromTypeId(8))
+				.isEqualsToByComparingFields(WampMessageType.EVENT);
 	}
 }

@@ -16,6 +16,7 @@
 package ch.rasc.wampspring.call;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+
 import ch.rasc.wampspring.annotation.WampCallListener;
 import ch.rasc.wampspring.message.CallMessage;
 

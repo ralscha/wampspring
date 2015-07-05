@@ -18,12 +18,12 @@ package ch.rasc.wampspring.message;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import ch.rasc.wampspring.config.WampSession;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
+import ch.rasc.wampspring.config.WampSession;
 
 /**
  * A client requests access to a valid topicURI to receive events published to the given

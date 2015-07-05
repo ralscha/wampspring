@@ -33,8 +33,8 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
  * The UserSessionRegistry handling is not enabled by default! See
  * {@link AbstractUserWampConfigurer} for configuration.
  */
-public final class UserSessionWebSocketHandlerDecoratorFactory implements
-		WebSocketHandlerDecoratorFactory {
+public final class UserSessionWebSocketHandlerDecoratorFactory
+		implements WebSocketHandlerDecoratorFactory {
 
 	private final UserSessionRegistry userSessionRegistry;
 

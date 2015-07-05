@@ -49,7 +49,8 @@ public class CallParameterTest extends BaseWampTest {
 
 	@Test
 	public void testHeadersMethod() throws Exception {
-		WampMessage response = sendWampMessage(new CallMessage("callID3", "headersMethod"));
+		WampMessage response = sendWampMessage(
+				new CallMessage("callID3", "headersMethod"));
 		assertThat(response).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) response;
 		assertThat(result.getCallID()).isEqualTo("callID3");
@@ -58,8 +59,8 @@ public class CallParameterTest extends BaseWampTest {
 
 	@Test
 	public void testWampSesionMethod() throws Exception {
-		WampMessage response = sendWampMessage(new CallMessage("callID5",
-				"wampSesionMethod"));
+		WampMessage response = sendWampMessage(
+				new CallMessage("callID5", "wampSesionMethod"));
 		assertThat(response).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) response;
 		assertThat(result.getCallID()).isEqualTo("callID5");
@@ -68,12 +69,13 @@ public class CallParameterTest extends BaseWampTest {
 
 	@Test
 	public void testMessageMethod() throws Exception {
-		WampMessage response = sendWampMessage(new CallMessage("callID6", "messageMethod"));
+		WampMessage response = sendWampMessage(
+				new CallMessage("callID6", "messageMethod"));
 		assertThat(response).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) response;
 		assertThat(result.getCallID()).isEqualTo("callID6");
-		assertThat(result.getResult()).isEqualTo(
-				"messageMethod called: callID6/messageMethod");
+		assertThat(result.getResult())
+				.isEqualTo("messageMethod called: callID6/messageMethod");
 	}
 
 	@Test

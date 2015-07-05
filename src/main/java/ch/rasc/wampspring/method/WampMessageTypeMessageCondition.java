@@ -31,8 +31,8 @@ import ch.rasc.wampspring.message.WampMessageType;
  * @author Rossen Stoyanchev
  * @author Ralph Schaer
  */
-public class WampMessageTypeMessageCondition extends
-		AbstractMessageCondition<WampMessageTypeMessageCondition> {
+public class WampMessageTypeMessageCondition
+		extends AbstractMessageCondition<WampMessageTypeMessageCondition> {
 
 	public static final WampMessageTypeMessageCondition CALL = new WampMessageTypeMessageCondition(
 			WampMessageType.CALL);
@@ -68,15 +68,16 @@ public class WampMessageTypeMessageCondition extends
 	}
 
 	@Override
-	public WampMessageTypeMessageCondition combine(WampMessageTypeMessageCondition other) {
+	public WampMessageTypeMessageCondition combine(
+			WampMessageTypeMessageCondition other) {
 		return other;
 	}
 
 	@Override
 	public WampMessageTypeMessageCondition getMatchingCondition(Message<?> message) {
 
-		WampMessageType actualMessageType = (WampMessageType) message.getHeaders().get(
-				WampMessageHeader.WAMP_MESSAGE_TYPE.name());
+		WampMessageType actualMessageType = (WampMessageType) message.getHeaders()
+				.get(WampMessageHeader.WAMP_MESSAGE_TYPE.name());
 		if (actualMessageType != this.messageType) {
 			return null;
 		}
@@ -86,8 +87,8 @@ public class WampMessageTypeMessageCondition extends
 
 	@Override
 	public int compareTo(WampMessageTypeMessageCondition other, Message<?> message) {
-		WampMessageType actualMessageType = (WampMessageType) message.getHeaders().get(
-				WampMessageHeader.WAMP_MESSAGE_TYPE.name());
+		WampMessageType actualMessageType = (WampMessageType) message.getHeaders()
+				.get(WampMessageHeader.WAMP_MESSAGE_TYPE.name());
 		if (actualMessageType != null) {
 			if (actualMessageType == this.getMessageType()
 					&& actualMessageType == other.getMessageType()) {

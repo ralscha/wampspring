@@ -31,9 +31,8 @@ public class WelcomeMessageTest extends BaseMessageTest {
 
 		assertWampMessageTypeHeader(welcomeMessage, WampMessageType.WELCOME);
 		String json = welcomeMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.WELCOME.getTypeId(), sessionId,
-						WelcomeMessage.PROTOCOL_VERSION, serverIdent));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.WELCOME.getTypeId(),
+				sessionId, WelcomeMessage.PROTOCOL_VERSION, serverIdent));
 	}
 
 	@Test

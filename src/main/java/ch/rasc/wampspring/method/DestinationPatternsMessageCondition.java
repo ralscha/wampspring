@@ -40,8 +40,8 @@ import ch.rasc.wampspring.message.WampMessage;
  * @author Rossen Stoyanchev
  * @author Ralph Schaer
  */
-public class DestinationPatternsMessageCondition extends
-		AbstractMessageCondition<DestinationPatternsMessageCondition> {
+public class DestinationPatternsMessageCondition
+		extends AbstractMessageCondition<DestinationPatternsMessageCondition> {
 
 	private final Set<String> patterns;
 
@@ -53,7 +53,8 @@ public class DestinationPatternsMessageCondition extends
 	 * request.
 	 * @param pathMatcher the PathMatcher to use
 	 */
-	public DestinationPatternsMessageCondition(String[] patterns, PathMatcher pathMatcher) {
+	public DestinationPatternsMessageCondition(String[] patterns,
+			PathMatcher pathMatcher) {
 		this(asList(patterns), pathMatcher);
 	}
 
@@ -66,8 +67,8 @@ public class DestinationPatternsMessageCondition extends
 	}
 
 	private static List<String> asList(String... patterns) {
-		return patterns != null ? Arrays.asList(patterns) : Collections
-				.<String> emptyList();
+		return patterns != null ? Arrays.asList(patterns)
+				: Collections.<String> emptyList();
 	}
 
 	public Set<String> getPatterns() {

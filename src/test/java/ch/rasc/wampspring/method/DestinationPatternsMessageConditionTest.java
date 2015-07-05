@@ -75,8 +75,9 @@ public class DestinationPatternsMessageConditionTest {
 		DestinationPatternsMessageCondition c1 = condition("/t1", "/t2");
 		DestinationPatternsMessageCondition c2 = condition("/m1", "/m2");
 
-		assertEquals(new DestinationPatternsMessageCondition(new String[] { "/t1/m1",
-				"/t1/m2", "/t2/m1", "/t2/m2" }, new AntPathMatcher()), c1.combine(c2));
+		assertEquals(new DestinationPatternsMessageCondition(
+				new String[] { "/t1/m1", "/t1/m2", "/t2/m1", "/t2/m2" },
+				new AntPathMatcher()), c1.combine(c2));
 	}
 
 	@Test

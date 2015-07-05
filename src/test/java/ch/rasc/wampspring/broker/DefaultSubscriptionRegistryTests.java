@@ -127,20 +127,20 @@ public class DefaultSubscriptionRegistryTests {
 		String sess1 = "sess01";
 		String sess2 = "sess02";
 
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.*.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.*.IBM"));
 		Set<String> actual = this.registry
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).hasSize(1).contains(sess1);
 
-		this.registry.registerSubscription(subscribeMessage(sess2,
-				"/topic/PRICE.STOCK.NASDAQ.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess2,
-				"/topic/PRICE.STOCK.NYSE.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess2,
-				"/topic/PRICE.STOCK.NASDAQ.GOOG"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess2, "/topic/PRICE.STOCK.NASDAQ.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess2, "/topic/PRICE.STOCK.NYSE.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess2, "/topic/PRICE.STOCK.NASDAQ.GOOG"));
 		actual = this.registry
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).hasSize(2).contains(sess1, sess2);
@@ -150,28 +150,28 @@ public class DefaultSubscriptionRegistryTests {
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).hasSize(1).contains(sess2);
 
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.*.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.*.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.IBM"));
 		actual = this.registry
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).hasSize(2).contains(sess1, sess2);
 
-		this.registry.unregisterSubscription(unsubscribeMessage(sess1,
-				"/topic/PRICE.STOCK.*.IBM"));
+		this.registry.unregisterSubscription(
+				unsubscribeMessage(sess1, "/topic/PRICE.STOCK.*.IBM"));
 		actual = this.registry
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).hasSize(2).contains(sess1, sess2);
 
-		this.registry.unregisterSubscription(unsubscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.IBM"));
+		this.registry.unregisterSubscription(
+				unsubscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.IBM"));
 		actual = this.registry
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).hasSize(1).contains(sess2);
 
-		this.registry.unregisterSubscription(unsubscribeMessage(sess2,
-				"/topic/PRICE.STOCK.NASDAQ.IBM"));
+		this.registry.unregisterSubscription(
+				unsubscribeMessage(sess2, "/topic/PRICE.STOCK.NASDAQ.IBM"));
 		actual = this.registry
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).isEmpty();
@@ -185,12 +185,12 @@ public class DefaultSubscriptionRegistryTests {
 		String sess1 = "sess01";
 		String sess2 = "sess02";
 
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NYSE.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.GOOG"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NYSE.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.GOOG"));
 
 		Set<String> actual = this.registry
 				.findSubscriptions(message("/topic/PRICE.STOCK.NYSE.IBM"));
@@ -202,12 +202,12 @@ public class DefaultSubscriptionRegistryTests {
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).hasSize(1).contains("sess01");
 
-		this.registry.unregisterSubscription(unsubscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.IBM"));
-		this.registry.unregisterSubscription(unsubscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NYSE.IBM"));
-		this.registry.unregisterSubscription(unsubscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.GOOG"));
+		this.registry.unregisterSubscription(
+				unsubscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.IBM"));
+		this.registry.unregisterSubscription(
+				unsubscribeMessage(sess1, "/topic/PRICE.STOCK.NYSE.IBM"));
+		this.registry.unregisterSubscription(
+				unsubscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.GOOG"));
 
 		actual = this.registry.findSubscriptions(message("/topic/PRICE.STOCK.NYSE.IBM"));
 		assertThat(actual).isEmpty();
@@ -218,16 +218,16 @@ public class DefaultSubscriptionRegistryTests {
 				.findSubscriptions(message("/topic/PRICE.STOCK.NASDAQ.IBM"));
 		assertThat(actual).isEmpty();
 
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NYSE.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NASDAQ.GOOG"));
-		this.registry.registerSubscription(subscribeMessage(sess1,
-				"/topic/PRICE.STOCK.NYSE.IBM"));
-		this.registry.registerSubscription(subscribeMessage(sess2,
-				"/topic/PRICE.STOCK.NASDAQ.GOOG"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NYSE.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NASDAQ.GOOG"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess1, "/topic/PRICE.STOCK.NYSE.IBM"));
+		this.registry.registerSubscription(
+				subscribeMessage(sess2, "/topic/PRICE.STOCK.NASDAQ.GOOG"));
 		this.registry.unregisterSession(sess1);
 		this.registry.unregisterSession(sess2);
 
@@ -327,7 +327,8 @@ public class DefaultSubscriptionRegistryTests {
 		return message;
 	}
 
-	private static UnsubscribeMessage unsubscribeMessage(String sessionId, String topicURI) {
+	private static UnsubscribeMessage unsubscribeMessage(String sessionId,
+			String topicURI) {
 		UnsubscribeMessage message = new UnsubscribeMessage(topicURI);
 		message.setWebSocketSessionId(sessionId);
 		return message;

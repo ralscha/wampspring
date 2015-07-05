@@ -148,8 +148,8 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 			return;
 		}
 
-		if (!(message instanceof PubSubMessage && this.wampMessageSelector
-				.accept((WampMessage) message))) {
+		if (!(message instanceof PubSubMessage
+				&& this.wampMessageSelector.accept((WampMessage) message))) {
 			return;
 		}
 
@@ -171,8 +171,8 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 		else if (messageType == WampMessageType.UNSUBSCRIBE) {
 			UnsubscribeMessage unsubscribeMessage = (UnsubscribeMessage) wampMessage;
 			if (unsubscribeMessage.isCleanup()) {
-				this.subscriptionRegistry.unregisterSession(unsubscribeMessage
-						.getWebSocketSessionId());
+				this.subscriptionRegistry
+						.unregisterSession(unsubscribeMessage.getWebSocketSessionId());
 			}
 			else {
 				checkAuthentication(wampMessage);
@@ -232,8 +232,8 @@ public class SimpleBrokerMessageHandler implements MessageHandler, SmartLifecycl
 
 		if (subscribedSessionIds.size() > 0) {
 			if (this.logger.isDebugEnabled()) {
-				this.logger.debug("Broadcasting to " + subscribedSessionIds.size()
-						+ " sessions.");
+				this.logger.debug(
+						"Broadcasting to " + subscribedSessionIds.size() + " sessions.");
 			}
 
 			for (String subscriptionSessionId : subscribedSessionIds) {

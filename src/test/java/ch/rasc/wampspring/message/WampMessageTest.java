@@ -55,10 +55,9 @@ public class WampMessageTest {
 				.isEqualTo(wampSession);
 		assertThat((String) callMessage.getHeader(WampMessageHeader.WEBSOCKET_SESSION_ID))
 				.isEqualTo("ws1");
-		assertThat(
-				(WampMessageType) callMessage
-						.getHeader(WampMessageHeader.WAMP_MESSAGE_TYPE)).isEqualTo(
-				WampMessageType.CALLERROR);
+		assertThat((WampMessageType) callMessage
+				.getHeader(WampMessageHeader.WAMP_MESSAGE_TYPE))
+						.isEqualTo(WampMessageType.CALLERROR);
 
 		assertThat(callMessage.getPrincipal()).isEqualTo(testPrincipal);
 		assertThat(callMessage.getWampSession()).isEqualTo(wampSession);

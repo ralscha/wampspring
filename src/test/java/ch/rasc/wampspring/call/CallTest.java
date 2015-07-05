@@ -35,8 +35,8 @@ public class CallTest extends BaseWampTest {
 
 	@Test
 	public void testCallArguments() throws Exception {
-		WampMessage receivedMessage = sendWampMessage(new CallMessage("callID",
-				"callService.simpleTest", "argument", 12));
+		WampMessage receivedMessage = sendWampMessage(
+				new CallMessage("callID", "callService.simpleTest", "argument", 12));
 		assertThat(receivedMessage).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) receivedMessage;
 
@@ -46,8 +46,8 @@ public class CallTest extends BaseWampTest {
 
 	@Test
 	public void testNoParameters() throws Exception {
-		WampMessage receivedMessage = sendWampMessage(new CallMessage("callID2",
-				"callService.noParams"));
+		WampMessage receivedMessage = sendWampMessage(
+				new CallMessage("callID2", "callService.noParams"));
 		assertThat(receivedMessage).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) receivedMessage;
 
@@ -57,8 +57,8 @@ public class CallTest extends BaseWampTest {
 
 	@Test
 	public void testCallOwnProcUri() throws Exception {
-		WampMessage receivedMessage = sendWampMessage(new CallMessage("theCallId",
-				"myOwnProcURI", "argument", 13));
+		WampMessage receivedMessage = sendWampMessage(
+				new CallMessage("theCallId", "myOwnProcURI", "argument", 13));
 		assertThat(receivedMessage).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) receivedMessage;
 
@@ -68,8 +68,8 @@ public class CallTest extends BaseWampTest {
 
 	@Test
 	public void testReturnValue() throws Exception {
-		WampMessage receivedMessage = sendWampMessage(new CallMessage("12",
-				"callService.sum", 3, 4));
+		WampMessage receivedMessage = sendWampMessage(
+				new CallMessage("12", "callService.sum", 3, 4));
 		assertThat(receivedMessage).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) receivedMessage;
 		assertThat(result.getCallID()).isEqualTo("12");
@@ -78,8 +78,8 @@ public class CallTest extends BaseWampTest {
 
 	@Test
 	public void testWithError() throws Exception {
-		WampMessage receivedMessage = sendWampMessage(new CallMessage("13",
-				"callService.error", "theArgument"));
+		WampMessage receivedMessage = sendWampMessage(
+				new CallMessage("13", "callService.error", "theArgument"));
 		assertThat(receivedMessage).isInstanceOf(CallErrorMessage.class);
 		CallErrorMessage result = (CallErrorMessage) receivedMessage;
 		assertThat(result.getCallID()).isEqualTo("13");
@@ -92,8 +92,8 @@ public class CallTest extends BaseWampTest {
 	public void testDto() throws Exception {
 		TestDto dto = new TestDto();
 		dto.setName("Hi");
-		WampMessage receivedMessage = sendWampMessage(new CallMessage("13",
-				"callService.callWithObject", dto));
+		WampMessage receivedMessage = sendWampMessage(
+				new CallMessage("13", "callService.callWithObject", dto));
 		assertThat(receivedMessage).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) receivedMessage;
 		assertThat(result.getCallID()).isEqualTo("13");

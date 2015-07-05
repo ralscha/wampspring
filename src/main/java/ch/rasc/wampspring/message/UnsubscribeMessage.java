@@ -20,12 +20,12 @@ import java.io.StringWriter;
 
 import org.springframework.web.socket.WebSocketSession;
 
-import ch.rasc.wampspring.config.WampSession;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
+import ch.rasc.wampspring.config.WampSession;
 
 /**
  * Calling unsubscribe on a topicURI informs the server to stop delivering messages to the

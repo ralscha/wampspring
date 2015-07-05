@@ -66,15 +66,16 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 		Assert.notNull(jsonFactory, "'jsonFactory' is required");
 
 		this.webSocketHandler = webSocketHandler;
-		this.subProtocolWebSocketHandler = unwrapSubProtocolWebSocketHandler(webSocketHandler);
+		this.subProtocolWebSocketHandler = unwrapSubProtocolWebSocketHandler(
+				webSocketHandler);
 
 		if (transportRegistration.getSendTimeLimit() != null) {
-			this.subProtocolWebSocketHandler.setSendTimeLimit(transportRegistration
-					.getSendTimeLimit());
+			this.subProtocolWebSocketHandler
+					.setSendTimeLimit(transportRegistration.getSendTimeLimit());
 		}
 		if (transportRegistration.getSendBufferSizeLimit() != null) {
-			this.subProtocolWebSocketHandler.setSendBufferSizeLimit(transportRegistration
-					.getSendBufferSizeLimit());
+			this.subProtocolWebSocketHandler.setSendBufferSizeLimit(
+					transportRegistration.getSendBufferSizeLimit());
 		}
 
 		this.wampSubProtocolHandler = new WampSubProtocolHandler(jsonFactory);
@@ -101,10 +102,8 @@ public class WebMvcWampEndpointRegistry implements WampEndpointRegistry {
 		this.registrations.add(registration);
 
 		if (this.handshakeInterceptors != null && this.handshakeInterceptors.size() > 0) {
-			registration
-					.addInterceptors(this.handshakeInterceptors
-							.toArray(new HandshakeInterceptor[this.handshakeInterceptors
-									.size()]));
+			registration.addInterceptors(this.handshakeInterceptors.toArray(
+					new HandshakeInterceptor[this.handshakeInterceptors.size()]));
 		}
 
 		return registration;

@@ -83,14 +83,15 @@ public class CallDestinationTest extends BaseWampTest {
 
 	@Test
 	public void testDoubleStarDestination() throws Exception {
-		WampMessage response = sendWampMessage(new CallMessage("callID3",
-				"/start/middle/end"));
+		WampMessage response = sendWampMessage(
+				new CallMessage("callID3", "/start/middle/end"));
 		assertThat(response).isInstanceOf(CallResultMessage.class);
 		CallResultMessage result = (CallResultMessage) response;
 		assertThat(result.getCallID()).isEqualTo("callID3");
 		assertThat(result.getResult()).isEqualTo("doubleStarDestination called");
 
-		response = sendWampMessage(new CallMessage("callID3", "/start/one/two/three/end"));
+		response = sendWampMessage(
+				new CallMessage("callID3", "/start/one/two/three/end"));
 		assertThat(response).isInstanceOf(CallResultMessage.class);
 		result = (CallResultMessage) response;
 		assertThat(result.getCallID()).isEqualTo("callID3");

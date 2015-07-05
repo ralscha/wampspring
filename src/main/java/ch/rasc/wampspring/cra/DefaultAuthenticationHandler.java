@@ -53,8 +53,9 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 		}
 
 		try {
-			final String challenge = generateHMacSHA256(message.getWebSocketSessionId()
-					+ System.currentTimeMillis(), authKey);
+			final String challenge = generateHMacSHA256(
+					message.getWebSocketSessionId() + System.currentTimeMillis(),
+					authKey);
 			wampSession.setAuthKey(authKey);
 			wampSession.setChallenge(challenge);
 			return challenge;
@@ -74,8 +75,8 @@ public class DefaultAuthenticationHandler implements AuthenticationHandler {
 
 		final String correctSignature;
 		try {
-			final String secret = this.authenticationSecretProvider.getSecret(wampSession
-					.getAuthKey());
+			final String secret = this.authenticationSecretProvider
+					.getSecret(wampSession.getAuthKey());
 			if (!StringUtils.hasText(secret)) {
 				throw new IllegalStateException("Secret does not exist");
 			}

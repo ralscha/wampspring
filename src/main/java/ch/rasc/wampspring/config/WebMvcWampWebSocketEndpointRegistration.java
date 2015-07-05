@@ -39,8 +39,8 @@ import org.springframework.web.socket.sockjs.transport.handler.WebSocketTranspor
  * @author Rossen Stoyanchev
  * @author Ralph Schaer
  */
-public class WebMvcWampWebSocketEndpointRegistration implements
-		WampWebSocketEndpointRegistration {
+public class WebMvcWampWebSocketEndpointRegistration
+		implements WampWebSocketEndpointRegistration {
 
 	private final String[] paths;
 
@@ -106,8 +106,8 @@ public class WebMvcWampWebSocketEndpointRegistration implements
 			this.registration.setTransportHandlerOverrides(transportHandler);
 		}
 		if (!this.allowedOrigins.isEmpty()) {
-			this.registration.setAllowedOrigins(this.allowedOrigins
-					.toArray(new String[this.allowedOrigins.size()]));
+			this.registration.setAllowedOrigins(
+					this.allowedOrigins.toArray(new String[this.allowedOrigins.size()]));
 		}
 		return this.registration;
 	}
@@ -143,7 +143,8 @@ public class WebMvcWampWebSocketEndpointRegistration implements
 				}
 				HandshakeInterceptor[] handshakeInterceptors = getInterceptors();
 				if (handshakeInterceptors.length > 0) {
-					handler.setHandshakeInterceptors(Arrays.asList(handshakeInterceptors));
+					handler.setHandshakeInterceptors(
+							Arrays.asList(handshakeInterceptors));
 				}
 				mappings.add(handler, path);
 			}

@@ -19,13 +19,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Set;
 
-import ch.rasc.wampspring.config.WampSession;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import ch.rasc.wampspring.config.WampSession;
 
 /**
  * The client will send an event to all clients connected to the server who have

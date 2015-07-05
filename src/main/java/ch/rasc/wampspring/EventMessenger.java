@@ -37,7 +37,7 @@ import ch.rasc.wampspring.message.EventMessage;
  * public class MyService {
  * 	&#064;Autowired
  * 	EventMessenger eventMessenger;
- * 
+ *
  * 	public void doSomething() {
  * 		eventMessenger.sendToAll(&quot;aTopic&quot;, &quot;the message&quot;);
  * 	}
@@ -83,7 +83,8 @@ public class EventMessenger {
 	 */
 	public void sendToAllExcept(String topicURI, Object event,
 			String excludeWebSocketSessionId) {
-		sendToAllExcept(topicURI, event, Collections.singleton(excludeWebSocketSessionId));
+		sendToAllExcept(topicURI, event,
+				Collections.singleton(excludeWebSocketSessionId));
 	}
 
 	/**
@@ -216,8 +217,9 @@ public class EventMessenger {
 				"WebSocket session id must not be null");
 
 		long timeout = this.sendTimeout;
-		boolean sent = timeout >= 0 ? this.clientOutboundChannel.send(eventMessage,
-				timeout) : this.clientOutboundChannel.send(eventMessage);
+		boolean sent = timeout >= 0
+				? this.clientOutboundChannel.send(eventMessage, timeout)
+				: this.clientOutboundChannel.send(eventMessage);
 
 		if (!sent) {
 			throw new MessageDeliveryException(eventMessage,

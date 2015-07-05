@@ -131,16 +131,16 @@ public class SimpleBrokerMessageHandlerTests {
 		this.messageHandler.handleMessage(eventMessage("sess1", "/foo", "message1"));
 		this.messageHandler.handleMessage(eventMessage("sess1", "/bar", "message2"));
 
-		verify(this.clientOutboundChannel, Mockito.never()).send(
-				this.messageCaptor.capture());
+		verify(this.clientOutboundChannel, Mockito.never())
+				.send(this.messageCaptor.capture());
 	}
 
 	@Test
 	public void testNoneSubscribed() {
 		this.messageHandler.handleMessage(eventMessage("sess1", "/foo", "message1"));
 		this.messageHandler.handleMessage(eventMessage("sess1", "/bar", "message2"));
-		verify(this.clientOutboundChannel, Mockito.never()).send(
-				this.messageCaptor.capture());
+		verify(this.clientOutboundChannel, Mockito.never())
+				.send(this.messageCaptor.capture());
 	}
 
 	@Test
@@ -148,8 +148,8 @@ public class SimpleBrokerMessageHandlerTests {
 		this.messageHandler.handleMessage(subscribeMessage("sess1", "/topic"));
 		this.messageHandler.handleMessage(subscribeMessage("sess2", "/topic"));
 
-		this.messageHandler.handleMessage(publishMessage("sess1", "/topic",
-				"publishMessage1"));
+		this.messageHandler
+				.handleMessage(publishMessage("sess1", "/topic", "publishMessage1"));
 
 		verify(this.clientOutboundChannel, times(2)).send(this.messageCaptor.capture());
 		assertCapturedMessage(eventMessage("sess1", "/topic", "publishMessage1"),
@@ -199,8 +199,8 @@ public class SimpleBrokerMessageHandlerTests {
 		publishMessage.setWebSocketSessionId("sess1");
 		this.messageHandler.handleMessage(publishMessage);
 
-		verify(this.clientOutboundChannel, Mockito.never()).send(
-				this.messageCaptor.capture());
+		verify(this.clientOutboundChannel, Mockito.never())
+				.send(this.messageCaptor.capture());
 	}
 
 	@Test
@@ -264,8 +264,8 @@ public class SimpleBrokerMessageHandlerTests {
 		publishMessage.setWebSocketSessionId("sess2");
 		this.messageHandler.handleMessage(publishMessage);
 
-		verify(this.clientOutboundChannel, Mockito.never()).send(
-				this.messageCaptor.capture());
+		verify(this.clientOutboundChannel, Mockito.never())
+				.send(this.messageCaptor.capture());
 	}
 
 	@Test
@@ -282,8 +282,8 @@ public class SimpleBrokerMessageHandlerTests {
 		publishMessage.setWebSocketSessionId("sess1");
 		this.messageHandler.handleMessage(publishMessage);
 
-		verify(this.clientOutboundChannel, Mockito.never()).send(
-				this.messageCaptor.capture());
+		verify(this.clientOutboundChannel, Mockito.never())
+				.send(this.messageCaptor.capture());
 	}
 
 	@Test
@@ -302,8 +302,8 @@ public class SimpleBrokerMessageHandlerTests {
 		publishMessage.setWebSocketSessionId("sess2");
 		this.messageHandler.handleMessage(publishMessage);
 
-		verify(this.clientOutboundChannel, Mockito.never()).send(
-				this.messageCaptor.capture());
+		verify(this.clientOutboundChannel, Mockito.never())
+				.send(this.messageCaptor.capture());
 	}
 
 	@Test
@@ -357,8 +357,8 @@ public class SimpleBrokerMessageHandlerTests {
 		eventMessage.setExcludeWebSocketSessionIds(exclude);
 		this.messageHandler.handleMessage(eventMessage);
 
-		verify(this.clientOutboundChannel, Mockito.never()).send(
-				this.messageCaptor.capture());
+		verify(this.clientOutboundChannel, Mockito.never())
+				.send(this.messageCaptor.capture());
 	}
 
 	@Test
@@ -422,8 +422,8 @@ public class SimpleBrokerMessageHandlerTests {
 		eventMessage.setEligibleWebSocketSessionIds(eligible);
 		this.messageHandler.handleMessage(eventMessage);
 
-		verify(this.clientOutboundChannel, Mockito.never()).send(
-				this.messageCaptor.capture());
+		verify(this.clientOutboundChannel, Mockito.never())
+				.send(this.messageCaptor.capture());
 	}
 
 	@Test
@@ -462,12 +462,12 @@ public class SimpleBrokerMessageHandlerTests {
 		this.messageHandler.handleMessage(subscribeMessage("sess2", "/foo/**/test/1"));
 
 		this.messageHandler.handleMessage(eventMessage("sess1", "/foo/1", "message1"));
-		this.messageHandler.handleMessage(eventMessage("sess1", "/foo/middle/1",
-				"message2"));
+		this.messageHandler
+				.handleMessage(eventMessage("sess1", "/foo/middle/1", "message2"));
 		this.messageHandler
 				.handleMessage(eventMessage("sess2", "/foo/test/1", "message3"));
-		this.messageHandler.handleMessage(eventMessage("sess2", "/foo/middle/test/1",
-				"message4"));
+		this.messageHandler
+				.handleMessage(eventMessage("sess2", "/foo/middle/test/1", "message4"));
 
 		verify(this.clientOutboundChannel, times(6)).send(this.messageCaptor.capture());
 
@@ -508,7 +508,8 @@ public class SimpleBrokerMessageHandlerTests {
 		return message;
 	}
 
-	private static UnsubscribeMessage unsubscribeMessage(String sessionId, String topicURI) {
+	private static UnsubscribeMessage unsubscribeMessage(String sessionId,
+			String topicURI) {
 		UnsubscribeMessage message = new UnsubscribeMessage(topicURI);
 		message.setWebSocketSessionId(sessionId);
 		return message;
@@ -539,10 +540,10 @@ public class SimpleBrokerMessageHandlerTests {
 				EventMessage found = null;
 				for (EventMessage capturedMessage : allCapturedMessages) {
 					if (capturedMessage.getPayload().equals(expectedMessage.getPayload())
-							&& capturedMessage.getDestination().equals(
-									expectedMessage.getDestination())
-							&& capturedMessage.getWebSocketSessionId().equals(
-									expectedMessage.getWebSocketSessionId())) {
+							&& capturedMessage.getDestination()
+									.equals(expectedMessage.getDestination())
+							&& capturedMessage.getWebSocketSessionId()
+									.equals(expectedMessage.getWebSocketSessionId())) {
 						found = capturedMessage;
 					}
 				}

@@ -31,14 +31,14 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.SessionLimitExceededException;
 import org.springframework.web.socket.messaging.SubProtocolHandler;
 
+import com.fasterxml.jackson.core.JsonFactory;
+
 import ch.rasc.wampspring.message.CallErrorMessage;
 import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.message.WampMessageHeader;
 import ch.rasc.wampspring.message.WelcomeMessage;
-
-import com.fasterxml.jackson.core.JsonFactory;
 
 /**
  * A WebSocket {@link SubProtocolHandler} for the WAMP v1 protocol.
@@ -92,9 +92,8 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 			outputChannel.send(wampMessage);
 		}
 		catch (Throwable ex) {
-			logger.error(
-					"Failed to send client message to application via MessageChannel"
-							+ " in session " + session.getId() + ".", ex);
+			logger.error("Failed to send client message to application via MessageChannel"
+					+ " in session " + session.getId() + ".", ex);
 
 			if (wampMessage != null && wampMessage instanceof CallMessage) {
 
@@ -156,12 +155,13 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 
 	@Override
 	public String resolveSessionId(Message<?> message) {
-		return (String) message.getHeaders().get(
-				WampMessageHeader.WEBSOCKET_SESSION_ID.name());
+		return (String) message.getHeaders()
+				.get(WampMessageHeader.WEBSOCKET_SESSION_ID.name());
 	}
 
 	@Override
-	public void afterSessionStarted(WebSocketSession session, MessageChannel outputChannel) {
+	public void afterSessionStarted(WebSocketSession session,
+			MessageChannel outputChannel) {
 		if (session.getTextMessageSizeLimit() < MINIMUM_WEBSOCKET_MESSAGE_SIZE) {
 			session.setTextMessageSizeLimit(MINIMUM_WEBSOCKET_MESSAGE_SIZE);
 		}
@@ -172,9 +172,8 @@ public class WampSubProtocolHandler implements SubProtocolHandler {
 			session.sendMessage(new TextMessage(welcomeMessage.toJson(this.jsonFactory)));
 		}
 		catch (IOException e) {
-			logger.error(
-					"Failed to send welcome message to client in session "
-							+ session.getId() + ".", e);
+			logger.error("Failed to send welcome message to client in session "
+					+ session.getId() + ".", e);
 		}
 	}
 

@@ -37,10 +37,10 @@ import ch.rasc.wampspring.config.DefaultWampConfiguration;
  * <pre class="code">
  * &#064;Service
  * public class MyService {
- * 
+ *
  * 	&#064;WampCallListener
  * 	public void doSomething(CallMessage message) { }
- * 
+ *
  * 	&#064;WampCallListener('callMe')
  * 	public void callMe(String argument) { }
  * }
@@ -59,7 +59,7 @@ public @interface WampCallListener {
 	 * One or more procURI(s) the method should listen on. If empty the default value
 	 * 'beanName.methodName' is used.
 	 */
-	String[] value() default {};
+	String[]value() default {};
 
 	/**
 	 * If true a call to this method has to be authenticated. If false no authentication
@@ -68,6 +68,6 @@ public @interface WampCallListener {
 	 * Takes precedence over {@link WampAuthenticated} and the global setting
 	 * {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
-	boolean[] authenticated() default {};
+	boolean[]authenticated() default {};
 
 }

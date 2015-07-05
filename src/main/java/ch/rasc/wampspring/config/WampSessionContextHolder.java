@@ -74,10 +74,9 @@ public abstract class WampSessionContextHolder {
 	public static WampSession currentAttributes() throws IllegalStateException {
 		WampSession attributes = getAttributes();
 		if (attributes == null) {
-			throw new IllegalStateException(
-					"No thread-bound WampSession found. "
-							+ "Your code is probably not processing a client message and executing in "
-							+ "message-handling methods invoked by the WampAnnotationMethodMessageHandler?");
+			throw new IllegalStateException("No thread-bound WampSession found. "
+					+ "Your code is probably not processing a client message and executing in "
+					+ "message-handling methods invoked by the WampAnnotationMethodMessageHandler?");
 		}
 		return attributes;
 	}

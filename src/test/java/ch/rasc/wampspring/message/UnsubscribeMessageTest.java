@@ -30,9 +30,8 @@ public class UnsubscribeMessageTest extends BaseMessageTest {
 
 		assertWampMessageTypeHeader(unsubscribeMessage, WampMessageType.UNSUBSCRIBE);
 		String json = unsubscribeMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.UNSUBSCRIBE.getTypeId(),
-						"http://example.com/simple"));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.UNSUBSCRIBE.getTypeId(),
+				"http://example.com/simple"));
 	}
 
 	@Test
@@ -44,9 +43,9 @@ public class UnsubscribeMessageTest extends BaseMessageTest {
 
 		assertWampMessageTypeHeader(unsubscribeMessage, WampMessageType.UNSUBSCRIBE);
 		assertThat(unsubscribeMessage.getType()).isEqualTo(WampMessageType.UNSUBSCRIBE);
-		assertThat(unsubscribeMessage.getTopicURI()).isEqualTo(
-				"http://example.com/simple");
-		assertThat(unsubscribeMessage.getDestination()).isEqualTo(
-				"http://example.com/simple");
+		assertThat(unsubscribeMessage.getTopicURI())
+				.isEqualTo("http://example.com/simple");
+		assertThat(unsubscribeMessage.getDestination())
+				.isEqualTo("http://example.com/simple");
 	}
 }

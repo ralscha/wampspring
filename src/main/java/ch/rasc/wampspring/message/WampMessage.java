@@ -27,11 +27,11 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.support.DestinationVariableMethodArgumentResolver;
 import org.springframework.web.socket.WebSocketSession;
 
-import ch.rasc.wampspring.config.WampSession;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
+import ch.rasc.wampspring.config.WampSession;
 
 public abstract class WampMessage implements Message<Object> {
 
@@ -61,10 +61,9 @@ public abstract class WampMessage implements Message<Object> {
 	}
 
 	public void setDestinationTemplateVariables(Map<String, String> vars) {
-		this.messageHeaders
-				.getRawHeaders()
-				.put(DestinationVariableMethodArgumentResolver.DESTINATION_TEMPLATE_VARIABLES_HEADER,
-						vars);
+		this.messageHeaders.getRawHeaders().put(
+				DestinationVariableMethodArgumentResolver.DESTINATION_TEMPLATE_VARIABLES_HEADER,
+				vars);
 	}
 
 	/**
@@ -130,8 +129,8 @@ public abstract class WampMessage implements Message<Object> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends WampMessage> T fromJson(JsonFactory jsonFactory,
-			String json, WampSession wampSession) throws IOException {
+	public static <T extends WampMessage> T fromJson(JsonFactory jsonFactory, String json,
+			WampSession wampSession) throws IOException {
 
 		try (JsonParser jp = jsonFactory.createParser(json)) {
 			if (jp.nextToken() != JsonToken.START_ARRAY) {

@@ -45,6 +45,9 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import org.springframework.web.socket.messaging.SubProtocolWebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.annotation.WampCallListener;
 import ch.rasc.wampspring.annotation.WampPublishListener;
@@ -59,15 +62,12 @@ import ch.rasc.wampspring.cra.DefaultAuthenticationHandler;
 import ch.rasc.wampspring.method.MethodParameterConverter;
 import ch.rasc.wampspring.method.WampAnnotationMethodMessageHandler;
 
-import com.fasterxml.jackson.databind.MappingJsonFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
  * To enable WAMP support create a @Configuration class that extends this class. Or add
  * {@link EnableWamp} to any @Configuration class.
  * <p>
- * If you overwrite a method annotated with @Bean, don't forget to add the annotation @Bean
- * to the overridden method as well.
+ * If you overwrite a method annotated with @Bean, don't forget to add the
+ * annotation @Bean to the overridden method as well.
  */
 @Configuration
 public class DefaultWampConfiguration {
@@ -203,8 +203,8 @@ public class DefaultWampConfiguration {
 
 		AuthenticationHandler authenticationHandler = authenticationHandler();
 		if (authenticationHandler != null) {
-			configurableApplicationContext.getBeanFactory().registerSingleton(
-					"authenticationHandler", authenticationHandler);
+			configurableApplicationContext.getBeanFactory()
+					.registerSingleton("authenticationHandler", authenticationHandler);
 		}
 
 		WampAnnotationMethodMessageHandler messageHandler = new WampAnnotationMethodMessageHandler(
@@ -229,7 +229,8 @@ public class DefaultWampConfiguration {
 		return WampMessageSelectors.ACCEPT_ALL;
 	}
 
-	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+	public void addArgumentResolvers(
+			List<HandlerMethodArgumentResolver> argumentResolvers) {
 		for (WampConfigurer wc : this.configurers) {
 			wc.addArgumentResolvers(argumentResolvers);
 		}
@@ -385,11 +386,11 @@ public class DefaultWampConfiguration {
 	 * <pre class="code">
 	 * &#064;Configuration
 	 * public class WampConfig extends DefaultWampConfiguration {
-	 * 
+	 *
 	 * 	public void registerWampEndpoints(WampEndpointRegistry registry) {
 	 * 		registry.addEndpoint(&quot;/wamp&quot;).withSockJS().setTaskScheduler(myScheduler());
 	 * 	}
-	 * 
+	 *
 	 * 	// ...
 	 * }
 	 * </pre>

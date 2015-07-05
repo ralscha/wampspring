@@ -57,7 +57,7 @@ import org.springframework.context.annotation.Import;
  * <pre class="code">
  * &#064;Configuration
  * public class MyAppConfig extends DefaultWampConfiguration {
- * 
+ *
  * 	&#064;Bean
  * 	public Executor clientInboundChannelExecutor() {
  * 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -67,15 +67,15 @@ import org.springframework.context.annotation.Import;
  * 		executor.setKeepAliveSeconds(120);
  * 		executor.setQueueCapacity(2000);
  * 		executor.setAllowCoreThreadTimeOut(true);
- * 
+ *
  * 		return executor;
  * 	}
- * 
+ *
  * 	&#064;Override
  * 	public void registerWampEndpoints(WampEndpointRegistry registry) {
  * 		registry.addEndpoint(&quot;/wamp&quot;).withSockJS();
  * 	}
- * 
+ *
  * }
  * </pre>
  */

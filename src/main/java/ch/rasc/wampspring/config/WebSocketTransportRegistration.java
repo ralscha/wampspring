@@ -112,7 +112,8 @@ public class WebSocketTransportRegistration {
 	 * messages; if the value is less than or equal to 0 then buffering is effectively
 	 * disabled.
 	 */
-	public WebSocketTransportRegistration setSendBufferSizeLimit(int sendBufferSizeLimit) {
+	public WebSocketTransportRegistration setSendBufferSizeLimit(
+			int sendBufferSizeLimit) {
 		this.sendBufferSizeLimit = sendBufferSizeLimit;
 		return this;
 	}

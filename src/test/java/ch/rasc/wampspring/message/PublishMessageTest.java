@@ -36,17 +36,15 @@ public class PublishMessageTest extends BaseMessageTest {
 		assertWampMessageTypeHeader(publishMessage, WampMessageType.PUBLISH);
 
 		String json = publishMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.PUBLISH.getTypeId(),
-						"http://example.com/simple", "Hello, world!"));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.PUBLISH.getTypeId(),
+				"http://example.com/simple", "Hello, world!"));
 
 		publishMessage = new PublishMessage("http://example.com/simple", null);
 		assertWampMessageTypeHeader(publishMessage, WampMessageType.PUBLISH);
 
 		json = publishMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.PUBLISH.getTypeId(),
-						"http://example.com/simple", null));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.PUBLISH.getTypeId(),
+				"http://example.com/simple", null));
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("rand", 0.09187032734575862);
@@ -58,12 +56,11 @@ public class PublishMessageTest extends BaseMessageTest {
 		assertWampMessageTypeHeader(publishMessage, WampMessageType.PUBLISH);
 
 		json = publishMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.PUBLISH.getTypeId(),
-						"http://example.com/event#myevent2", map));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.PUBLISH.getTypeId(),
+				"http://example.com/event#myevent2", map));
 
-		publishMessage = new PublishMessage("event:myevent1", "hello", new TreeSet<>(
-				Arrays.asList("NwtXQ8rdfPsy-ewS", "dYqgDl0FthI6_hjb")));
+		publishMessage = new PublishMessage("event:myevent1", "hello",
+				new TreeSet<>(Arrays.asList("NwtXQ8rdfPsy-ewS", "dYqgDl0FthI6_hjb")));
 		assertWampMessageTypeHeader(publishMessage, WampMessageType.PUBLISH);
 
 		json = publishMessage.toJson(getJsonFactory());
@@ -72,31 +69,28 @@ public class PublishMessageTest extends BaseMessageTest {
 						"hello", Arrays.asList("NwtXQ8rdfPsy-ewS", "dYqgDl0FthI6_hjb")));
 
 		publishMessage = new PublishMessage("event:myevent1", "hello",
-				Collections.<String> emptySet(), new TreeSet<>(
-						Arrays.asList("NwtXQ8rdfPsy-ewS")));
+				Collections.<String> emptySet(),
+				new TreeSet<>(Arrays.asList("NwtXQ8rdfPsy-ewS")));
 		assertWampMessageTypeHeader(publishMessage, WampMessageType.PUBLISH);
 
 		json = publishMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.PUBLISH.getTypeId(), "event:myevent1",
-						"hello", Collections.emptyList(),
-						Arrays.asList("NwtXQ8rdfPsy-ewS")));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.PUBLISH.getTypeId(),
+				"event:myevent1", "hello", Collections.emptyList(),
+				Arrays.asList("NwtXQ8rdfPsy-ewS")));
 
 		publishMessage = new PublishMessage("event:myevent1", "true", Boolean.TRUE);
 		assertWampMessageTypeHeader(publishMessage, WampMessageType.PUBLISH);
 
 		json = publishMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.PUBLISH.getTypeId(), "event:myevent1",
-						"true", Boolean.TRUE));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.PUBLISH.getTypeId(),
+				"event:myevent1", "true", Boolean.TRUE));
 
 		publishMessage = new PublishMessage("event:myevent1", "false", Boolean.FALSE);
 		assertWampMessageTypeHeader(publishMessage, WampMessageType.PUBLISH);
 
 		json = publishMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.PUBLISH.getTypeId(), "event:myevent1",
-						"false"));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.PUBLISH.getTypeId(),
+				"event:myevent1", "false"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -172,11 +166,11 @@ public class PublishMessageTest extends BaseMessageTest {
 				MapEntry.entry("flag", Boolean.FALSE), MapEntry.entry("num", 23),
 				MapEntry.entry("name", "Kross"),
 				MapEntry.entry("created", "2012-03-29T10:41:09.864Z"));
-		assertThat((Map<String, Object>) publishMessage.getPayload()).hasSize(5)
-				.contains(MapEntry.entry("rand", 0.09187032734575862),
-						MapEntry.entry("flag", Boolean.FALSE), MapEntry.entry("num", 23),
-						MapEntry.entry("name", "Kross"),
-						MapEntry.entry("created", "2012-03-29T10:41:09.864Z"));
+		assertThat((Map<String, Object>) publishMessage.getPayload()).hasSize(5).contains(
+				MapEntry.entry("rand", 0.09187032734575862),
+				MapEntry.entry("flag", Boolean.FALSE), MapEntry.entry("num", 23),
+				MapEntry.entry("name", "Kross"),
+				MapEntry.entry("created", "2012-03-29T10:41:09.864Z"));
 		assertThat(publishMessage.getExcludeMe()).isNull();
 		assertThat(publishMessage.getExclude()).isNull();
 		assertThat(publishMessage.getEligible()).isNull();

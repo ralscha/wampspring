@@ -188,17 +188,19 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 	private List<? extends HandlerMethodArgumentResolver> initArgumentResolvers() {
 		ConfigurableBeanFactory beanFactory = ClassUtils.isAssignableValue(
-				ConfigurableApplicationContext.class, this.applicationContext) ? ((ConfigurableApplicationContext) this.applicationContext)
-				.getBeanFactory() : null;
+				ConfigurableApplicationContext.class, this.applicationContext)
+						? ((ConfigurableApplicationContext) this.applicationContext)
+								.getBeanFactory()
+						: null;
 
 		List<HandlerMethodArgumentResolver> resolvers = new ArrayList<>();
 
 		// Annotation-based argument resolution
-		resolvers.add(new HeaderMethodArgumentResolver(this.conversionService,
-				beanFactory));
+		resolvers.add(
+				new HeaderMethodArgumentResolver(this.conversionService, beanFactory));
 		resolvers.add(new HeadersMethodArgumentResolver());
-		resolvers.add(new DestinationVariableMethodArgumentResolver(
-				this.conversionService));
+		resolvers.add(
+				new DestinationVariableMethodArgumentResolver(this.conversionService));
 
 		// Type-based argument resolution
 		resolvers.add(new PrincipalMethodArgumentResolver());
@@ -213,7 +215,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 		return resolvers;
 	}
 
-	private void handleMatchInternal(WampHandlerMethod handlerMethod, WampMessage message) {
+	private void handleMatchInternal(WampHandlerMethod handlerMethod,
+			WampMessage message) {
 
 		if (this.logger.isDebugEnabled()) {
 			this.logger.debug("Invoking " + handlerMethod.getShortLogMessage());
@@ -247,8 +250,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 		if (wampSession != null && !wampSession.isAuthenticated()
 				&& handlerMethod.isAuthenticationRequired()) {
 
-			if (!(message instanceof UnsubscribeMessage && ((UnsubscribeMessage) message)
-					.isCleanup())) {
+			if (!(message instanceof UnsubscribeMessage
+					&& ((UnsubscribeMessage) message).isCleanup())) {
 				throw new SecurityException("Not authenticated");
 			}
 
@@ -258,8 +261,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	@Override
 	public void handleMessage(Message<?> message) throws MessagingException {
 
-		if (!(message instanceof WampMessage && this.wampMessageSelector
-				.accept((WampMessage) message))) {
+		if (!(message instanceof WampMessage
+				&& this.wampMessageSelector.accept((WampMessage) message))) {
 			return;
 		}
 
@@ -278,7 +281,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 			checkAuthentication(handlerMethod, callMessage);
 
 			InvocableWampHandlerMethod invocable = new InvocableWampHandlerMethod(
-					handlerMethod.createWithResolvedBean(), this.methodParameterConverter);
+					handlerMethod.createWithResolvedBean(),
+					this.methodParameterConverter);
 			invocable.setMessageMethodArgumentResolvers(this.argumentResolvers);
 
 			Object[] arguments = null;
@@ -306,8 +310,9 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 	public void send(WampMessage wampMessage) {
 		long timeout = this.sendTimeout;
-		boolean sent = timeout >= 0 ? this.clientOutboundChannel.send(wampMessage,
-				timeout) : this.clientOutboundChannel.send(wampMessage);
+		boolean sent = timeout >= 0
+				? this.clientOutboundChannel.send(wampMessage, timeout)
+				: this.clientOutboundChannel.send(wampMessage);
 
 		if (!sent) {
 			throw new MessageDeliveryException(wampMessage,
@@ -366,7 +371,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 				new MethodFilter() {
 					@Override
 					public boolean matches(Method method) {
-						return AnnotationUtils.findAnnotation(method, annotationType) != null;
+						return AnnotationUtils.findAnnotation(method,
+								annotationType) != null;
 					}
 				});
 
@@ -379,8 +385,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 			Boolean broadcast = (Boolean) AnnotationUtils.getValue(annotation,
 					"broadcast");
 
-			boolean authenticationRequiredClass = AnnotationUtils.findAnnotation(
-					userType, WampAuthenticated.class) != null;
+			boolean authenticationRequiredClass = AnnotationUtils.findAnnotation(userType,
+					WampAuthenticated.class) != null;
 			boolean[] authenticationRequiredMethod = (boolean[]) AnnotationUtils
 					.getValue(annotation, "authenticated");
 
@@ -406,8 +412,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 			WampMessageMappingInfo mapping = null;
 
 			if (annotationType.equals(WampCallListener.class)) {
-				mapping = new WampMessageMappingInfo(
-						WampMessageTypeMessageCondition.CALL,
+				mapping = new WampMessageMappingInfo(WampMessageTypeMessageCondition.CALL,
 						new DestinationPatternsMessageCondition(destinations,
 								this.pathMatcher));
 			}
@@ -494,7 +499,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	 * ones configured by default. This is an advanced option. For most use cases it
 	 * should be sufficient to use {@link #setCustomArgumentResolvers(java.util.List)}.
 	 */
-	public void setArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+	public void setArgumentResolvers(
+			List<HandlerMethodArgumentResolver> argumentResolvers) {
 		if (argumentResolvers == null) {
 			this.argumentResolvers.clear();
 			return;
@@ -519,7 +525,8 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 			this.argumentResolvers.addResolvers(initArgumentResolvers());
 		}
 
-		for (String beanName : this.applicationContext.getBeanNamesForType(Object.class)) {
+		for (String beanName : this.applicationContext
+				.getBeanNamesForType(Object.class)) {
 			detectHandlerMethods(beanName);
 		}
 	}
@@ -566,13 +573,14 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	}
 
 	private void handleMatch(WampMessageMappingInfo mapping,
-			WampHandlerMethod handlerMethod, String lookupDestination, WampMessage message) {
+			WampHandlerMethod handlerMethod, String lookupDestination,
+			WampMessage message) {
 
 		if (!"**".equals(message.getDestination())) {
 			String matchedPattern = mapping.getDestinationConditions().getPatterns()
 					.iterator().next();
-			Map<String, String> vars = this.pathMatcher.extractUriTemplateVariables(
-					matchedPattern, lookupDestination);
+			Map<String, String> vars = this.pathMatcher
+					.extractUriTemplateVariables(matchedPattern, lookupDestination);
 
 			if (!CollectionUtils.isEmpty(vars)) {
 				message.setDestinationTemplateVariables(vars);

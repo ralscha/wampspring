@@ -43,12 +43,14 @@ public class AbstractWampConfigurer implements WampConfigurer {
 	}
 
 	@Override
-	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+	public void addArgumentResolvers(
+			List<HandlerMethodArgumentResolver> argumentResolvers) {
 		// by default nothing here
 	}
 
 	@Override
-	public void addHandshakeInterceptors(List<HandshakeInterceptor> handshakeInterceptors) {
+	public void addHandshakeInterceptors(
+			List<HandshakeInterceptor> handshakeInterceptors) {
 		// by default nothing here
 	}
 

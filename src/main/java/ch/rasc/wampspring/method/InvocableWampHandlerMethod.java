@@ -71,7 +71,8 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 	 * <p>
 	 * Default is a {@link org.springframework.core.DefaultParameterNameDiscoverer}.
 	 */
-	public void setParameterNameDiscoverer(ParameterNameDiscoverer parameterNameDiscoverer) {
+	public void setParameterNameDiscoverer(
+			ParameterNameDiscoverer parameterNameDiscoverer) {
 		this.parameterNameDiscoverer = parameterNameDiscoverer;
 	}
 
@@ -113,9 +114,8 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 				}
 				catch (Exception ex) {
 					if (this.logger.isTraceEnabled()) {
-						this.logger.trace(
-								getArgumentResolutionErrorMessage(
-										"Error resolving argument", i), ex);
+						this.logger.trace(getArgumentResolutionErrorMessage(
+								"Error resolving argument", i), ex);
 					}
 					throw ex;
 				}
@@ -169,8 +169,8 @@ public class InvocableWampHandlerMethod extends HandlerMethod {
 		}
 		catch (IllegalArgumentException ex) {
 			assertTargetBean(getBridgedMethod(), getBean(), args);
-			throw new IllegalStateException(getInvocationErrorMessage(ex.getMessage(),
-					args), ex);
+			throw new IllegalStateException(
+					getInvocationErrorMessage(ex.getMessage(), args), ex);
 		}
 		catch (InvocationTargetException ex) {
 			// Unwrap for HandlerExceptionResolvers ...

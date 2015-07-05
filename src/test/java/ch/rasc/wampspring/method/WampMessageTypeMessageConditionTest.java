@@ -31,12 +31,12 @@ public class WampMessageTypeMessageConditionTest {
 
 	@Test
 	public void testGetMessageType() {
-		assertThat(WampMessageTypeMessageCondition.CALL.getMessageType()).isEqualTo(
-				WampMessageType.CALL);
-		assertThat(WampMessageTypeMessageCondition.PUBLISH.getMessageType()).isEqualTo(
-				WampMessageType.PUBLISH);
-		assertThat(WampMessageTypeMessageCondition.SUBSCRIBE.getMessageType()).isEqualTo(
-				WampMessageType.SUBSCRIBE);
+		assertThat(WampMessageTypeMessageCondition.CALL.getMessageType())
+				.isEqualTo(WampMessageType.CALL);
+		assertThat(WampMessageTypeMessageCondition.PUBLISH.getMessageType())
+				.isEqualTo(WampMessageType.PUBLISH);
+		assertThat(WampMessageTypeMessageCondition.SUBSCRIBE.getMessageType())
+				.isEqualTo(WampMessageType.SUBSCRIBE);
 		assertThat(WampMessageTypeMessageCondition.UNSUBSCRIBE.getMessageType())
 				.isEqualTo(WampMessageType.UNSUBSCRIBE);
 
@@ -48,24 +48,19 @@ public class WampMessageTypeMessageConditionTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetContent() {
-		assertThat(
-				(Collection<WampMessageType>) WampMessageTypeMessageCondition.CALL
-						.getContent()).hasSize(1).containsExactly(WampMessageType.CALL);
+		assertThat((Collection<WampMessageType>) WampMessageTypeMessageCondition.CALL
+				.getContent()).hasSize(1).containsExactly(WampMessageType.CALL);
 
-		assertThat(
-				(Collection<WampMessageType>) WampMessageTypeMessageCondition.PUBLISH
-						.getContent()).hasSize(1)
-				.containsExactly(WampMessageType.PUBLISH);
+		assertThat((Collection<WampMessageType>) WampMessageTypeMessageCondition.PUBLISH
+				.getContent()).hasSize(1).containsExactly(WampMessageType.PUBLISH);
 
-		assertThat(
-				(Collection<WampMessageType>) WampMessageTypeMessageCondition.SUBSCRIBE
-						.getContent()).hasSize(1).containsExactly(
-				WampMessageType.SUBSCRIBE);
+		assertThat((Collection<WampMessageType>) WampMessageTypeMessageCondition.SUBSCRIBE
+				.getContent()).hasSize(1).containsExactly(WampMessageType.SUBSCRIBE);
 
 		assertThat(
 				(Collection<WampMessageType>) WampMessageTypeMessageCondition.UNSUBSCRIBE
-						.getContent()).hasSize(1).containsExactly(
-				WampMessageType.UNSUBSCRIBE);
+						.getContent()).hasSize(1)
+								.containsExactly(WampMessageType.UNSUBSCRIBE);
 
 		WampMessageTypeMessageCondition cond = new WampMessageTypeMessageCondition(
 				WampMessageType.CALL);

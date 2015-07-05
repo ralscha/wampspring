@@ -83,8 +83,8 @@ public class SockJsTest extends BaseWampTest {
 				this.jsonFactory);
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 			SubscribeMessage subscribeMsg = new SubscribeMessage("/topic");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("/topic", "payload");
 			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
@@ -96,8 +96,8 @@ public class SockJsTest extends BaseWampTest {
 			result.reset();
 
 			UnsubscribeMessage unsubscribeMsg = new UnsubscribeMessage("/topic");
-			webSocketSession.sendMessage(new TextMessage(unsubscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(
+					new TextMessage(unsubscribeMsg.toJson(this.jsonFactory)));
 
 			try {
 				pm = new PublishMessage("/topic", "payload2");

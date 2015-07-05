@@ -86,8 +86,8 @@ public class WampSessionScope implements Scope {
 	}
 
 	@SuppressWarnings("serial")
-	public static class WampSessionObjectFactory implements ObjectFactory<WampSession>,
-			Serializable {
+	public static class WampSessionObjectFactory
+			implements ObjectFactory<WampSession>, Serializable {
 
 		@Override
 		public WampSession getObject() {
@@ -101,8 +101,8 @@ public class WampSessionScope implements Scope {
 	}
 
 	@SuppressWarnings("serial")
-	public static class WebSocketSessionObjectFactory implements
-			ObjectFactory<WebSocketSession>, Serializable {
+	public static class WebSocketSessionObjectFactory
+			implements ObjectFactory<WebSocketSession>, Serializable {
 
 		@Override
 		public WebSocketSession getObject() {

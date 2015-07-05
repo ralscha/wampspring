@@ -61,8 +61,8 @@ public class PubSubTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("topicURI");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("topicURI", "a message");
 			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
@@ -73,8 +73,8 @@ public class PubSubTest extends BaseWampTest {
 
 			result.reset();
 			UnsubscribeMessage unsubscribeMsg = new UnsubscribeMessage("topicURI");
-			webSocketSession.sendMessage(new TextMessage(unsubscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession.sendMessage(
+					new TextMessage(unsubscribeMsg.toJson(this.jsonFactory)));
 
 			pm = new PublishMessage("topicURI", "a second message");
 			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
@@ -93,8 +93,8 @@ public class PubSubTest extends BaseWampTest {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage(
 					"pubSubService.dto.result");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			TestDto testDto = new TestDto();
 			testDto.setName("Hello PubSub");
@@ -117,8 +117,8 @@ public class PubSubTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("secondTopic");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			EventMessage event = (EventMessage) result.getWampMessage();
 			assertThat(event.getTopicURI()).isEqualTo("secondTopic");
@@ -136,8 +136,8 @@ public class PubSubTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("resultTopic");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("sumTopic", Arrays.asList(1, 2, 3, 4));
 			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));
@@ -150,8 +150,8 @@ public class PubSubTest extends BaseWampTest {
 
 	private void testExcludeEligible(Boolean excludeMe, List<Integer> exclude,
 			List<Integer> eligible, List<Integer> expectedReceiver)
-			throws InterruptedException, ExecutionException, IOException,
-			TimeoutException {
+					throws InterruptedException, ExecutionException, IOException,
+					TimeoutException {
 		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
 		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
@@ -181,12 +181,12 @@ public class PubSubTest extends BaseWampTest {
 				if (eligible != null) {
 					Set<String> eligibleSet = new HashSet<>();
 					if (eligible.contains(1)) {
-						eligibleSet.add(result1.getWelcomeMessage()
-								.getWebSocketSessionId());
+						eligibleSet
+								.add(result1.getWelcomeMessage().getWebSocketSessionId());
 					}
 					if (eligible.contains(2)) {
-						eligibleSet.add(result2.getWelcomeMessage()
-								.getWebSocketSessionId());
+						eligibleSet
+								.add(result2.getWelcomeMessage().getWebSocketSessionId());
 					}
 
 					pm = new PublishMessage("anotherTopic", "the test message",
@@ -264,14 +264,16 @@ public class PubSubTest extends BaseWampTest {
 		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(1),
 				Collections.<Integer> emptyList());
 		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(2), Arrays.asList(2));
-		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(1, 2), Arrays.asList(2));
+		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(1, 2),
+				Arrays.asList(2));
 
 		testExcludeEligible(null, Arrays.asList(2), Collections.<Integer> emptyList(),
 				Collections.<Integer> emptyList());
 		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(1), Arrays.asList(1));
 		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(2),
 				Collections.<Integer> emptyList());
-		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(1, 2), Arrays.asList(1));
+		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(1, 2),
+				Arrays.asList(1));
 
 		testExcludeEligible(null, Arrays.asList(1, 2), Collections.<Integer> emptyList(),
 				Collections.<Integer> emptyList());
@@ -291,8 +293,8 @@ public class PubSubTest extends BaseWampTest {
 		try (WebSocketSession webSocketSession = startWebSocketSession(result)) {
 
 			SubscribeMessage subscribeMsg = new SubscribeMessage("payloadMethodResult");
-			webSocketSession.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 
 			PublishMessage pm = new PublishMessage("payloadMethod", "payload");
 			webSocketSession.sendMessage(new TextMessage(pm.toJson(this.jsonFactory)));

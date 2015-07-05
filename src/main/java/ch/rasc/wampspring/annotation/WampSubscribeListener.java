@@ -39,11 +39,11 @@ import ch.rasc.wampspring.message.EventMessage;
  * <pre class="code">
  * &#064;Service
  * public class MyService {
- * 
+ *
  * 	&#064;WampSubscribeListener
  * 	public void feed() {
  * 	}
- * 
+ *
  * 	&#064;WampSubscribeListener(&quot;/topic/news&quot;)
  * 	public void subscribeNews(SubscribeMessage message) {
  * 	}
@@ -55,14 +55,11 @@ import ch.rasc.wampspring.message.EventMessage;
  * {@link EventMessage} and sent to the broker which sends by default an EVENT message to
  * every subscriber of the listed {@link #replyTo()} destinations.
  * <ul>
- * <li>
- * When the {@link #excludeSender()} attribute is true the sender of the SUBSCRIBE message
- * will not receive the EVENT message.</li>
- * <li>
- * When the {@link #broadcast()} attribute is false only the sender of the SUBSCRIBE
+ * <li>When the {@link #excludeSender()} attribute is true the sender of the SUBSCRIBE
+ * message will not receive the EVENT message.</li>
+ * <li>When the {@link #broadcast()} attribute is false only the sender of the SUBSCRIBE
  * message will receive the EVENT message.</li>
- * <li>
- * When {@link #excludeSender()} is true and {@link #broadcast()} is false no one will
+ * <li>When {@link #excludeSender()} is true and {@link #broadcast()} is false no one will
  * receive an EVENT message.</li>
  * </ul>
  */
@@ -75,7 +72,7 @@ public @interface WampSubscribeListener {
 	 * One or more topicURI(s)/destination(s) the method should listen on. If empty the
 	 * default value 'beanName.methodName' is used.
 	 */
-	String[] value() default {};
+	String[]value() default {};
 
 	/**
 	 * If not empty the return value of this method (wrapped in an {@link EventMessage})
@@ -83,7 +80,7 @@ public @interface WampSubscribeListener {
 	 * is ignored when the method does not have a return value or the return value is
 	 * {@code null}.
 	 */
-	String[] replyTo() default {};
+	String[]replyTo() default {};
 
 	/**
 	 * Exclude the sender of the SUBSCRIBE message from the replyTo receivers.
@@ -116,5 +113,5 @@ public @interface WampSubscribeListener {
 	 * Takes precedence over {@link WampAuthenticated} and the global setting
 	 * {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
-	boolean[] authenticated() default {};
+	boolean[]authenticated() default {};
 }

@@ -43,10 +43,10 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.annotation.Validated;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ch.rasc.wampspring.annotation.WampPublishListener;
 import ch.rasc.wampspring.message.PublishMessage;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Test fixture for {@link PayloadArgumentResolver}.
@@ -97,8 +97,8 @@ public class PayloadArgumentResolverTest {
 		this.paramAnnotatedRequired = getMethodParameter(this.payloadMethod, 2);
 		this.paramWithSpelExpression = getMethodParameter(this.payloadMethod, 3);
 		this.paramValidated = getMethodParameter(this.payloadMethod, 4);
-		this.paramValidated
-				.initParameterNameDiscovery(new LocalVariableTableParameterNameDiscoverer());
+		this.paramValidated.initParameterNameDiscovery(
+				new LocalVariableTableParameterNameDiscoverer());
 		this.paramValidatedNotAnnotated = getMethodParameter(this.payloadMethod, 5);
 		this.paramNotAnnotated = getMethodParameter(this.payloadMethod, 6);
 	}
@@ -111,7 +111,7 @@ public class PayloadArgumentResolverTest {
 				String.class);
 		assertThat(
 				this.resolver.supportsParameter(getMethodParameter(nonPublishMethod, 0)))
-				.isFalse();
+						.isFalse();
 	}
 
 	@Test
@@ -238,9 +238,8 @@ public class PayloadArgumentResolverTest {
 			@Payload(required = false) String paramNotRequired,
 			@Payload(required = true) String requiredParam,
 			@Payload("foo.bar") String paramWithSpelExpression,
-			@MyValid @Payload String validParam,
-			@Validated String validParamNotAnnotated, String paramNotAnnotated,
-			Integer numberParameter) {
+			@MyValid @Payload String validParam, @Validated String validParamNotAnnotated,
+			String paramNotAnnotated, Integer numberParameter) {
 		// nothing here
 	}
 

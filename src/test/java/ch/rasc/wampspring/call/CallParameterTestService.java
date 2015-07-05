@@ -34,8 +34,8 @@ import ch.rasc.wampspring.message.WampMessageType;
 public class CallParameterTestService {
 
 	@WampCallListener(value = "headerMethod")
-	public String headerMethod(WampSession wampSession, @Header(
-			value = "WEBSOCKET_SESSION_ID") String webSocketSessionId) {
+	public String headerMethod(WampSession wampSession,
+			@Header(value = "WEBSOCKET_SESSION_ID") String webSocketSessionId) {
 		return "headerMethod called: "
 				+ wampSession.getWebSocketSessionId().equals(webSocketSessionId);
 	}
@@ -49,7 +49,7 @@ public class CallParameterTestService {
 
 		assertThat(
 				(WampMessageType) headers.get(WampMessageHeader.WAMP_MESSAGE_TYPE.name()))
-				.isEqualTo(WampMessageType.CALL);
+						.isEqualTo(WampMessageType.CALL);
 
 		return "headersMethod called";
 	}
@@ -68,8 +68,8 @@ public class CallParameterTestService {
 
 	@WampCallListener(value = "messageMethod/{id}")
 	public String mix(String param1, CallMessage message, int param2,
-			WampSession wampSession, @Headers Map<String, Object> headers, @Header(
-					value = "WAMP_MESSAGE_TYPE") WampMessageType wampMessageType,
+			WampSession wampSession, @Headers Map<String, Object> headers,
+			@Header(value = "WAMP_MESSAGE_TYPE") WampMessageType wampMessageType,
 			float param3, @DestinationVariable("id") int id, String param4) {
 
 		assertThat(param1).isEqualTo("param1");

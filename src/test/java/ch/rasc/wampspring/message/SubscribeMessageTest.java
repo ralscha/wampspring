@@ -30,9 +30,8 @@ public class SubscribeMessageTest extends BaseMessageTest {
 
 		assertWampMessageTypeHeader(subscribeMessage, WampMessageType.SUBSCRIBE);
 		String json = subscribeMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.SUBSCRIBE.getTypeId(),
-						"http://example.com/simple"));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.SUBSCRIBE.getTypeId(),
+				"http://example.com/simple"));
 	}
 
 	@Test
@@ -44,8 +43,8 @@ public class SubscribeMessageTest extends BaseMessageTest {
 		assertWampMessageTypeHeader(subscribeMessage, WampMessageType.SUBSCRIBE);
 		assertThat(subscribeMessage.getType()).isEqualTo(WampMessageType.SUBSCRIBE);
 		assertThat(subscribeMessage.getTopicURI()).isEqualTo("http://example.com/simple");
-		assertThat(subscribeMessage.getDestination()).isEqualTo(
-				"http://example.com/simple");
+		assertThat(subscribeMessage.getDestination())
+				.isEqualTo("http://example.com/simple");
 
 	}
 }

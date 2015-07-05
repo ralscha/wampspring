@@ -44,8 +44,8 @@ import ch.rasc.wampspring.testsupport.CompletableFutureWebSocketHandler;
 public class DirectTest extends BaseWampTest {
 
 	@Test
-	public void testDirect() throws InterruptedException, ExecutionException,
-			IOException, TimeoutException {
+	public void testDirect() throws InterruptedException, ExecutionException, IOException,
+			TimeoutException {
 		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
 		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
@@ -59,15 +59,15 @@ public class DirectTest extends BaseWampTest {
 
 			// Client 1 subscribe
 			SubscribeMessage subscribeMsg = new SubscribeMessage("/topic/1");
-			webSocketSession1.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession1
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 			waitForMessage(result1);
 
 			// Client 2 subscribe
 			result1.reset(1);
 			subscribeMsg = new SubscribeMessage("/topic/2");
-			webSocketSession2.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession2
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 			waitForMessage(result2);
 			EventMessage response1 = (EventMessage) result1.getWampMessage();
 			assertThat(response1.getTopicURI()).isEqualTo("/topic");
@@ -77,8 +77,8 @@ public class DirectTest extends BaseWampTest {
 			result1.reset(1);
 			result2.reset(1);
 			subscribeMsg = new SubscribeMessage("/topic/3");
-			webSocketSession3.sendMessage(new TextMessage(subscribeMsg
-					.toJson(this.jsonFactory)));
+			webSocketSession3
+					.sendMessage(new TextMessage(subscribeMsg.toJson(this.jsonFactory)));
 			waitForMessage(result3);
 			response1 = (EventMessage) result1.getWampMessage();
 			assertThat(response1.getTopicURI()).isEqualTo("/topic");
@@ -91,8 +91,9 @@ public class DirectTest extends BaseWampTest {
 			result1.reset(1);
 			result2.reset(1);
 			result3.reset(1);
-			webSocketSession1.sendMessage(new TextMessage(new PublishMessage("/topic",
-					"fromClient1").toJson(this.jsonFactory)));
+			webSocketSession1.sendMessage(
+					new TextMessage(new PublishMessage("/topic", "fromClient1")
+							.toJson(this.jsonFactory)));
 			response1 = (EventMessage) result1.getWampMessage();
 			assertThat(response1.getTopicURI()).isEqualTo("/topic");
 			assertThat(response1.getEvent()).isEqualTo("publish:fromClient1:1");
@@ -108,8 +109,8 @@ public class DirectTest extends BaseWampTest {
 			result2.reset();
 			result3.reset(1);
 			UnsubscribeMessage unsubscribeMessage = new UnsubscribeMessage("/topic");
-			webSocketSession2.sendMessage(new TextMessage(unsubscribeMessage
-					.toJson(this.jsonFactory)));
+			webSocketSession2.sendMessage(
+					new TextMessage(unsubscribeMessage.toJson(this.jsonFactory)));
 			waitForMessage(result2);
 			response1 = (EventMessage) result1.getWampMessage();
 			assertThat(response1.getTopicURI()).isEqualTo("/topic");
@@ -122,8 +123,9 @@ public class DirectTest extends BaseWampTest {
 			result1.reset(1);
 			result2.reset();
 			result3.reset(1);
-			webSocketSession3.sendMessage(new TextMessage(new PublishMessage("/topic",
-					"fromClient3").toJson(this.jsonFactory)));
+			webSocketSession3.sendMessage(
+					new TextMessage(new PublishMessage("/topic", "fromClient3")
+							.toJson(this.jsonFactory)));
 			response1 = (EventMessage) result1.getWampMessage();
 			assertThat(response1.getTopicURI()).isEqualTo("/topic");
 			assertThat(response1.getEvent()).isEqualTo("publish:fromClient3:3");

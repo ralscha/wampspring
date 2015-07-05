@@ -27,10 +27,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
+import com.fasterxml.jackson.core.JsonFactory;
+
 import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.message.WelcomeMessage;
-
-import com.fasterxml.jackson.core.JsonFactory;
 
 public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler {
 
@@ -105,20 +105,20 @@ public class CompletableFutureWebSocketHandler extends AbstractWebSocketHandler 
 		}
 	}
 
-	public WampMessage getWampMessage() throws InterruptedException, ExecutionException,
-			TimeoutException {
-		List<WampMessage> results = this.messageFuture
-				.get(this.timeout, TimeUnit.SECONDS);
+	public WampMessage getWampMessage()
+			throws InterruptedException, ExecutionException, TimeoutException {
+		List<WampMessage> results = this.messageFuture.get(this.timeout,
+				TimeUnit.SECONDS);
 		return results.get(0);
 	}
 
-	public List<WampMessage> getWampMessages() throws InterruptedException,
-			ExecutionException, TimeoutException {
+	public List<WampMessage> getWampMessages()
+			throws InterruptedException, ExecutionException, TimeoutException {
 		return this.messageFuture.get(this.timeout, TimeUnit.SECONDS);
 	}
 
-	public WelcomeMessage getWelcomeMessage() throws InterruptedException,
-			ExecutionException, TimeoutException {
+	public WelcomeMessage getWelcomeMessage()
+			throws InterruptedException, ExecutionException, TimeoutException {
 		return this.welcomeMessageFuture.get(this.timeout, TimeUnit.SECONDS);
 	}
 }

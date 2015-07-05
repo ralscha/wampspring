@@ -34,6 +34,8 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 import org.springframework.util.AntPathMatcher;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.config.WampMessageSelectors;
 import ch.rasc.wampspring.message.CallMessage;
@@ -43,8 +45,6 @@ import ch.rasc.wampspring.message.PublishMessage;
 import ch.rasc.wampspring.message.SubscribeMessage;
 import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.message.WampMessage;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Brian Clozel
@@ -96,8 +96,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 
 	@Test
 	public void testCall() {
-		CallMessage callMessage = new CallMessage("call1", "annotatedTestService.call",
-				1, 2);
+		CallMessage callMessage = new CallMessage("call1", "annotatedTestService.call", 1,
+				2);
 		this.messageHandler.handleMessage(callMessage);
 
 		verifyZeroInteractions(this.eventMessenger);
@@ -132,8 +132,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verify(this.eventMessenger, times(1)).sendToAll(stringCaptor.capture(),
 				objectCaptor.capture());
 		verifyZeroInteractions(this.clientOutboundChannel);
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.subscribeReplyTo");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.subscribeReplyTo");
 		assertThat(objectCaptor.getValue()).isEqualTo(3);
 	}
 
@@ -150,8 +150,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verifyZeroInteractions(this.clientOutboundChannel);
 		verify(this.eventMessenger, times(1)).sendToAllExcept(stringCaptor.capture(),
 				objectCaptor.capture(), string2Captor.capture());
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.subscribeExcludeMe");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.subscribeExcludeMe");
 		assertThat(objectCaptor.getValue()).isEqualTo(4);
 		assertThat(string2Captor.getValue()).isEqualTo("ws1");
 	}
@@ -169,8 +169,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verifyZeroInteractions(this.clientOutboundChannel);
 		verify(this.eventMessenger, times(1)).sendTo(stringCaptor.capture(),
 				objectCaptor.capture(), string2Captor.capture());
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.subscribeBroadcastOff");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.subscribeBroadcastOff");
 		assertThat(objectCaptor.getValue()).isEqualTo(44);
 		assertThat(string2Captor.getValue()).isEqualTo("ws1");
 	}
@@ -206,8 +206,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verify(this.eventMessenger, times(1)).sendToAll(stringCaptor.capture(),
 				objectCaptor.capture());
 		verifyZeroInteractions(this.clientOutboundChannel);
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.unsubscribeReplyTo");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.unsubscribeReplyTo");
 		assertThat(objectCaptor.getValue()).isEqualTo(6);
 	}
 
@@ -224,8 +224,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verifyZeroInteractions(this.clientOutboundChannel);
 		verify(this.eventMessenger, times(1)).sendToAllExcept(stringCaptor.capture(),
 				objectCaptor.capture(), string2Captor.capture());
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.unsubscribeExcludeMe");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.unsubscribeExcludeMe");
 		assertThat(objectCaptor.getValue()).isEqualTo(7);
 		assertThat(string2Captor.getValue()).isEqualTo("ws1");
 	}
@@ -243,8 +243,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verifyZeroInteractions(this.clientOutboundChannel);
 		verify(this.eventMessenger, times(1)).sendTo(stringCaptor.capture(),
 				objectCaptor.capture(), string2Captor.capture());
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.unsubscribeBroadcastOff");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.unsubscribeBroadcastOff");
 		assertThat(objectCaptor.getValue()).isEqualTo(77);
 		assertThat(string2Captor.getValue()).isEqualTo("ws1");
 	}
@@ -262,8 +262,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 
 	@Test
 	public void testPublish() {
-		PublishMessage publishMessage = new PublishMessage(
-				"annotatedTestService.publish", null);
+		PublishMessage publishMessage = new PublishMessage("annotatedTestService.publish",
+				null);
 		this.messageHandler.handleMessage(publishMessage);
 
 		verifyZeroInteractions(this.eventMessenger);
@@ -281,8 +281,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verify(this.eventMessenger, times(1)).sendToAll(stringCaptor.capture(),
 				objectCaptor.capture());
 		verifyZeroInteractions(this.clientOutboundChannel);
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.publishReplyTo");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.publishReplyTo");
 		assertThat(objectCaptor.getValue()).isEqualTo(9);
 	}
 
@@ -299,8 +299,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verifyZeroInteractions(this.clientOutboundChannel);
 		verify(this.eventMessenger, times(1)).sendToAllExcept(stringCaptor.capture(),
 				objectCaptor.capture(), string2Captor.capture());
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.publishExcludeMe");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.publishExcludeMe");
 		assertThat(objectCaptor.getValue()).isEqualTo(10);
 		assertThat(string2Captor.getValue()).isEqualTo("ws1");
 	}
@@ -318,8 +318,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		verifyZeroInteractions(this.clientOutboundChannel);
 		verify(this.eventMessenger, times(1)).sendTo(stringCaptor.capture(),
 				objectCaptor.capture(), string2Captor.capture());
-		assertThat(stringCaptor.getValue()).isEqualTo(
-				"annotatedTestService.publishBroadcastOff");
+		assertThat(stringCaptor.getValue())
+				.isEqualTo("annotatedTestService.publishBroadcastOff");
 		assertThat(objectCaptor.getValue()).isEqualTo(100);
 		assertThat(string2Captor.getValue()).isEqualTo("ws1");
 	}

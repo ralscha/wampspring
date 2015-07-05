@@ -33,16 +33,14 @@ public class CallResultMessageTest extends BaseMessageTest {
 				"Hello, I am a simple event.");
 		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
 		String json = callResultMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
-						"Hello, I am a simple event."));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.CALLRESULT.getTypeId(),
+				"CcDnuI2bl2oLGBzO", "Hello, I am a simple event."));
 
 		callResultMessage = new CallResultMessage(callMessage, null);
 		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
 		json = callResultMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
-						null));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.CALLRESULT.getTypeId(),
+				"CcDnuI2bl2oLGBzO", null));
 
 		Map<String, Object> eventObject = new HashMap<>();
 		eventObject.put("value3", Boolean.TRUE);
@@ -54,17 +52,16 @@ public class CallResultMessageTest extends BaseMessageTest {
 				eventObject);
 		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
 		json = mapCallResultMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.CALLRESULT.getTypeId(), "CcDnuI2bl2oLGBzO",
-						eventObject));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.CALLRESULT.getTypeId(),
+				"CcDnuI2bl2oLGBzO", eventObject));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void deserializationTest() throws IOException {
 		String json = toJsonArray(3, "CcDnuI2bl2oLGBzO", null);
-		CallResultMessage callResultMessage = WampMessage
-				.fromJson(getJsonFactory(), json);
+		CallResultMessage callResultMessage = WampMessage.fromJson(getJsonFactory(),
+				json);
 		assertWampMessageTypeHeader(callResultMessage, WampMessageType.CALLRESULT);
 		assertThat(callResultMessage.getType()).isEqualTo(WampMessageType.CALLRESULT);
 		assertThat(callResultMessage.getCallID()).isEqualTo("CcDnuI2bl2oLGBzO");

@@ -32,16 +32,14 @@ public class EventMessageTest extends BaseMessageTest {
 				"Hello, I am a simple event.");
 		assertWampMessageTypeHeader(eventMessage, WampMessageType.EVENT);
 		String json = eventMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.EVENT.getTypeId(),
-						"http://example.com/simple", "Hello, I am a simple event."));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.EVENT.getTypeId(),
+				"http://example.com/simple", "Hello, I am a simple event."));
 
 		eventMessage = new EventMessage("http://example.com/simple", null);
 		assertWampMessageTypeHeader(eventMessage, WampMessageType.EVENT);
 		json = eventMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.EVENT.getTypeId(),
-						"http://example.com/simple", null));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.EVENT.getTypeId(),
+				"http://example.com/simple", null));
 
 		Map<String, Object> eventObject = new HashMap<>();
 		eventObject.put("rand", 0.09187032734575862);
@@ -54,9 +52,8 @@ public class EventMessageTest extends BaseMessageTest {
 				"http://example.com/event#myevent2", eventObject);
 		assertWampMessageTypeHeader(mapEventMessage, WampMessageType.EVENT);
 		json = mapEventMessage.toJson(getJsonFactory());
-		assertThat(json).isEqualTo(
-				toJsonArray(WampMessageType.EVENT.getTypeId(),
-						"http://example.com/event#myevent2", eventObject));
+		assertThat(json).isEqualTo(toJsonArray(WampMessageType.EVENT.getTypeId(),
+				"http://example.com/event#myevent2", eventObject));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -91,10 +88,10 @@ public class EventMessageTest extends BaseMessageTest {
 		EventMessage mapEventMessage = WampMessage.fromJson(getJsonFactory(), json);
 		assertWampMessageTypeHeader(mapEventMessage, WampMessageType.EVENT);
 		assertThat(mapEventMessage.getType()).isEqualTo(WampMessageType.EVENT);
-		assertThat(mapEventMessage.getTopicURI()).isEqualTo(
-				"http://example.com/event#myevent2");
-		assertThat(mapEventMessage.getDestination()).isEqualTo(
-				"http://example.com/event#myevent2");
+		assertThat(mapEventMessage.getTopicURI())
+				.isEqualTo("http://example.com/event#myevent2");
+		assertThat(mapEventMessage.getDestination())
+				.isEqualTo("http://example.com/event#myevent2");
 		assertThat((Map) mapEventMessage.getEvent()).hasSize(5).contains(
 				MapEntry.entry("rand", 0.09187032734575862),
 				MapEntry.entry("flag", Boolean.FALSE), MapEntry.entry("num", 23),

@@ -74,8 +74,8 @@ public class MethodParameterConverter {
 					return this.objectMapper.convertValue(argument, type);
 				}
 				else if (td.isArray()) {
-					JavaType type = typeFactory.constructArrayType(td
-							.getElementTypeDescriptor().getType());
+					JavaType type = typeFactory
+							.constructArrayType(td.getElementTypeDescriptor().getType());
 					return this.objectMapper.convertValue(argument, type);
 				}
 
