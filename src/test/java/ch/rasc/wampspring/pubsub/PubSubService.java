@@ -15,7 +15,7 @@
  */
 package ch.rasc.wampspring.pubsub;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashSet;
 import java.util.List;

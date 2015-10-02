@@ -15,7 +15,7 @@
  */
 package ch.rasc.wampspring.message;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -37,22 +37,22 @@ public class WampMessageTypeTest extends BaseMessageTest {
 	@Test
 	public void fromTypeIdTest() {
 		assertThat(WampMessageType.fromTypeId(0))
-				.isEqualsToByComparingFields(WampMessageType.WELCOME);
+				.isEqualToComparingFieldByField(WampMessageType.WELCOME);
 		assertThat(WampMessageType.fromTypeId(1))
-				.isEqualsToByComparingFields(WampMessageType.PREFIX);
+				.isEqualToComparingFieldByField(WampMessageType.PREFIX);
 		assertThat(WampMessageType.fromTypeId(2))
-				.isEqualsToByComparingFields(WampMessageType.CALL);
+				.isEqualToComparingFieldByField(WampMessageType.CALL);
 		assertThat(WampMessageType.fromTypeId(3))
-				.isEqualsToByComparingFields(WampMessageType.CALLRESULT);
+				.isEqualToComparingFieldByField(WampMessageType.CALLRESULT);
 		assertThat(WampMessageType.fromTypeId(4))
-				.isEqualsToByComparingFields(WampMessageType.CALLERROR);
+				.isEqualToComparingFieldByField(WampMessageType.CALLERROR);
 		assertThat(WampMessageType.fromTypeId(5))
-				.isEqualsToByComparingFields(WampMessageType.SUBSCRIBE);
+				.isEqualToComparingFieldByField(WampMessageType.SUBSCRIBE);
 		assertThat(WampMessageType.fromTypeId(6))
-				.isEqualsToByComparingFields(WampMessageType.UNSUBSCRIBE);
+				.isEqualToComparingFieldByField(WampMessageType.UNSUBSCRIBE);
 		assertThat(WampMessageType.fromTypeId(7))
-				.isEqualsToByComparingFields(WampMessageType.PUBLISH);
+				.isEqualToComparingFieldByField(WampMessageType.PUBLISH);
 		assertThat(WampMessageType.fromTypeId(8))
-				.isEqualsToByComparingFields(WampMessageType.EVENT);
+				.isEqualToComparingFieldByField(WampMessageType.EVENT);
 	}
 }
