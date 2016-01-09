@@ -17,9 +17,11 @@ package ch.rasc.wampspring.user;
 
 import java.security.Principal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.messaging.simp.user.DefaultUserSessionRegistry;
-import org.springframework.messaging.simp.user.UserSessionRegistry;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
+import org.springframework.web.socket.messaging.DefaultSimpUserRegistry;
 
 import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.config.AbstractWampConfigurer;
@@ -27,7 +29,7 @@ import ch.rasc.wampspring.config.WebSocketTransportRegistration;
 import ch.rasc.wampspring.message.EventMessage;
 
 /**
- * Configures a {@link UserSessionRegistry} that maps a {@link Principal}s name to a
+ * Configures a {@link SimpUserRegistry} that maps a {@link Principal}s name to a
  * WebSocket session id. Additionally a {@link UserEventMessenger} is configured as a bean
  * that allows sending {@link EventMessage}s to user names in addition to WebSocket
  * session ids.
@@ -55,18 +57,21 @@ public abstract class AbstractUserWampConfigurer extends AbstractWampConfigurer 
 
 	@Bean
 	public UserEventMessenger userEventMessenger(EventMessenger eventMessenger) {
-		return new UserEventMessenger(eventMessenger, userSessionRegistry());
+		return new UserEventMessenger(eventMessenger, simpUserRegistry());
 	}
 
 	@Bean
-	public UserSessionRegistry userSessionRegistry() {
-		return new DefaultUserSessionRegistry();
+	public SimpUserRegistry simpUserRegistry() {
+		return new DefaultSimpUserRegistry();
 	}
+
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	@Override
 	public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
 		registration.addDecoratorFactory(
-				new UserSessionWebSocketHandlerDecoratorFactory(userSessionRegistry()));
+				new UserSessionWebSocketHandlerDecoratorFactory(this.eventPublisher));
 	}
 
 }

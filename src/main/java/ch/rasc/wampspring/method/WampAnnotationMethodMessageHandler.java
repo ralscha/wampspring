@@ -33,6 +33,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.SmartLifecycle;
+import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.messaging.Message;
@@ -41,7 +42,6 @@ import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.SubscribableChannel;
-import org.springframework.messaging.handler.HandlerMethodSelector;
 import org.springframework.messaging.handler.annotation.support.DestinationVariableMethodArgumentResolver;
 import org.springframework.messaging.handler.annotation.support.HeaderMethodArgumentResolver;
 import org.springframework.messaging.handler.annotation.support.HeadersMethodArgumentResolver;
@@ -367,7 +367,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	private <A extends Annotation> void detectHandlerMethods(String beanName,
 			Class<?> userType, final Class<A> annotationType) {
 
-		Set<Method> methods = HandlerMethodSelector.selectMethods(userType,
+		Set<Method> methods = MethodIntrospector.selectMethods(userType,
 				new MethodFilter() {
 					@Override
 					public boolean matches(Method method) {

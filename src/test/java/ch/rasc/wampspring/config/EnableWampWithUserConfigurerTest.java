@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Ralph Schaer <ralphschaer@gmail.com>
+ * Copyright 2014-2016 Ralph Schaer <ralphschaer@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.user.UserSessionRegistry;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 
 import ch.rasc.wampspring.annotation.WampCallListener;
 import ch.rasc.wampspring.message.CallMessage;
@@ -69,7 +69,7 @@ public class EnableWampWithUserConfigurerTest extends BaseWampTest {
 		@Autowired
 		UserEventMessenger userEventMessenger;
 		@Autowired
-		UserSessionRegistry userSessionRegistry;
+		SimpUserRegistry simpUserRegistry;
 
 		@WampCallListener("sum")
 		public int sum(int a, int b) {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Ralph Schaer <ralphschaer@gmail.com>
+ * Copyright 2014-2016 Ralph Schaer <ralphschaer@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.messaging.simp.user.UserSessionRegistry;
+import org.springframework.messaging.simp.user.SimpSession;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.util.Assert;
 
 import ch.rasc.wampspring.EventMessenger;
@@ -40,14 +41,14 @@ public class UserEventMessenger {
 
 	private final EventMessenger eventMessenger;
 
-	private final UserSessionRegistry userSessionRegistry;
+	private final SimpUserRegistry simpUserRegistry;
 
 	public UserEventMessenger(EventMessenger eventMessenger,
-			UserSessionRegistry userSessionRegistry) {
+			SimpUserRegistry simpUserRegistry) {
 		Assert.notNull(eventMessenger, "'eventMessenger' must not be null");
-		Assert.notNull(userSessionRegistry, "'userSessionRegistry' must not be null");
+		Assert.notNull(simpUserRegistry, "'simpUserRegistry' must not be null");
 		this.eventMessenger = eventMessenger;
-		this.userSessionRegistry = userSessionRegistry;
+		this.simpUserRegistry = simpUserRegistry;
 	}
 
 	public void setSendTimeout(long sendTimeout) {
@@ -121,7 +122,10 @@ public class UserEventMessenger {
 			excludeSessionIds = new HashSet<>(excludeUsers.size());
 
 			for (String user : excludeUsers) {
-				excludeSessionIds.addAll(this.userSessionRegistry.getSessionIds(user));
+				for (SimpSession session : this.simpUserRegistry.getUser(user)
+						.getSessions()) {
+					excludeSessionIds.add(session.getId());
+				}
 			}
 		}
 
@@ -145,7 +149,10 @@ public class UserEventMessenger {
 			eligibleSessionIds = new HashSet<>(eligibleUsers.size());
 
 			for (String user : eligibleUsers) {
-				eligibleSessionIds.addAll(this.userSessionRegistry.getSessionIds(user));
+				for (SimpSession session : this.simpUserRegistry.getUser(user)
+						.getSessions()) {
+					eligibleSessionIds.add(session.getId());
+				}
 			}
 		}
 
@@ -167,7 +174,7 @@ public class UserEventMessenger {
 
 	/**
 	 * Send an EventMessage directly to each client listed in the users set parameter. A
-	 * user is ignored if there is no entry in the {@link UserSessionRegistry} for his
+	 * user is ignored if there is no entry in the {@link SimpUserRegistry} for his
 	 * username.
 	 * <p>
 	 * In contrast to {@link #sendToUsers(String, Object, Set)} this method does not check
@@ -185,7 +192,10 @@ public class UserEventMessenger {
 			webSocketSessionIds = new HashSet<>(users.size());
 
 			for (String user : users) {
-				webSocketSessionIds.addAll(this.userSessionRegistry.getSessionIds(user));
+				for (SimpSession session : this.simpUserRegistry.getUser(user)
+						.getSessions()) {
+					webSocketSessionIds.add(session.getId());
+				}
 			}
 		}
 
@@ -194,7 +204,7 @@ public class UserEventMessenger {
 
 	/**
 	 * Send an EventMessage directly to the client specified with the user parameter. If
-	 * there is no entry in the {@link UserSessionRegistry} for this user nothing happens.
+	 * there is no entry in the {@link SimpUserRegistry} for this user nothing happens.
 	 * <p>
 	 * In contrast to {@link #sendToUser(String, Object, String)} this method does not
 	 * check if the receiver is subscribed to the destination. The

@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Ralph Schaer <ralphschaer@gmail.com>
+ * Copyright 2014-2016 Ralph Schaer <ralphschaer@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public @interface WampCallListener {
 	 * One or more procURI(s) the method should listen on. If empty the default value
 	 * 'beanName.methodName' is used.
 	 */
-	String[]value() default {};
+	String[] value() default {};
 
 	/**
 	 * If true a call to this method has to be authenticated. If false no authentication
@@ -68,6 +68,6 @@ public @interface WampCallListener {
 	 * Takes precedence over {@link WampAuthenticated} and the global setting
 	 * {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
-	boolean[]authenticated() default {};
+	boolean[] authenticated() default {};
 
 }

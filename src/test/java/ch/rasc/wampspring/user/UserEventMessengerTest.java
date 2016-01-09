@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Ralph Schaer <ralphschaer@gmail.com>
+ * Copyright 2014-2016 Ralph Schaer <ralphschaer@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +33,16 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.SubscribableChannel;
-import org.springframework.messaging.simp.user.DefaultUserSessionRegistry;
-import org.springframework.messaging.simp.user.UserSessionRegistry;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
+import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.web.socket.messaging.DefaultSimpUserRegistry;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
 
 import ch.rasc.wampspring.EventMessenger;
 import ch.rasc.wampspring.message.EventMessage;
 import ch.rasc.wampspring.message.WampMessage;
+import ch.rasc.wampspring.testsupport.TestPrincipal;
 
 public class UserEventMessengerTest {
 
@@ -50,7 +54,7 @@ public class UserEventMessengerTest {
 
 	private UserEventMessenger userEventMessenger;
 
-	private UserSessionRegistry userSessionRegistry;
+	private DefaultSimpUserRegistry defaultSimpUserRegistry;
 
 	@Captor
 	ArgumentCaptor<EventMessage> messageCaptor;
@@ -63,15 +67,40 @@ public class UserEventMessengerTest {
 		Mockito.when(this.clientOutboundChannel.send(Matchers.any(WampMessage.class)))
 				.thenReturn(true);
 
-		this.userSessionRegistry = new DefaultUserSessionRegistry();
-		this.userSessionRegistry.registerSessionId("A", "ws1");
-		this.userSessionRegistry.registerSessionId("B", "ws2");
-		this.userSessionRegistry.registerSessionId("C", "ws3");
-		this.userSessionRegistry.registerSessionId("D", "ws4");
+		this.defaultSimpUserRegistry = new DefaultSimpUserRegistry();
+
+		SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor
+				.create(SimpMessageType.MESSAGE);
+		accessor.setSessionId("ws1");
+		this.defaultSimpUserRegistry.onApplicationEvent(new SessionConnectedEvent(this,
+				MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders()),
+				new TestPrincipal("A")));
+
+		accessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+		accessor.setSessionId("ws2");
+		this.defaultSimpUserRegistry.onApplicationEvent(new SessionConnectedEvent(this,
+				MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders()),
+				new TestPrincipal("B")));
+
+		accessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+		accessor.setSessionId("ws3");
+		this.defaultSimpUserRegistry.onApplicationEvent(new SessionConnectedEvent(this,
+				MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders()),
+				new TestPrincipal("C")));
+
+		accessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+		accessor.setSessionId("ws4");
+		this.defaultSimpUserRegistry.onApplicationEvent(new SessionConnectedEvent(this,
+				MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders()),
+				new TestPrincipal("D")));
+		// this.defaultSimpUserRegistry.registerSessionId("A", "ws1");
+		// this.defaultSimpUserRegistry.registerSessionId("B", "ws2");
+		// this.defaultSimpUserRegistry.registerSessionId("C", "ws3");
+		// this.defaultSimpUserRegistry.registerSessionId("D", "ws4");
 
 		this.userEventMessenger = new UserEventMessenger(
 				new EventMessenger(this.brokerChannel, this.clientOutboundChannel),
-				this.userSessionRegistry);
+				this.defaultSimpUserRegistry);
 	}
 
 	@Test

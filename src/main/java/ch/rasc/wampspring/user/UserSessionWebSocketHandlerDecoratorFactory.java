@@ -17,18 +17,26 @@ package ch.rasc.wampspring.user;
 
 import java.security.Principal;
 
-import org.springframework.messaging.simp.user.UserSessionRegistry;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.util.Assert;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 /**
  * WebSocket handler decorator that manages the relationship between a
  * {@link Principal#getName()} to a WebSocket session id. The mappings are stored in an
- * {@link org.springframework.messaging.simp.user.UserSessionRegistry} bean.
+ * {@link SimpUserRegistry} bean.
  *
  * The UserSessionRegistry handling is not enabled by default! See
  * {@link AbstractUserWampConfigurer} for configuration.
@@ -36,12 +44,12 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 public final class UserSessionWebSocketHandlerDecoratorFactory
 		implements WebSocketHandlerDecoratorFactory {
 
-	private final UserSessionRegistry userSessionRegistry;
+	private final ApplicationEventPublisher eventPublisher;
 
 	public UserSessionWebSocketHandlerDecoratorFactory(
-			UserSessionRegistry userSessionRegistry) {
-		Assert.notNull(userSessionRegistry, "'userSessionRegistry' is required ");
-		this.userSessionRegistry = userSessionRegistry;
+			ApplicationEventPublisher eventPublisher) {
+		Assert.notNull(eventPublisher, "' eventPublisher' is required ");
+		this.eventPublisher = eventPublisher;
 	}
 
 	@Override
@@ -62,8 +70,12 @@ public final class UserSessionWebSocketHandlerDecoratorFactory
 
 			Principal principal = webSocketSession.getPrincipal();
 			if (principal != null) {
-				UserSessionWebSocketHandlerDecoratorFactory.this.userSessionRegistry
-						.registerSessionId(principal.getName(), webSocketSession.getId());
+				SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor
+						.create(SimpMessageType.MESSAGE);
+				accessor.setSessionId(webSocketSession.getId());
+
+				publishEvent(new SessionConnectedEvent(this, MessageBuilder.createMessage(
+						new byte[0], accessor.getMessageHeaders()), principal));
 			}
 		}
 
@@ -73,13 +85,28 @@ public final class UserSessionWebSocketHandlerDecoratorFactory
 
 			Principal principal = webSocketSession.getPrincipal();
 			if (principal != null) {
-				String userName = principal.getName();
-				UserSessionWebSocketHandlerDecoratorFactory.this.userSessionRegistry
-						.unregisterSessionId(userName, webSocketSession.getId());
+				SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor
+						.create(SimpMessageType.MESSAGE);
+				accessor.setSessionId(webSocketSession.getId());
+
+				publishEvent(new SessionDisconnectEvent(this,
+						MessageBuilder.createMessage(new byte[0],
+								accessor.getMessageHeaders()),
+						webSocketSession.getId(), closeStatus, principal));
 			}
 
 			super.afterConnectionClosed(webSocketSession, closeStatus);
 		}
 
 	}
+
+	private void publishEvent(ApplicationEvent event) {
+		try {
+			this.eventPublisher.publishEvent(event);
+		}
+		catch (Throwable ex) {
+			LogFactory.getLog(this.getClass()).error("Error publishing " + event, ex);
+		}
+	}
+
 }

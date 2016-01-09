@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Ralph Schaer <ralphschaer@gmail.com>
+ * Copyright 2014-2016 Ralph Schaer <ralphschaer@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public @interface WampPublishListener {
 	 * One or more topicURI(s)/destination(s) the method should listen on. If empty the
 	 * default value 'beanName.methodName' is used.
 	 */
-	String[]value() default {};
+	String[] value() default {};
 
 	/**
 	 * If not empty the return value of this method (wrapped in an {@link EventMessage})
@@ -80,7 +80,7 @@ public @interface WampPublishListener {
 	 * is ignored when the method does not have a return value or the return value is
 	 * {@code null}.
 	 */
-	String[]replyTo() default {};
+	String[] replyTo() default {};
 
 	/**
 	 * Exclude the sender of the PUBLISH message from the replyTo receivers.
@@ -113,5 +113,5 @@ public @interface WampPublishListener {
 	 * Takes precedence over {@link WampAuthenticated} and the global setting
 	 * {@link DefaultWampConfiguration#authenticationRequired()}
 	 */
-	boolean[]authenticated() default {};
+	boolean[] authenticated() default {};
 }
