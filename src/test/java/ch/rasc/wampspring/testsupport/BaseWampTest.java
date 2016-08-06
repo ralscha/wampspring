@@ -26,9 +26,10 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
@@ -44,15 +45,15 @@ import ch.rasc.wampspring.message.CallMessage;
 import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest({ "server.port=0", "spring.main.show_banner=false" })
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
 @Ignore
 public class BaseWampTest {
 
 	protected final JsonFactory jsonFactory = new MappingJsonFactory(new ObjectMapper());
 
-	@Value("${local.server.port}")
-	protected String port;
+	@LocalServerPort
+	public int actualPort;
 
 	protected WampMessage sendWampMessage(WampMessage msg) throws InterruptedException,
 			ExecutionException, TimeoutException, IOException {
@@ -81,7 +82,7 @@ public class BaseWampTest {
 	}
 
 	protected String wampEndpointUrl() {
-		return "ws://localhost:" + this.port + "/wamp";
+		return "ws://localhost:" + this.actualPort + "/wamp";
 	}
 
 	protected WampMessage sendAuthenticatedMessage(WampMessage msg) throws Exception {

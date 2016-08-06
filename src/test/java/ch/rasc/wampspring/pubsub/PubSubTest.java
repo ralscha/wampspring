@@ -31,7 +31,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.TextMessage;
@@ -46,7 +47,7 @@ import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.testsupport.BaseWampTest;
 import ch.rasc.wampspring.testsupport.CompletableFutureWebSocketHandler;
 
-@SpringApplicationConfiguration(classes = PubSubTest.Config.class)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = PubSubTest.Config.class)
 public class PubSubTest extends BaseWampTest {
 
 	@Rule
@@ -81,6 +82,7 @@ public class PubSubTest extends BaseWampTest {
 
 			this.thrown.expect(TimeoutException.class);
 			event = (EventMessage) result.getWampMessage();
+			System.out.println(event);
 		}
 	}
 

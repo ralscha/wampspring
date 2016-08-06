@@ -32,6 +32,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.converter.GenericMessageConverter;
 import org.springframework.util.AntPathMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,7 +82,7 @@ public class WampAnnotationMethodMessageHandlerTest {
 		this.messageHandler = new WampAnnotationMethodMessageHandler(
 				this.clientInboundChannel, this.clientOutboundChannel,
 				this.eventMessenger, conversionService, paramConverter,
-				new AntPathMatcher(), WampMessageSelectors.ACCEPT_ALL);
+				new AntPathMatcher(), WampMessageSelectors.ACCEPT_ALL, new GenericMessageConverter());
 
 		@SuppressWarnings("resource")
 		StaticApplicationContext applicationContext = new StaticApplicationContext();

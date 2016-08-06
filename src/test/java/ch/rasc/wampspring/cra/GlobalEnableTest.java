@@ -19,7 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,7 +32,7 @@ import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.testsupport.BaseWampTest;
 
-@SpringApplicationConfiguration(classes = GlobalEnableTest.Config.class)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = GlobalEnableTest.Config.class)
 public class GlobalEnableTest extends BaseWampTest {
 
 	@Test

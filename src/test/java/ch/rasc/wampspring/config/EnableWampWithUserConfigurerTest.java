@@ -24,7 +24,8 @@ import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
@@ -37,7 +38,7 @@ import ch.rasc.wampspring.testsupport.BaseWampTest;
 import ch.rasc.wampspring.user.AbstractUserWampConfigurer;
 import ch.rasc.wampspring.user.UserEventMessenger;
 
-@SpringApplicationConfiguration(classes = EnableWampWithUserConfigurerTest.Config.class)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = EnableWampWithUserConfigurerTest.Config.class)
 public class EnableWampWithUserConfigurerTest extends BaseWampTest {
 
 	@Test

@@ -29,6 +29,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.converter.GenericMessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.support.AbstractMessageChannel;
 import org.springframework.messaging.support.ExecutorSubscribableChannel;
@@ -147,6 +149,11 @@ public class DefaultWampConfiguration {
 	public SubscribableChannel clientOutboundChannel() {
 		return new ExecutorSubscribableChannel(clientOutboundChannelExecutor());
 	}
+	
+	@Bean
+	public MessageConverter messageConverter() {
+		return new GenericMessageConverter();
+	}
 
 	@Bean
 	public Executor clientOutboundChannelExecutor() {
@@ -210,7 +217,7 @@ public class DefaultWampConfiguration {
 		WampAnnotationMethodMessageHandler messageHandler = new WampAnnotationMethodMessageHandler(
 				clientInboundChannel(), clientOutboundChannel(), eventMessenger(),
 				conversionService(), methodParameterConverter(), pathMatcher(),
-				methodMessageHandlerMessageSelector());
+				methodMessageHandlerMessageSelector(), messageConverter());
 
 		messageHandler.setAuthenticationRequiredGlobal(authenticationRequired());
 

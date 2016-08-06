@@ -24,7 +24,8 @@ import java.util.concurrent.TimeoutException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.TextMessage;
@@ -40,7 +41,7 @@ import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.testsupport.BaseWampTest;
 import ch.rasc.wampspring.testsupport.CompletableFutureWebSocketHandler;
 
-@SpringApplicationConfiguration(classes = DirectTest.Config.class)
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = DirectTest.Config.class)
 public class DirectTest extends BaseWampTest {
 
 	@Test

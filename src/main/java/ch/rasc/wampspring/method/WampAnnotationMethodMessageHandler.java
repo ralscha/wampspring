@@ -42,6 +42,7 @@ import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DestinationVariableMethodArgumentResolver;
 import org.springframework.messaging.handler.annotation.support.HeaderMethodArgumentResolver;
 import org.springframework.messaging.handler.annotation.support.HeadersMethodArgumentResolver;
@@ -123,11 +124,13 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 
 	private final MultiValueMap<String, WampMessageMappingInfo> destinationLookup = new LinkedMultiValueMap<>();
 
+	private final MessageConverter messageConverter;
+	
 	public WampAnnotationMethodMessageHandler(SubscribableChannel clientInboundChannel,
 			MessageChannel clientOutboundChannel, EventMessenger eventMessenger,
 			ConversionService conversionService,
 			MethodParameterConverter methodParameterConverter, PathMatcher pathMatcher,
-			WampMessageSelector wampMessageSelector) {
+			WampMessageSelector wampMessageSelector, MessageConverter messageConverter) {
 		this.clientInboundChannel = clientInboundChannel;
 		this.clientOutboundChannel = clientOutboundChannel;
 		this.eventMessenger = eventMessenger;
@@ -135,6 +138,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 		this.methodParameterConverter = methodParameterConverter;
 		this.pathMatcher = pathMatcher;
 		this.wampMessageSelector = wampMessageSelector;
+		this.messageConverter = messageConverter;
 	}
 
 	public void setAuthenticationRequiredGlobal(boolean authenticationRequiredGlobal) {
@@ -205,7 +209,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 		// Type-based argument resolution
 		resolvers.add(new PrincipalMethodArgumentResolver());
 		resolvers.add(new WampSessionMethodArgumentResolver());
-		resolvers.add(new MessageMethodArgumentResolver());
+		resolvers.add(new MessageMethodArgumentResolver(this.messageConverter));
 
 		resolvers.addAll(getCustomArgumentResolvers());
 

@@ -24,7 +24,8 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SyncTaskExecutor;
@@ -35,7 +36,7 @@ import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.testsupport.BaseWampTest;
 
-@SpringApplicationConfiguration(
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, 
 		classes = SubclassDefaultWampConfigurationTest.Config.class)
 public class SubclassDefaultWampConfigurationTest extends BaseWampTest {
 
@@ -51,7 +52,7 @@ public class SubclassDefaultWampConfigurationTest extends BaseWampTest {
 
 	@Override
 	protected String wampEndpointUrl() {
-		return "ws://localhost:" + this.port + "/w";
+		return "ws://localhost:" + this.actualPort + "/w";
 	}
 
 	@Configuration
