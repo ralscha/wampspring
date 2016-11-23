@@ -15,6 +15,7 @@
  */
 package ch.rasc.wampspring.method;
 
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.springframework.lang.UsesJava8;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.TypeBindings;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class MethodParameterConverter {
@@ -66,16 +68,38 @@ public class MethodParameterConverter {
 						this.conversionService.convert(argument, targetClass));
 			}
 			catch (Exception e) {
+				// ignore this exception for collections and arrays.
+				// try to convert the value with jackson
 
-				TypeFactory typeFactory = this.objectMapper.getTypeFactory();
+				TypeFactory typeFactory = this.objectMapper
+						.getTypeFactory();
 				if (td.isCollection()) {
-					JavaType type = CollectionType.construct(td.getType(), typeFactory
-							.constructType(td.getElementTypeDescriptor().getType()));
+
+					JavaType elemType = typeFactory
+							.constructType(td
+									.getElementTypeDescriptor().getType());
+					TypeVariable<?>[] vars = targetClass.getTypeParameters();
+					TypeBindings bindings;
+					if ((vars == null) || (vars.length != 1)) {
+						bindings = TypeBindings.emptyBindings();
+					}
+					else {
+						bindings = TypeBindings.create(targetClass, elemType);
+					}
+					JavaType superClass = null;
+					Class<?> parent = targetClass.getSuperclass();
+					if (parent != null) {
+						superClass = TypeFactory.unknownType();
+					}
+
+					JavaType type = CollectionType.construct(targetClass, bindings,
+							superClass, null, elemType);
 					return this.objectMapper.convertValue(argument, type);
 				}
 				else if (td.isArray()) {
 					JavaType type = typeFactory
-							.constructArrayType(td.getElementTypeDescriptor().getType());
+							.constructArrayType(td
+									.getElementTypeDescriptor().getType());
 					return this.objectMapper.convertValue(argument, type);
 				}
 
