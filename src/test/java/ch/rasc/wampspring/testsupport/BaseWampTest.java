@@ -46,7 +46,7 @@ import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Ignore
 public class BaseWampTest {
 
@@ -103,8 +103,8 @@ public class BaseWampTest {
 
 	protected void authenticate(CompletableFutureWebSocketHandler result,
 			WebSocketSession webSocketSession)
-					throws IOException, InterruptedException, InvalidKeyException,
-					NoSuchAlgorithmException, ExecutionException, TimeoutException {
+			throws IOException, InterruptedException, InvalidKeyException,
+			NoSuchAlgorithmException, ExecutionException, TimeoutException {
 		CallMessage authReqCallMessage = new CallMessage("1",
 				"http://api.wamp.ws/procedure#authreq", "a", Collections.emptyMap());
 		webSocketSession.sendMessage(

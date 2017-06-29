@@ -125,7 +125,7 @@ public class WampAnnotationMethodMessageHandler implements MessageHandler,
 	private final MultiValueMap<String, WampMessageMappingInfo> destinationLookup = new LinkedMultiValueMap<>();
 
 	private final MessageConverter messageConverter;
-	
+
 	public WampAnnotationMethodMessageHandler(SubscribableChannel clientInboundChannel,
 			MessageChannel clientOutboundChannel, EventMessenger eventMessenger,
 			ConversionService conversionService,

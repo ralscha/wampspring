@@ -38,7 +38,8 @@ import ch.rasc.wampspring.testsupport.BaseWampTest;
 import ch.rasc.wampspring.user.AbstractUserWampConfigurer;
 import ch.rasc.wampspring.user.UserEventMessenger;
 
-@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = EnableWampWithUserConfigurerTest.Config.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+		classes = EnableWampWithUserConfigurerTest.Config.class)
 public class EnableWampWithUserConfigurerTest extends BaseWampTest {
 
 	@Test

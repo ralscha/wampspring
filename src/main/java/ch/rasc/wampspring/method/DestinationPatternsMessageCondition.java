@@ -68,7 +68,7 @@ public class DestinationPatternsMessageCondition
 
 	private static List<String> asList(String... patterns) {
 		return patterns != null ? Arrays.asList(patterns)
-				: Collections.<String> emptyList();
+				: Collections.<String>emptyList();
 	}
 
 	public Set<String> getPatterns() {

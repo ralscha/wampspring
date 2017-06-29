@@ -71,16 +71,14 @@ public class MethodParameterConverter {
 				// ignore this exception for collections and arrays.
 				// try to convert the value with jackson
 
-				TypeFactory typeFactory = this.objectMapper
-						.getTypeFactory();
+				TypeFactory typeFactory = this.objectMapper.getTypeFactory();
 				if (td.isCollection()) {
 
 					JavaType elemType = typeFactory
-							.constructType(td
-									.getElementTypeDescriptor().getType());
+							.constructType(td.getElementTypeDescriptor().getType());
 					TypeVariable<?>[] vars = targetClass.getTypeParameters();
 					TypeBindings bindings;
-					if ((vars == null) || (vars.length != 1)) {
+					if (vars == null || vars.length != 1) {
 						bindings = TypeBindings.emptyBindings();
 					}
 					else {
@@ -98,8 +96,7 @@ public class MethodParameterConverter {
 				}
 				else if (td.isArray()) {
 					JavaType type = typeFactory
-							.constructArrayType(td
-									.getElementTypeDescriptor().getType());
+							.constructArrayType(td.getElementTypeDescriptor().getType());
 					return this.objectMapper.convertValue(argument, type);
 				}
 

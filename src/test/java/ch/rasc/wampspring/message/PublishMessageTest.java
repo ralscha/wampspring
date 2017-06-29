@@ -69,7 +69,7 @@ public class PublishMessageTest extends BaseMessageTest {
 						"hello", Arrays.asList("NwtXQ8rdfPsy-ewS", "dYqgDl0FthI6_hjb")));
 
 		publishMessage = new PublishMessage("event:myevent1", "hello",
-				Collections.<String> emptySet(),
+				Collections.<String>emptySet(),
 				new TreeSet<>(Arrays.asList("NwtXQ8rdfPsy-ewS")));
 		assertWampMessageTypeHeader(publishMessage, WampMessageType.PUBLISH);
 

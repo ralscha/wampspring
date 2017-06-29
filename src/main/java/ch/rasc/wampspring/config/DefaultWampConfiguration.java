@@ -149,7 +149,7 @@ public class DefaultWampConfiguration {
 	public SubscribableChannel clientOutboundChannel() {
 		return new ExecutorSubscribableChannel(clientOutboundChannelExecutor());
 	}
-	
+
 	@Bean
 	public MessageConverter messageConverter() {
 		return new GenericMessageConverter();

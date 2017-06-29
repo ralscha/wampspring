@@ -41,7 +41,8 @@ import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.testsupport.BaseWampTest;
 import ch.rasc.wampspring.testsupport.CompletableFutureWebSocketHandler;
 
-@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = DirectTest.Config.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+		classes = DirectTest.Config.class)
 public class DirectTest extends BaseWampTest {
 
 	@Test

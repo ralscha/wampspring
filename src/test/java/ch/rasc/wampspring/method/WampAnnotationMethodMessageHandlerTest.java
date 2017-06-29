@@ -82,7 +82,8 @@ public class WampAnnotationMethodMessageHandlerTest {
 		this.messageHandler = new WampAnnotationMethodMessageHandler(
 				this.clientInboundChannel, this.clientOutboundChannel,
 				this.eventMessenger, conversionService, paramConverter,
-				new AntPathMatcher(), WampMessageSelectors.ACCEPT_ALL, new GenericMessageConverter());
+				new AntPathMatcher(), WampMessageSelectors.ACCEPT_ALL,
+				new GenericMessageConverter());
 
 		@SuppressWarnings("resource")
 		StaticApplicationContext applicationContext = new StaticApplicationContext();

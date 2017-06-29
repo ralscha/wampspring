@@ -47,7 +47,8 @@ import ch.rasc.wampspring.message.UnsubscribeMessage;
 import ch.rasc.wampspring.testsupport.BaseWampTest;
 import ch.rasc.wampspring.testsupport.CompletableFutureWebSocketHandler;
 
-@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = PubSubTest.Config.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+		classes = PubSubTest.Config.class)
 public class PubSubTest extends BaseWampTest {
 
 	@Rule
@@ -152,8 +153,8 @@ public class PubSubTest extends BaseWampTest {
 
 	private void testExcludeEligible(Boolean excludeMe, List<Integer> exclude,
 			List<Integer> eligible, List<Integer> expectedReceiver)
-					throws InterruptedException, ExecutionException, IOException,
-					TimeoutException {
+			throws InterruptedException, ExecutionException, IOException,
+			TimeoutException {
 		CompletableFutureWebSocketHandler result1 = new CompletableFutureWebSocketHandler(
 				this.jsonFactory);
 		CompletableFutureWebSocketHandler result2 = new CompletableFutureWebSocketHandler(
@@ -245,46 +246,46 @@ public class PubSubTest extends BaseWampTest {
 		testExcludeEligible(Boolean.TRUE, null, null, Arrays.asList(2));
 		testExcludeEligible(Boolean.FALSE, null, null, Arrays.asList(1, 2));
 
-		testExcludeEligible(null, Collections.<Integer> emptyList(), null,
+		testExcludeEligible(null, Collections.<Integer>emptyList(), null,
 				Arrays.asList(1, 2));
 		testExcludeEligible(null, Arrays.asList(1), null, Arrays.asList(2));
 		testExcludeEligible(null, Arrays.asList(2), null, Arrays.asList(1));
 		testExcludeEligible(null, Arrays.asList(1, 2), null,
-				Collections.<Integer> emptyList());
+				Collections.<Integer>emptyList());
 
-		testExcludeEligible(null, Collections.<Integer> emptyList(),
-				Collections.<Integer> emptyList(), Collections.<Integer> emptyList());
-		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(1),
+		testExcludeEligible(null, Collections.<Integer>emptyList(),
+				Collections.<Integer>emptyList(), Collections.<Integer>emptyList());
+		testExcludeEligible(null, Collections.<Integer>emptyList(), Arrays.asList(1),
 				Arrays.asList(1));
-		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(2),
+		testExcludeEligible(null, Collections.<Integer>emptyList(), Arrays.asList(2),
 				Arrays.asList(2));
-		testExcludeEligible(null, Collections.<Integer> emptyList(), Arrays.asList(1, 2),
+		testExcludeEligible(null, Collections.<Integer>emptyList(), Arrays.asList(1, 2),
 				Arrays.asList(1, 2));
 
-		testExcludeEligible(null, Arrays.asList(1), Collections.<Integer> emptyList(),
-				Collections.<Integer> emptyList());
+		testExcludeEligible(null, Arrays.asList(1), Collections.<Integer>emptyList(),
+				Collections.<Integer>emptyList());
 		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(1),
-				Collections.<Integer> emptyList());
+				Collections.<Integer>emptyList());
 		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(2), Arrays.asList(2));
 		testExcludeEligible(null, Arrays.asList(1), Arrays.asList(1, 2),
 				Arrays.asList(2));
 
-		testExcludeEligible(null, Arrays.asList(2), Collections.<Integer> emptyList(),
-				Collections.<Integer> emptyList());
+		testExcludeEligible(null, Arrays.asList(2), Collections.<Integer>emptyList(),
+				Collections.<Integer>emptyList());
 		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(1), Arrays.asList(1));
 		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(2),
-				Collections.<Integer> emptyList());
+				Collections.<Integer>emptyList());
 		testExcludeEligible(null, Arrays.asList(2), Arrays.asList(1, 2),
 				Arrays.asList(1));
 
-		testExcludeEligible(null, Arrays.asList(1, 2), Collections.<Integer> emptyList(),
-				Collections.<Integer> emptyList());
+		testExcludeEligible(null, Arrays.asList(1, 2), Collections.<Integer>emptyList(),
+				Collections.<Integer>emptyList());
 		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(1),
-				Collections.<Integer> emptyList());
+				Collections.<Integer>emptyList());
 		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(2),
-				Collections.<Integer> emptyList());
+				Collections.<Integer>emptyList());
 		testExcludeEligible(null, Arrays.asList(1, 2), Arrays.asList(1, 2),
-				Collections.<Integer> emptyList());
+				Collections.<Integer>emptyList());
 	}
 
 	@Test

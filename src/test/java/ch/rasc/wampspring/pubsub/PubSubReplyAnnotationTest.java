@@ -43,7 +43,8 @@ import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.testsupport.BaseWampTest;
 import ch.rasc.wampspring.testsupport.CompletableFutureWebSocketHandler;
 
-@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = PubSubReplyAnnotationTest.Config.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+		classes = PubSubReplyAnnotationTest.Config.class)
 public class PubSubReplyAnnotationTest extends BaseWampTest {
 
 	@Test

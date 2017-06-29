@@ -31,7 +31,8 @@ import ch.rasc.wampspring.message.CallResultMessage;
 import ch.rasc.wampspring.message.WampMessage;
 import ch.rasc.wampspring.testsupport.BaseWampTest;
 
-@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT, classes = CallTest.Config.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT,
+		classes = CallTest.Config.class)
 public class CallTest extends BaseWampTest {
 
 	@Test
