@@ -1,4 +1,4 @@
-##wampspring 
+## wampspring 
 [![Build Status](https://api.travis-ci.org/ralscha/wampspring.png)](https://travis-ci.org/ralscha/wampspring)
 
 
