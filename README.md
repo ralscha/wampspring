@@ -1,3 +1,6 @@
+See the https://github.com/ralscha/wamp2spring project for a WAMP v2 implementation
+
+
 ## wampspring 
 [![Build Status](https://api.travis-ci.org/ralscha/wampspring.png)](https://travis-ci.org/ralscha/wampspring)
 
