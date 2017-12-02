@@ -258,7 +258,7 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Automatic-Module-Name>ch.rasc.darksky</Automatic-Module-Name>
+							<Automatic-Module-Name>ch.rasc.wampspring</Automatic-Module-Name>
 						</manifestEntries>
 					</archive>
 				</configuration>				
