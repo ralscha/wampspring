@@ -140,6 +140,7 @@
 					<testSource>1.8</testSource>
 					<testTarget>1.8</testTarget>
 					<encoding>UTF-8</encoding>
+					<parameters>true</parameters>
 				</configuration>
 			</plugin>
 
@@ -321,7 +322,8 @@
 						<exclude>**/WampSessionScopeTest.java</exclude>
 						<exclude>**/PrincipalMethodArgumentResolver.java</exclude>
 						<exclude>.mvn/**/*</exclude>
-						<exclude>mvnw.cmd</exclude>						
+						<exclude>mvnw</exclude>			
+						<exclude>mvnw.cmd</exclude>
 					</excludes>
 					<strictCheck>true</strictCheck>
 				</configuration>
