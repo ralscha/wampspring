@@ -1,4 +1,4 @@
-See the https://github.com/ralscha/wamp2spring project for a WAMP v2 implementation
+**Deprecated**: See the https://github.com/ralscha/wamp2spring project for the WAMP v2 implementation
 
 
 ## wampspring 
